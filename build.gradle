@@ -210,6 +210,9 @@ dependencies {
     // 兼容azurelib读geo文件
 //    implementation fg.deobf("curse.maven:azurelib-817423:6849107")
 
+    //兼容azurelib armor读geo文件
+    //implementation fg.deobf("curse.maven:azurelib-armor-912767:6004945")
+
 
 }
 tasks.named('processResources', ProcessResources).configure {

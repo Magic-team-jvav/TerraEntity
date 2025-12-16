@@ -25,7 +25,8 @@
     "client.ServerChunkLoadingManagerMixin",
     "container.AbstractContainerMenuMixin",
     "container.ChestMenuMixin",
-    "integration.azurelib.AzurelibFileLoaderMixin"
+    "integration.azurelib.AzurelibFileLoaderMixin",
+    "integration.azurelibArmor.AzurelibArmorFileLoaderMixin"
   ],
   "client": [
     "accessor.GameRendererAccessor",
