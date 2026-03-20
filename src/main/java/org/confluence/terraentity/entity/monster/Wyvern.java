@@ -166,7 +166,7 @@ public class Wyvern<S extends BaseWormPart> extends BaseWorm<S> implements IDisc
         public WyvernAttackGoal(T warm, float distanceToTurn) {
             super(warm, distanceToTurn);
             followRangeModifier = TerraEntity.space("aggressive");
-            modifier = new AttributeModifier(UUID.fromString(followRangeModifier.toString()),followRangeModifier.toString(), 200, AttributeModifier.Operation.ADDITION);
+            modifier = new AttributeModifier(UUID.nameUUIDFromBytes(followRangeModifier.toString().getBytes()),followRangeModifier.toString(), 200, AttributeModifier.Operation.ADDITION);
         }
 
         @Override

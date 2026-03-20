@@ -280,11 +280,11 @@ public class NPCTradeManager {
 
             DynamicOps<Tag> ops = NbtOps.INSTANCE;
             map.forEach((key, value) -> {
-                var res = NPCTradeManager.CODEC.decode(ops, value);
+                var res = NPCTradeManager.CODEC.parse(ops, value);
                 if (res.error().isPresent()) {
                     TerraEntity.LOGGER.error("Failed to sync trade list {} :{}", key, res.error().get().message());
                 } else {
-                    res.result().ifPresent(r->map1.put(key, r.getFirst()));
+                    res.result().ifPresent(r->map1.put(key, r));
                 }
             });
 

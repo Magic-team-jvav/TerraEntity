@@ -30,10 +30,10 @@
     "container.AbstractContainerMenuMixin",
     "container.ChestMenuMixin",
     "integration.azurelib.AzurelibFileLoaderMixin",
-    "integration.azurelibArmor.AzurelibArmorFileLoaderMixin"
+    "integration.azurelibArmor.AzurelibArmorFileLoaderMixin",
+    "level.ModifyBiomeMixin"
   ],
   "client": [
-    "accessor.CameraAccessor",
     "accessor.GameRendererAccessor",
     "accessor.LevelRendererAccessor",
     "client.BossHealthOverlayMixin",

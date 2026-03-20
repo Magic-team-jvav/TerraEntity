@@ -85,7 +85,7 @@ public class SyncWallOfFleshPositionsPacket implements CustomPacketPayload {
 
     @Override
     public void handle(IPayloadContext context) {
-
+        handle(this, context);
     }
 
     public static void handle(SyncWallOfFleshPositionsPacket packet, IPayloadContext context) {

@@ -42,7 +42,7 @@ public class ItemRendererMixin {
             if(item instanceof BaseWhipItem && player.getCooldowns().isOnCooldown(item)){
                 return;
             }
-            if(item instanceof YoyosItem && player.getCapability(TEAttachments.WEAPON_STORAGE).orElse(new WeaponStorage()).yoyosEntity != null){
+            if (item instanceof YoyosItem && player.getCapability(TEAttachments.WEAPON_STORAGE).orElse(new WeaponStorage()).yoyosEntity != null) {
                 return;
             }
 

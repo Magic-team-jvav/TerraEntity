@@ -28,6 +28,7 @@ import org.confluence.terraentity.entity.npc.trade.TradeModifiers;
 import org.confluence.terraentity.init.entity.TENpcEntities;
 import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.integration.curios.CuriosHelper;
+import org.confluence.terraentity.level.LivingSpawnForbidden;
 import org.confluence.terraentity.network.s2c.SyncDataS2C;
 import org.confluence.terraentity.network.s2c.SyncNPCTradesPacketS2C;
 import org.confluence.terraentity.registries.mappeddata.MappedDataLoader;
@@ -74,7 +75,7 @@ public class GameEvent {
         event.addListener(ChatManager.Loader.getInstance());
         event.addListener(HillOfFleshModelAnimationTable.getInstance());
         event.addListener(new MappedDataLoader());
-
+        event.addListener(LivingSpawnForbidden.getInstance());
     }
 
     @SubscribeEvent

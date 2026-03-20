@@ -200,9 +200,9 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
         Vector4f bonePos = new Vector4f(modelX, modelY, modelZ, 1.0f);
         matrix.transform(bonePos);
 
-        float camX = bonePos.x();
-        float camY = bonePos.y();
-        float camZ = bonePos.z();
+        float camX = 0;
+        float camY = 0;
+        float camZ = 0;
 
         // 3. 计算盒子半径
         double radius = CELL_SIZE / 32f;

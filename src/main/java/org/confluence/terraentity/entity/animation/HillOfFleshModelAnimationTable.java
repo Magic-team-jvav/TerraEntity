@@ -53,7 +53,7 @@ public class HillOfFleshModelAnimationTable extends SimplePreparableReloadListen
         if(file.isPresent()){
             try (Reader reader = file.get().openAsReader()) {
                 JsonObject jsonobject = GsonHelper.fromJson(GSON, reader, JsonObject.class);
-                ModelPositionTable animTable = ModelPositionTable.CODEC.decode(JsonOps.INSTANCE, jsonobject).get().orThrow().getFirst();
+                ModelPositionTable animTable = ModelPositionTable.CODEC.parse(JsonOps.INSTANCE, jsonobject).get().orThrow();
                 Map<String, Vec3KeyframeAnimation> positions = new HashMap<>();
                 // 填充首尾关键帧
                 for (Map.Entry<String, Vec3KeyframeAnimation> entry : animTable) {

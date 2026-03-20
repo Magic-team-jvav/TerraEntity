@@ -66,7 +66,7 @@ public class HorrifiedEffect extends MobEffect {
                         living.addEffect(new MobEffectInstance(horrifiedHolder.get(), 60));
                 }
             }
-        }else living.getActiveEffectsMap().remove(TEEffects.HORRIFIED).getEffect();
+        }else living.getActiveEffectsMap().remove(TEEffects.HORRIFIED.get()).getEffect();
 
     }
 

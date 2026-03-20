@@ -50,7 +50,7 @@ public class TheTongueEffect extends MobEffect  implements IMobEffectExtension {
                 Vec3 adjustedForce = dragDirection.scale(speedFactor);
 
                 if ((distance <= 9.0F || !living.isAlive())) {
-                    living.getActiveEffectsMap().remove(TEEffects.THE_TONGUE).getEffect();
+                    living.getActiveEffectsMap().remove(TEEffects.THE_TONGUE.get()).getEffect();
                 } else {
                     living.setDeltaMovement(living.getDeltaMovement().add(adjustedForce));
                     living.hurtMarked = true;
@@ -64,7 +64,7 @@ public class TheTongueEffect extends MobEffect  implements IMobEffectExtension {
                 living.setDeltaMovement(0,1.25,0);
                 targetPos.add(0,1.25,0);
             } else if(living.tickCount % 20 == 0){
-                living.getActiveEffectsMap().remove(TEEffects.THE_TONGUE).getEffect();
+                living.getActiveEffectsMap().remove(TEEffects.THE_TONGUE.get()).getEffect();
             }
         }
 

@@ -223,7 +223,7 @@ dependencies {
 //    additionalRuntimeClasspath "org.apache.commons:commons-math3:3.6.1"
 
 
-    implementation fg.deobf("curse.maven:pehkui-319596:5393101")
+//    implementation fg.deobf("curse.maven:pehkui-319596:5393101")
 
 
     // 兼容azurelib读geo文件

@@ -20,7 +20,7 @@ public abstract class AttributeModifierAction extends BTNode {
         this.living = living;
         this.attributeHolder = attributeHolder;
         this.id = id;
-        this.uuid = UUID.fromString(id.toString());
+        this.uuid = UUID.nameUUIDFromBytes(id.toString().getBytes());
     }
 
     public static class Add extends AttributeModifierAction {

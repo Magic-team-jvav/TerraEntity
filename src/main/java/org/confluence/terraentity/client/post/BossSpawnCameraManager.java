@@ -7,7 +7,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.entity.ai.keyframe.Keyframe;
 import org.confluence.terraentity.entity.ai.keyframe.animation.Vec3KeyframeAnimation;
-import org.confluence.terraentity.mixin.accessor.CameraAccessor;
 
 /**
  * boss召唤镜头过场动画
@@ -22,11 +21,11 @@ public enum BossSpawnCameraManager {
     float _backTime;
 
     private void setPos(Camera camera, Vec3 pos){
-        ((CameraAccessor)camera).callSetPosition(pos);
+        setPos(camera, pos.x, pos.y, pos.z);
     }
 
     private void setPos(Camera camera, double x, double y, double z){
-        ((CameraAccessor)camera).callSetPosition(x, y, z);
+        camera.setPosition(x, y, z);
     }
 
     public boolean isAnimating(){
