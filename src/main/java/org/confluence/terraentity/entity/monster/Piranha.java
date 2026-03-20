@@ -97,6 +97,11 @@ public class Piranha extends WaterAnimal implements Enemy, GeoEntity {
         return new WaterBoundPathNavigation(this, level);
     }
 
+//    @Override
+//    public void playAttackSound() {
+//        this.playSound(SoundEvents.DOLPHIN_ATTACK, 1.0F, 1.0F);
+//    }
+
     @Override
     public int getMaxAirSupply() {
         return 4800;
@@ -206,7 +211,7 @@ public class Piranha extends WaterAnimal implements Enemy, GeoEntity {
             if(this.swinging){
                 return state.setAndContinue(DefaultAnimations.ATTACK_STRIKE);
             }
-            return state.setAndContinue(DefaultAnimations.SWIM);
+            return state.setAndContinue(state.isMoving() ? DefaultAnimations.SWIM : DefaultAnimations.IDLE);
         }));
     }
 

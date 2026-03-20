@@ -7,6 +7,7 @@ import org.confluence.terraentity.registries.npc_trade_lock.TradeLockProviderTyp
 import org.confluence.terraentity.registries.npc_trade_lock.variant.AndLock;
 import org.confluence.terraentity.registries.npc_trade_lock.variant.NotLock;
 import org.confluence.terraentity.registries.npc_trade_lock.variant.OrLock;
+import org.confluence.terraentity.registries.npc_trade_lock.variant.TrueLock;
 
 import java.util.Arrays;
 
@@ -42,5 +43,9 @@ public interface ITradeLock {
     }
     static ITradeLock not(ITradeLock lock){
         return new NotLock(lock);
+    }
+
+    static ITradeLock alwaysTrue() {
+        return TrueLock.INSTANCE;
     }
 }

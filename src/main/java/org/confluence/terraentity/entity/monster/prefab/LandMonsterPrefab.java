@@ -33,6 +33,7 @@ public class LandMonsterPrefab extends AbstractPrefab {
             ()->new LandMonsterPrefab().getPrefab()
                     .setSpawnWithoutLight()
                     .setAmbientSound(TESounds.FACE_HOOT)
+                    .setHurtSound(TESounds.ROUTINE_HURT)
                     .setDeathSound(TESounds.TR_ZOMBIE_DEATH)
                     .addTarget((t,e)-> t.addGoal(1, new NearestAttackableTargetGoal<>(e, Player.class,false, LivingEntity::canBeSeenAsEnemy)))
                     .addGoal((g,e)-> {
@@ -49,6 +50,7 @@ public class LandMonsterPrefab extends AbstractPrefab {
             ()->new LandMonsterPrefab().getPrefab()
                     .setSpawnWithoutLight()
                     .setAmbientSound(TESounds.TR_ZOMBIE_FREE)
+                    .setHurtSound(TESounds.ROUTINE_HURT)
                     .setDeathSound(TESounds.TR_ZOMBIE_DEATH)
                     .addTarget((t,e)-> {
                         t.addGoal(1,new AccelerateOnSeeingGoal(e,0.25f));
@@ -77,6 +79,7 @@ public class LandMonsterPrefab extends AbstractPrefab {
             ()->new LandMonsterPrefab().getPrefab()
                     .setSpawnWithoutLight()
                     .setAmbientSound(TESounds.TR_ZOMBIE_FREE)
+                    .setHurtSound(TESounds.ROUTINE_HURT)
                     .setDeathSound(TESounds.TR_ZOMBIE_DEATH)
                     .addTarget((t,e)-> {
                         t.addGoal(1,new AccelerateOnSeeingGoal(e,0.25f));
@@ -106,7 +109,7 @@ public class LandMonsterPrefab extends AbstractPrefab {
                     .setNoAttachAttack()
                     .setTicker(e->{
                         if(!e.level().isClientSide && e.isAlive() && e.tickCount == 60 + e.getId() % 40){
-                            List<EntityType<? extends Entity>> entities = List.of(TEMonsterEntities.BLOOD_CRAWLER.get(), TEMonsterEntities.FACE_MONSTER.get(), TEMonsterEntities.CRIMSON_KEMERA.get());
+                            List<EntityType<? extends Entity>> entities = List.of(TEMonsterEntities.BLOOD_CRAWLER.get(), TEMonsterEntities.FACE_MONSTER.get(), TEMonsterEntities.CRIMERA.get());
                             Entity summon = entities.get(e.getRandom().nextIntBetweenInclusive(0,entities.size()-1)).create(e.level());
                             if(summon!=null) {
                                 summon.setPos(e.getX(), e.getY(), e.getZ());
@@ -123,7 +126,9 @@ public class LandMonsterPrefab extends AbstractPrefab {
 
     public static Supplier<AttributeBuilder> BLOOD_ZOMBIE_BUILDER =
             ()->new LandMonsterPrefab().getPrefab()
+                    .setSpawnWithoutLight()
                     .setAmbientSound(TESounds.TR_ZOMBIE_FREE)
+                    .setHurtSound(TESounds.ROUTINE_HURT)
                     .setDeathSound(TESounds.TR_ZOMBIE_DEATH)
                     .addTarget((t,e)-> {
                         t.addGoal(1,new AccelerateOnSeeingGoal(e,0.25f));
@@ -157,6 +162,62 @@ public class LandMonsterPrefab extends AbstractPrefab {
                         g.addGoal(8, new LookAtPlayerGoal(e, Player.class, 6));
                     });
 
+    public static Supplier<AttributeBuilder> MUMMY_BUILDER =
+            ()->new LandMonsterPrefab().getPrefab()
+                    .setSpawnWithoutLight()
+                    .setHurtSound(TESounds.ROUTINE_HURT)
+                    .setDeathSound(TESounds.ROUTINE_DEATH)
+                    .addTarget((t,e)-> t.addGoal(1, new NearestAttackableTargetGoal<>(e, Player.class,false, LivingEntity::canBeSeenAsEnemy)))
+                    .addGoal((g,e)-> {
+                        g.addGoal(1, new JumpAttack(e, 2, 4));
+                        g.addGoal(2, new JumpOverBlockGoal(e));
+                        g.addGoal(3, new MeleeAttackGoal(e,  1f, true));
+                        g.addGoal(7, new WaterAvoidingRandomStrollGoal(e, 1.0));
+                        g.addGoal(8, new LookAtPlayerGoal(e, Player.class, 6));
+                    });
+
+    public static Supplier<AttributeBuilder> LAMIA_BUILDER =
+            ()->new LandMonsterPrefab().getPrefab()
+                    .setSpawnWithoutLight()
+                    .setHurtSound(TESounds.ROUTINE_HURT)
+                    .setDeathSound(TESounds.ROUTINE_DEATH)
+                    .addTarget((t,e)-> t.addGoal(1, new NearestAttackableTargetGoal<>(e, Player.class,false, LivingEntity::canBeSeenAsEnemy)))
+                    .addGoal((g,e)-> {
+                        g.addGoal(1, new JumpAttack(e, 2, 5));
+                        g.addGoal(2, new JumpOverBlockGoal(e));
+                        g.addGoal(3, new MeleeAttackGoal(e,  1.3f, true));
+                        g.addGoal(7, new WaterAvoidingRandomStrollGoal(e, 1.0));
+                        g.addGoal(8, new LookAtPlayerGoal(e, Player.class, 6));
+                    });
+
+    public static Supplier<AttributeBuilder> GHOUL_BUILDER =
+            ()->new LandMonsterPrefab().getPrefab()
+                    .setSpawnWithoutLight()
+                    .setHurtSound(TESounds.ROUTINE_HURT)
+                    .setDeathSound(TESounds.ROUTINE_DEATH)
+                    .addTarget((t,e)-> t.addGoal(1, new NearestAttackableTargetGoal<>(e, Player.class,false, LivingEntity::canBeSeenAsEnemy)))
+                    .addGoal((g,e)-> {
+                        g.addGoal(1, new JumpAttack(e, 2, 5));
+                        g.addGoal(2, new JumpOverBlockGoal(e));
+                        g.addGoal(3, new MeleeAttackGoal(e,  1.6f, true));
+                        g.addGoal(7, new WaterAvoidingRandomStrollGoal(e, 1.0));
+                        g.addGoal(8, new LookAtPlayerGoal(e, Player.class, 6));
+                    });
+
+    public static Supplier<AttributeBuilder> EVIL_MUMMY_BUILDER =
+            ()->new LandMonsterPrefab().getPrefab()
+                    .setSpawnWithoutLight()
+                    .setHurtSound(TESounds.ROUTINE_HURT)
+                    .setDeathSound(TESounds.ROUTINE_DEATH)
+                    .addTarget((t,e)-> t.addGoal(1, new NearestAttackableTargetGoal<>(e, Player.class,false, LivingEntity::canBeSeenAsEnemy)))
+                    .addGoal((g,e)-> {
+                        g.addGoal(1, new JumpAttack(e, 3, 5));
+                        g.addGoal(2, new JumpOverBlockGoal(e));
+                        g.addGoal(3, new MeleeAttackGoal(e,  1.3f, true));
+                        g.addGoal(7, new WaterAvoidingRandomStrollGoal(e, 1.0));
+                        g.addGoal(8, new LookAtPlayerGoal(e, Player.class, 6));
+                    });
+
     public LandMonsterPrefab() {
         super();
         modifier = b->b
@@ -170,6 +231,7 @@ public class LandMonsterPrefab extends AbstractPrefab {
                 })
         ;
     }
+
 
     private final Function<AttributeBuilder, AttributeBuilder> modifier;
 

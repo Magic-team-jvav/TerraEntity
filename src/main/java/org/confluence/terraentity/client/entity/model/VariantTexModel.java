@@ -6,7 +6,10 @@ import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.api.entity.IVariant;
 import software.bernie.geckolib.animatable.GeoEntity;
 
-
+/**
+ * 变种模型：将贴图与变种id绑定
+ * @param <T>
+ */
 public class VariantTexModel<T extends Entity & IVariant<Integer> & GeoEntity> extends GeoNormalModel<T> {
     private final ResourceLocation animation;
     private final ResourceLocation model;
@@ -29,6 +32,9 @@ public class VariantTexModel<T extends Entity & IVariant<Integer> & GeoEntity> e
 
     @Override
     public ResourceLocation getTextureResource(T entity) {
+        if(entity.getTexture() == null){
+            return TerraEntity.space("textures/entity/default.png");
+        }
         return entity.getTexture();
     }
     @Override

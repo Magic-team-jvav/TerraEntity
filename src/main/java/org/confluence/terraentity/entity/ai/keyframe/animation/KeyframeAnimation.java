@@ -3,8 +3,10 @@ package org.confluence.terraentity.entity.ai.keyframe.animation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.confluence.terraentity.api.entity.animation.IKeyframeAnimation;
+import org.confluence.terraentity.api.entity.animation.IKeyframeBaker;
 import org.confluence.terraentity.entity.ai.keyframe.Keyframe;
 import org.confluence.terraentity.entity.ai.keyframe.baker.AbstractKeyframeBaker;
+import org.confluence.terraentity.entity.ai.keyframe.baker.BakerEnum;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,7 +19,7 @@ public class KeyframeAnimation implements IKeyframeAnimation<Double> {
 
     public List<Keyframe> keyframes;
     private final double length;
-    List<AbstractKeyframeBaker> interpolators;
+    List<IKeyframeBaker> interpolators;
     private final float endTime;
 
     public static Codec<KeyframeAnimation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -32,7 +34,7 @@ public class KeyframeAnimation implements IKeyframeAnimation<Double> {
 
     public KeyframeAnimation(List<Keyframe> keyframes) {
         if (keyframes == null || keyframes.size() < 2) {
-            throw new IllegalArgumentException("Keyframes list must not be null and must contain at least 3 keyframes.");
+            throw new IllegalArgumentException("Keyframes list must not be null and must contain at least 2 keyframes.");
         }
         // Sort keyframes by time
         this.keyframes = new ArrayList<>(keyframes);
@@ -43,9 +45,9 @@ public class KeyframeAnimation implements IKeyframeAnimation<Double> {
             Keyframe kf1 = keyframes.get(i - 1);
             Keyframe kf2 = keyframes.get(i);
             if(kf1.isInterpolated || kf2.isInterpolated)
-                interpolators.add(AbstractKeyframeBaker.PIECEWISE_BEZIER_BAKER.get());
+                interpolators.add(BakerEnum.PIECEWISE_BEZIER_SPLINE2.getBaker());
             else{
-                interpolators.add(AbstractKeyframeBaker.LINEAR_BAKER.get());
+                interpolators.add(BakerEnum.LINER.getBaker());
             }
         }
         AtomicInteger ii = new AtomicInteger();
@@ -70,7 +72,7 @@ public class KeyframeAnimation implements IKeyframeAnimation<Double> {
         }
         if(interval.insertPoint < 0) return keyframes.get(-interval.insertPoint - 1).value;
         int index = interval.insertPoint - 1;
-        AbstractKeyframeBaker interpolator = interpolators.get(index);
+        IKeyframeBaker interpolator = interpolators.get(index);
         return interpolator.calculate(t);
     }
 

@@ -9,11 +9,10 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-
+import org.confluence.terraentity.api.npc.trade.ITrade;
 import org.confluence.terraentity.api.npc.trade.ITradeHolder;
 import org.confluence.terraentity.mixed.IPlayer;
 import org.confluence.terraentity.network.c2s.NPCShopPacket;
-import org.confluence.terraentity.api.npc.trade.ITrade;
 import org.confluence.terraentity.utils.AdapterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,10 +30,10 @@ public abstract class TETradesMenu extends AbstractContainerMenu {
         this(menuType, containerId, playerInventory, null);
     }
 
-    public TETradesMenu(MenuType<?> menuType, int containerId, Inventory playerInventory, @Nullable  ITradeHolder NPCTrades) {
+    public TETradesMenu(MenuType<?> menuType, int containerId, Inventory playerInventory, @Nullable ITradeHolder NPCTrades) {
         super(menuType, containerId);
         this.NPCTrades = NPCTrades;
-        if(NPCTrades == null) {
+        if (NPCTrades == null) {
             this.NPCTrades = ((IPlayer) playerInventory.player).terra_entity$getTradeHolder();
         }
 
@@ -42,26 +41,26 @@ public abstract class TETradesMenu extends AbstractContainerMenu {
         this.addResultSlot();
 
         int k;
-        for(k = 0; k < 3; ++k) {
-            for(int j = 0; j < 9; ++j) {
+        for (k = 0; k < 3; ++k) {
+            for (int j = 0; j < 9; ++j) {
                 this.addSlot(new Slot(playerInventory, j + k * 9 + 9, 108 + j * 18, 84 + k * 18));
             }
         }
 
-        for(k = 0; k < 9; ++k) {
+        for (k = 0; k < 9; ++k) {
             this.addSlot(new Slot(playerInventory, k, 108 + k * 18, 142));
         }
     }
 
-    protected void addResultSlot(){
-        this.addSlot(new Slot(this.container, 0, 238, 37){
+    protected void addResultSlot() {
+        this.addSlot(new Slot(this.container, 0, 238, 37) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
 
             @Override
-            public void onTake(Player player, ItemStack stack){
+            public void onTake(Player player, ItemStack stack) {
 //                var d  = ((IPlayer)playerInventory.player).terra_entity$getDaveTrades();
 //                if(selectedMerchantIndex >= 0 && selectedMerchantIndex < d.trades().size()){
 //                    PacketDistributor.sendToServer(new NPCShopPacket((ITrade) d.trades().get(selectedMerchantIndex)));
@@ -78,7 +77,7 @@ public abstract class TETradesMenu extends AbstractContainerMenu {
     }
 
     public boolean stillValid(Player player) {
-        return ((IPlayer)player).terra_entity$getTradeHolder() == NPCTrades;
+        return ((IPlayer) player).terra_entity$getTradeHolder() == NPCTrades;
     }
 
     public ItemStack quickMoveStack(Player player, int index) {
@@ -93,7 +92,7 @@ public abstract class TETradesMenu extends AbstractContainerMenu {
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
                 playTradeSound();
-            } else  {
+            } else {
                 if (index >= 1 && index < 28) {
                     if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
                         return ItemStack.EMPTY;
@@ -125,22 +124,22 @@ public abstract class TETradesMenu extends AbstractContainerMenu {
 
     public void removed(Player player) {
         super.removed(player);
-        if(player instanceof ServerPlayer){
+        if (player instanceof ServerPlayer) {
             player.getInventory().placeItemBackInInventory(slots.get(0).getItem().copy());
         }
     }
 
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if(player.isLocalPlayer()) {
-            if(slotId == 0){
+        if (player.isLocalPlayer()) {
+            if (slotId == 0) {
                 this.handleTrade(player, selectedMerchantIndex, button, clickType);
             }
         }
         super.clicked(slotId, button, clickType, player);
     }
 
-    protected void handleTrade(Player player, int selectedMerchantIndex, int button, ClickType clickType){
+    protected void handleTrade(Player player, int selectedMerchantIndex, int button, ClickType clickType) {
         var d = ((IPlayer) player).terra_entity$getTradeHolder();
         if (d != null && selectedMerchantIndex >= 0 && selectedMerchantIndex < d.trades().size()) {
             ITrade trade = d.trades().get(selectedMerchantIndex);

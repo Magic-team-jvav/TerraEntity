@@ -3,7 +3,6 @@ package org.confluence.terraentity.entity.boss;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -15,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.confluence.terraentity.api.entity.Boss;
+import org.confluence.lib.api.entity.Boss;
 import org.confluence.terraentity.api.entity.IAutoLeaveMob;
 import org.confluence.terraentity.api.entity.blur.IMotionBlurHolder;
 import org.confluence.terraentity.config.ServerConfig;
@@ -167,23 +166,21 @@ public class EyeOfCthulhu extends AbstractTerraBossBase implements GeoEntity, Bo
 
         // 定义技能实现
         // 定格在玩家正上方
-        this.stage1_stare = new MobSkill<>( type1, 5 * 20, 0,
+        this.stage1_stare = new MobSkill( type1, 5 * 20, 0,
                 terraBossBase -> {},
                 terraBossBase -> {
                     if (getTarget() == null) return;
                     lookAt(10);
                     // 生成粒子
-                    for (int i = 0; i < 10; i++) {
-                        BlockPos pos = BlockPos.containing(position());
+//                    for (int i = 0; i < 10; i++) {
+//                        BlockPos pos = BlockPos.containing(position());
 
-                        /*
-                        ((ServerLevel) level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ModBlocks.TR_CRIMSON_STONE.getPrefab().defaultBlockState()),
-                                pos.getX() + 0.5F,
-                                pos.getY() + 0.75F,
-                                pos.getZ() + 0.5F,
-                                10, 0.0625F, 0.0625F, 0.0625F, 0.15F);
-                        */
-                    }
+//                        ((ServerLevel) level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ModBlocks.TR_CRIMSON_STONE.get().defaultBlockState()),
+//                                pos.getX() + 0.5F,
+//                                pos.getY() + 0.75F,
+//                                pos.getZ() + 0.5F,
+//                                10, 0.0625F, 0.0625F, 0.0625F, 0.15F);
+//                    }
                     // 生成仆从
                     spawnMinions(getTarget());
                     // 向玩家正上方移动
@@ -195,7 +192,7 @@ public class EyeOfCthulhu extends AbstractTerraBossBase implements GeoEntity, Bo
                 terraBossBase -> {}
         );
         // 延迟20tick冲刺10tick
-        this.state1_dash = new MobSkill<>( type1run, 30, 20,
+        this.state1_dash = new MobSkill( type1run, 30, 20,
                 terraBossBase -> {},
                 terraBossBase -> {
                     // 延迟冲刺
@@ -235,7 +232,7 @@ public class EyeOfCthulhu extends AbstractTerraBossBase implements GeoEntity, Bo
                 }
         );
         // 转换阶段
-        this.switch_1_to_2 = new MobSkill<>(switching, 23, 0,
+        this.switch_1_to_2 = new MobSkill(switching, 23, 0,
                 terraBossBase -> {
 
                     summonCD = 0;
@@ -250,7 +247,7 @@ public class EyeOfCthulhu extends AbstractTerraBossBase implements GeoEntity, Bo
                     getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(CRAZY_DAMAGE);
 
                 });
-        this.stage2_stare = new MobSkill<>(type2, 3 * 20, 0,
+        this.stage2_stare = new MobSkill(type2, 3 * 20, 0,
                 terraBossBase -> {
                 },
                 terraBossBase -> {
@@ -287,7 +284,7 @@ public class EyeOfCthulhu extends AbstractTerraBossBase implements GeoEntity, Bo
                     getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(CRAZY_DAMAGE);
                 }
         );
-        this.state2_dash = new MobSkill<>(type2run, 30, 20,
+        this.state2_dash = new MobSkill(type2run, 30, 20,
                 terraBossBase -> {
                     if (getTarget() == null) return;
                     if(this.isEnhanceDash()){

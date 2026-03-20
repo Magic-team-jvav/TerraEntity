@@ -6,6 +6,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.confluence.terraentity.api.entity.ISummonMob;
 
@@ -52,26 +53,30 @@ public class SummonFollowOwnerGoal<T extends Mob & ISummonMob> extends Goal {
     public boolean canContinueToUse() {
         if (this.navigation.isDone()) {
             return false;
-        } else {
+        } else if (owner!=null) {
             return !this.tamable.summon_unableToMoveToOwner() && !(this.tamable.distanceToSqr(this.owner) <= (double) (this.stopDistance * this.stopDistance));
         }
+        return false;
     }
 
+    @Override
     public void start() {
         this.timeToRecalcPath = 0;
         this.oldWaterCost = this.tamable.getPathfindingMalus(BlockPathTypes.WATER);
         this.tamable.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
     }
 
+    @Override
     public void stop() {
         this.owner = null;
         this.navigation.stop();
         this.tamable.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
     }
 
+    @Override
     public void tick() {
         boolean flag = this.tamable.summon_shouldTryTeleportToOwner();
-        if (!flag) {
+        if (!flag && owner!=null) {
             this.tamable.getLookControl().setLookAt(this.owner, 10.0F, (float)this.tamable.getMaxHeadXRot());
         }
 
@@ -87,7 +92,11 @@ public class SummonFollowOwnerGoal<T extends Mob & ISummonMob> extends Goal {
     }
 
     public void createPath(){
-        this.navigation.moveTo(this.owner, this.speedModifier);
+        if(tamable instanceof FlyingAnimal){
+            this.navigation.moveTo(this.owner.position().x, this.owner.position().y + 1.8, this.owner.position().z, this.speedModifier);
+        }else {
+            this.navigation.moveTo(this.owner, this.speedModifier);
+        }
     }
 
     public int getInterval() {

@@ -15,6 +15,7 @@ import org.confluence.terraentity.client.block.renderer.FigureBlockRenderer;
 import org.confluence.terraentity.client.entity.model.*;
 import org.confluence.terraentity.client.gui.config_container.ConfigContainerRegister;
 import org.confluence.terraentity.client.gui.container.SimpleTradeScreen;
+import org.confluence.terraentity.client.init.model.AdditionalItemRegister;
 import org.confluence.terraentity.client.init.model.EntityBlockModelRegister;
 import org.confluence.terraentity.client.init.model.WhipModelRegister;
 import org.confluence.terraentity.client.particle.BiomeColorParticle;
@@ -23,6 +24,7 @@ import org.confluence.terraentity.init.TEEntities;
 import org.confluence.terraentity.init.TEMenus;
 import org.confluence.terraentity.init.TEParticles;
 import org.confluence.terraentity.init.block.TEFigureBlocks;
+import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.integration.sodium_dynamic_light.SDHelper;
 
 import static org.confluence.terraentity.client.util.RegisterUtils.registerModel;
@@ -36,7 +38,9 @@ public final class ModClientEvent {
         event.enqueueWork(() -> {
             registerMenuScreens();
             ItemInHandTrailAttachment.registerDefault();
-            SDHelper.registerDynamicLight();
+            if(ModChecker.sodiumdynamiclights.isLoaded()) {
+                SDHelper.registerDynamicLight();
+            }
         });
     }
 
@@ -58,6 +62,10 @@ public final class ModClientEvent {
 //        registerModel(event, TerraprismaModel.class);
         event.registerLayerDefinition(TerraprismaModel.LAYER_LOCATION, TerraprismaModel::createBodyLayer);
         registerModel(event, BeeProjModel.class);
+        registerModel(event, SlimeSpikedProjectlieModel.class);
+        registerModel(event, JungleSpikedProjectlieModel.class);
+        registerModel(event, IceSpikeProjectileModel.class);
+
 
     }
 
@@ -88,7 +96,7 @@ public final class ModClientEvent {
     public static void registerAdditionalModel(ModelEvent.RegisterAdditional event) {
         WhipModelRegister.getInstance().register(event);
         EntityBlockModelRegister.getInstance().register(event);
-//        AdditionalItemRegister.getInstance().register(event);
+        AdditionalItemRegister.getInstance().register(event);
     }
 
 

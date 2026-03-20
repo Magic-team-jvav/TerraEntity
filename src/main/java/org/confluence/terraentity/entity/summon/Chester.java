@@ -68,6 +68,10 @@ public class Chester extends AbstractSummonMob implements IPetMob {
         return true;
     }
 
+    @Override
+    public float summon_getStartDistanceToOwner(){
+        return 3 * 3;
+    }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {

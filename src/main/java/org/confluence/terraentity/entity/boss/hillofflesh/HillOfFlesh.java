@@ -36,7 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.confluence.terraentity.api.entity.Boss;
+import org.confluence.lib.api.entity.Boss;
 import org.confluence.terraentity.attachment.UnSyncableAttachment;
 import org.confluence.terraentity.data.codec.TECodecs;
 import org.confluence.terraentity.data.mappeddata.BossSkillMapDatas;
@@ -119,8 +119,8 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
     private static final EntityDataAccessor<Integer> DATA_TARGET_8 = SynchedEntityData.defineId(HillOfFlesh.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_TARGET_9 = SynchedEntityData.defineId(HillOfFlesh.class, EntityDataSerializers.INT);
 
-    private static final EntityDataAccessor<Float> DATA_OUT_RADIUM = SynchedEntityData.defineId(HillOfFlesh.class, EntityDataSerializers.FLOAT);
-//    private static final EntityDataAccessor<Float> DATA_INNER_RADIUM = SynchedEntityData.defineId(HillOfFlesh.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_OUT_RADIUS = SynchedEntityData.defineId(HillOfFlesh.class, EntityDataSerializers.FLOAT);
+//    private static final EntityDataAccessor<Float> DATA_INNER_RADIUS = SynchedEntityData.defineId(HillOfFlesh.class, EntityDataSerializers.FLOAT);
 
 
     static {
@@ -147,11 +147,11 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
         this.addPart(new HillOfFleshEye(this, "Eye3", 3, 3));
         this.addPart(new HillOfFleshEye(this, "Eye4", 3, 3));
 
-        this.addPart(new HillOfFleshMouse(this, "Mouth0", 4, 4));
-        this.addPart(new HillOfFleshMouse(this, "Mouth1", 4, 4));
-        this.addPart(new HillOfFleshMouse(this, "Mouth2", 4, 4));
-        this.addPart(new HillOfFleshMouse(this, "Mouth3", 4, 4));
-        this.addPart(new HillOfFleshMouse(this, "Mouth4", 4, 4));
+        this.addPart(new HillOfFleshMouth(this, "Mouth0", 4, 4));
+        this.addPart(new HillOfFleshMouth(this, "Mouth1", 4, 4));
+        this.addPart(new HillOfFleshMouth(this, "Mouth2", 4, 4));
+        this.addPart(new HillOfFleshMouth(this, "Mouth3", 4, 4));
+        this.addPart(new HillOfFleshMouth(this, "Mouth4", 4, 4));
         this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1);
 
         setNoGravity(false);
@@ -214,8 +214,8 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
                     List.of(5, 6, 7, 8),
                     List.of(5, 6, 7, 8),
                     List.of(5, 6, 7, 8),
-                    40.0f, 40.0f, 50.0f,
-                    75.0f, 18.0f,
+                    40.0f, 40.0f, 10.0f,
+                    75.0f, 14.0f,
                     100.0f, 5000
             );
         }
@@ -302,7 +302,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
 
     static class SummonFleshSlimeGoal extends SummonGoal<HillOfFlesh, FleshSlime> {
         int mouth = 0;
-        HillOfFleshMouse currentMouse;
+        HillOfFleshMouth currentMouth;
 
         public SummonFleshSlimeGoal(HillOfFlesh mob, int interval, int maxCount) {
             super(mob, interval, maxCount);
@@ -315,8 +315,8 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
             this.setCdReduce(0.9f); // todo debug
             Vec3 spawnPos;
             if (this.mob.subEntities[mouth] != null) {
-                currentMouse = (HillOfFleshMouse) this.mob.subEntities[mouth];
-                spawnPos = currentMouse.position().offsetRandom(this.mob.random, 0.2f);
+                currentMouth = (HillOfFleshMouth) this.mob.subEntities[mouth];
+                spawnPos = currentMouth.position().offsetRandom(this.mob.random, 0.2f);
             } else {
                 spawnPos = this.mob.position().offsetRandom(this.mob.random, 3);
             }
@@ -336,7 +336,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
             minion.getAttribute(Attributes.FOLLOW_RANGE).addPermanentModifier(new AttributeModifier(UUID.fromString("3bcbac82-b5f7-4ee9-8ac6-65db98539c45"),
                     "hill", 50, AttributeModifier.Operation.ADDITION
             ));
-            currentMouse.onSummonFleshSlime(minion);
+            currentMouth.onSummonFleshSlime(minion);
             minion.getAttribute(Attributes.MAX_HEALTH).setBaseValue(minion.getMaxHealth() * Math.round(this.mob.currentScale));
             minion.setHealth(minion.getMaxHealth());
             minion.level().playSound(null, minion.blockPosition(), TESounds.WALL_OF_FLESH_SUMMON.get(), SoundSource.HOSTILE, 1, 1);
@@ -361,7 +361,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
 
         @Override
         protected void doAction(LivingEntity target) {
-            int size = this.mob.innerEntities.size();
+            int size = this.mob.nearbyLivings.size(); // MT: Resolve IndexOutOfBoundsException, replace: innerEntities -> nearbyLivings
             int random = this.mob.random.nextInt(5);
             size = Math.min(size, random);
             List<LivingEntity> newList = new ArrayList<>(this.mob.nearbyLivings);
@@ -422,28 +422,28 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
         this.entityData.define(DATA_INIT, true);
         targetMap.forEach((key, value) -> this.entityData.define(key, -1));
 
-        this.entityData.define(DATA_OUT_RADIUM, 10f);
-//        builder.define(DATA_INNER_RADIUM, 10f);
+        this.entityData.define(DATA_OUT_RADIUS, 10f);
+//        builder.define(DATA_INNER_RADIUS, 10f);
     }
 
-    public float getOutRadium() {
-        return this.entityData.get(DATA_OUT_RADIUM);
+    public float getOutRadius() {
+        return this.entityData.get(DATA_OUT_RADIUS);
     }
 
-    public float getInnerRadium(float partialTicks) {
+    public float getInnerRadius(float partialTicks) {
         if(!this.isExpert()){
             return this.innerRadius;
         }
         // 专家模式会变大
-        return Mth.lerp(this.getExpandingProgress(partialTicks), this.innerRadius, this.outerRadius * 0.5f);
+        return Mth.lerp(this.getExpandingProgress(partialTicks), this.innerRadius, this.outerRadius * 0.25f);
     }
 
-    public void setOutRadium(float radium) {
-        this.entityData.set(DATA_OUT_RADIUM, Mth.clamp(radium, this.innerRadius, this.outerRadius));
+    public void setOutRadius(float radius) {
+        this.entityData.set(DATA_OUT_RADIUS, Mth.clamp(radius, this.innerRadius, this.outerRadius));
     }
 
     public float getExpandingScale(float partialTicks){
-        return this.getInnerRadium(partialTicks) / this.innerRadius;
+        return this.getInnerRadius(partialTicks) / this.innerRadius * 2f;
     }
 
     @Override
@@ -469,7 +469,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
         }
         if(level().isClientSide && key==DATA_INIT){
             if(!this.entityData.get(DATA_INIT)) {
-                this.setOutRadium(this.outerRadius);
+                this.setOutRadius(this.outerRadius);
             }
         }
 
@@ -624,8 +624,8 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
             List<LivingEntity> toRemove = new ArrayList<>();
             for (LivingEntity living : this.innerEntities) {
                 double distance = living.position().subtract(this.position()).horizontalDistanceSqr();
-                float innerRadius = this.getInnerRadium(0.5f);
-                if (distance > this.getOutRadium() * this.getOutRadium()) {
+                float innerRadius = this.getInnerRadius(0.5f);
+                if (distance > this.getOutRadius() * this.getOutRadius()) {
                     living.hurt(TETags.DamageTypes.of(level(), DamageTypes.MAGIC), this.magicDamageOuter);
                     this.generateParticles(living, 10);
 
@@ -678,14 +678,14 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
 
     private void getNearbyLivings() {
         if (this.tickCount % 64 == 0) {
-            this.nearbyLivings = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(this.getOutRadium() * 1.2f), e -> {
+            this.nearbyLivings = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(this.getOutRadius() * 1.2f), e -> {
                 if (!(e instanceof Player) && !this.hasLineOfSight(e)) {
                     return false;
                 }
-                float d = this.getOutRadium() * this.getOutRadium();
+                float d = this.getOutRadius() * this.getOutRadius();
                 double dx = e.position().subtract(position()).horizontalDistanceSqr();
                 boolean canAttack = this.canAttack(e);
-                float innerRadius = this.getInnerRadium(0.5f);
+                float innerRadius = this.getInnerRadius(0.5f);
                 if(dx < innerRadius * innerRadius && canAttack){
                     this.applyCrimsonStorm(e);
                 }
@@ -703,7 +703,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
 
     @Override
     public @NotNull AABB getBoundingBoxForCulling() {
-        return super.getBoundingBoxForCulling().inflate(this.getOutRadium());
+        return super.getBoundingBoxForCulling().inflate(this.getOutRadius());
     }
 
     private void spawnLavaParticle(int count, float speed) {
@@ -720,13 +720,13 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
 //        }
         if (level().isClientSide) {
             this.circleDx += 0.1f;
-            this.showCircleParticles(this.position().add(0, 0.2, 0), this.getInnerRadium(0.5f), this.circleDx, 0, 2);
+            this.showCircleParticles(this.position().add(0, 0.2, 0), this.getInnerRadius(0.5f), this.circleDx, 0, 2);
             this.circleOuterDx += 0.02f;
             if (Minecraft.getInstance().player != null && !this.isSpawning()) {
                 Vec3 playerPos = Minecraft.getInstance().player.position();
                 float height = (float) (playerPos.y - this.position().y);
                 for (int i = -8; i <= 8; i++) {
-                    this.showCircleParticles(this.position().add(0, i + height, 0), this.getOutRadium() - 0.2F, this.circleOuterDx + i * 0.03f, (float) Math.PI, 3);
+                    this.showCircleParticles(this.position().add(0, i + height, 0), this.getOutRadius() - 0.2F, this.circleOuterDx + i * 0.03f, (float) Math.PI, 3);
                 }
             }
         } else {
@@ -810,8 +810,9 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
         offsetX *= this.currentScale;
         offsetY *= this.currentScale;
         offsetZ *= this.currentScale;
-        part.setPos(this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ);
-        part.setModelOffset(new Vec3(offsetX, offsetY, offsetZ));
+        Vec3 dir = new Vec3(offsetX, offsetY, offsetZ).yRot(-this.getYRot()* Mth.DEG_TO_RAD);
+        part.setPos(this.getX() + dir.x, this.getY() + dir.y, this.getZ() + dir.z);
+        part.setModelOffset(dir);
         if(this.currentScaleO != this.currentScale) {
             part.setScale(this.currentScale);
         }
@@ -820,7 +821,11 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
             if (HillOfFleshModelAnimationTable.getTable() != null) {
                 Vec3KeyframeAnimation animation = HillOfFleshModelAnimationTable.getTable().getPositions(part.name);
                 if (animation != null) {
-                    part.setPos(position().add(animation.calWithCache((this.tickCount + 10) % 40).add(0,-1,0).scale(this.currentScale)));
+                    part.setPos(position().add(animation.calWithCache((this.tickCount + 10) % 40)
+                            .add(0,-1,0)
+                            .scale(this.currentScale)
+                            .yRot(-this.getYRot()* Mth.DEG_TO_RAD)
+                    ));
                 }
             }
             part.tickPart(offsetX, offsetY, offsetZ, index);
@@ -910,7 +915,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
         if (this.task != null) {
 
             task.onTick(1);
-            this.setOutRadium(task.getCurrentRadius());
+            this.setOutRadius(task.getCurrentRadius());
 
             if (task.tryStopDestruction()) {
                 task = null;
@@ -920,16 +925,16 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putFloat("OutRadium", this.getOutRadium());
+        compound.putFloat("OutRadius", this.getOutRadius());
 
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if(tag.contains("OutRadium")){
-            this.setOutRadium(tag.getFloat("OutRadium"));
-            this.setOutRadium(this.getOutRadium());
+        if(tag.contains("OutRadius")){
+            this.setOutRadius(tag.getFloat("OutRadius"));
+            this.setOutRadius(this.getOutRadius());
         }
     }
 

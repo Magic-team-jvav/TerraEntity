@@ -13,7 +13,7 @@ import org.confluence.terraentity.registries.npc_trade_lock.TradeLockProviderTyp
  * @param lock
  *
  */
-public record NotLock(ITradeLock lock) implements ITradeLock  {
+public record NotLock(ITradeLock lock) implements ITradeLock {
 
     public static final MapCodec<NotLock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ITradeLock.TYPED_CODEC.fieldOf("locks").forGetter(NotLock::lock)

@@ -26,14 +26,22 @@ public class NPCHouseBehaviors {
                 instance.present(MemoryModuleType.HOME)
         ).apply(instance, (walk_target, home_pos) -> (serverLevel, entity, l) -> {
             if (serverLevel.getGameTime() - mutablelong.getValue() >= 20L) {
-                entity.house = HouseManager.getInstance().getHouse(entity.getUUID());
-                if (!entity.house.isEmpty()) {
+                entity.setHouse(HouseManager.getInstance().getHouse(entity.getUUID()));
+                House house = entity.getHouse();
+                if (!house.isEmpty()) {
+
+
                     // 如果已经有房屋，则回到房屋
                     GlobalPos globalpos = instance.get(home_pos);
-                    walk_target.set(new WalkTarget(globalpos.pos(), speedModifier, 1));
+                    BlockPos pos = globalpos.pos();
+                    if(serverLevel.isNight() && entity.blockPosition().distSqr(pos ) > 500){
+                        entity.teleportTo(pos.getX(), pos.getY(), pos.getZ());
+                    }else {
+                        walk_target.set(new WalkTarget(pos, speedModifier, 1));
+                    }
 //                    walk_target.set(new WalkTarget(entity.house.center(), speedModifier, 1));
-                    HouseManager.getInstance().tryAddHouse(entity.getUUID().toString(),
-                            entity.house.min(), entity.house.max(), entity.house.center());
+                    HouseManager.getInstance().tryAddHouse(entity.getUUID(),
+                            house.min(), house.max(), house.center());
                     // todo 设置为椅子坐标
 //                    home_pos.set(GlobalPos.of(serverLevel.dimension(), entity.house.center()));
                     return true;
@@ -70,6 +78,8 @@ public class NPCHouseBehaviors {
                     blockpos = oldHouse.center();
                 }
 
+                if (!serverLevel.isLoaded(blockpos)) return true;
+
                 HouseManager.getInstance().removeHouse(entity.getUUID());
                 IHouseDetector info = IHouseDetector.detect(blockpos, serverLevel);
                 if (info.isError()) {
@@ -79,7 +89,7 @@ public class NPCHouseBehaviors {
                 }
 
                 // 成功检测到房屋
-                House house = info.getHouse(entity.getStringUUID());
+                House house = info.getHouse(entity.getUUID());
 
                 if(HouseManager.getInstance().tryAddHouse(house)){
                     // 成功添加房屋

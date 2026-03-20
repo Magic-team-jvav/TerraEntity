@@ -2,7 +2,10 @@ package org.confluence.terraentity.entity.npc.house;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.TorchBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import org.confluence.terraentity.init.TETags;
+import org.confluence.terraentity.utils.ComputerUtils;
+
 import java.util.List;
 
 /**
@@ -22,16 +25,17 @@ public record HouseDetectInfo(BlockPos min, BlockPos max, BlockPos center, List<
 
     public static HouseDetectInfo detect(BlockPos start, Level level){
         // TODO: 房间内可包含方块
-        var list = org.confluence.terraentity.utils.ComputerUtils.zoomDetection(level, start, DetectRange, state->
-                state.isAir() || state.getBlock() instanceof TorchBlock
+        List<BlockPos> list = ComputerUtils.zoomDetection(level, start, DetectRange, state->{
+            return state.isAir() || state.is(TETags.Blocks.NPC_HOUSE_CONSTITUTE);
+            }
         );
 
         if(list.isEmpty()){
-            return error(DetectType.TO_LARGE);
+            return error(DetectType.TOO_LARGE);
         }
         // 空间太小
         if(list.size() < 16){
-            return error(DetectType.TO_SMALL);
+            return error(DetectType.TOO_SMALL);
         }
         int minx = Integer.MAX_VALUE;
         int miny = Integer.MAX_VALUE;
@@ -40,11 +44,21 @@ public record HouseDetectInfo(BlockPos min, BlockPos max, BlockPos center, List<
         int maxy = Integer.MIN_VALUE;
         int maxz = Integer.MIN_VALUE;
 
-        boolean test1 = false;
-        for(var blockPos : list){
-            // TODO: 桌子 椅子
-            if(level.getLightEmission(blockPos) > 10)
-                test1 = true;
+        boolean hasLight = false;
+        boolean hasChair = false;
+        boolean hasTable = false;
+
+        for(BlockPos blockPos : list){
+            BlockState state = level.getBlockState(blockPos);
+            if(!hasLight && level.getLightEmission(blockPos) > 10) {
+                hasLight = true;
+            }
+            if(!hasChair && state.is(TETags.Blocks.NPC_HOUSE_CHAIR)) {
+                hasChair = true;
+            }
+            if(!hasTable && state.is(TETags.Blocks.NPC_HOUSE_TABLE)) {
+                hasTable = true;
+            }
             minx = Math.min(minx, blockPos.getX());
             miny = Math.min(miny, blockPos.getY());
             minz = Math.min(minz, blockPos.getZ());
@@ -54,10 +68,16 @@ public record HouseDetectInfo(BlockPos min, BlockPos max, BlockPos center, List<
         }
         // 空间xz单个方向最小值
         if(maxx - minx < 4 || maxz - minz < 4){
-            return error(DetectType.TO_SMALL);
+            return error(DetectType.TOO_SMALL);
         }
-        if(!test1){
+        if(!hasLight){
             return error(DetectType.NO_DYNAMIC_LIGHT);
+        }
+        if(!hasChair){
+            return error(DetectType.NO_CHAIR);
+        }
+        if(!hasTable){
+            return error(DetectType.NO_TABLE);
         }
         BlockPos min = new BlockPos(minx, miny, minz);
         BlockPos max = new BlockPos(maxx, maxy, maxz);
@@ -71,19 +91,25 @@ public record HouseDetectInfo(BlockPos min, BlockPos max, BlockPos center, List<
 
     @Override
     public String message() {
-        return type.translationKey;
+        return type.getTranslationKey();
     }
 
     public enum DetectType {
 
-        TO_LARGE("tooltip.terra_entity.house_detect.message.too_large"),
-        TO_SMALL("tooltip.terra_entity.house_detect.message.too_small"),
+        TOO_LARGE("tooltip.terra_entity.house_detect.message.too_large"),
+        TOO_SMALL("tooltip.terra_entity.house_detect.message.too_small"),
         NO_DYNAMIC_LIGHT("tooltip.terra_entity.house_detect.message.no_dynamic_light"),
+        NO_CHAIR("tooltip.terra_entity.house_detect.message.no_chair"),
+        NO_TABLE("tooltip.terra_entity.house_detect.message.no_table"),
         FOUND_HOUSE("tooltip.terra_entity.house_detect.message.found_house");
 
-        public final String translationKey;
+        private final String translationKey;
         DetectType(String translationKey){
             this.translationKey = translationKey;
+        }
+
+        public String getTranslationKey() {
+            return translationKey;
         }
     }
 }

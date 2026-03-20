@@ -22,6 +22,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.registries.RegistryObject;
+import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.api.entity.*;
 import org.confluence.terraentity.init.TETags;
@@ -41,7 +42,7 @@ import java.util.function.Consumer;
 public abstract class BaseProj<T extends BaseProj<T>> extends Projectile implements ICollisionAttackEntity, IAttackableProjectile {
     public float damage = 1;
     private final Set<UUID> hitList = new HashSet<>();
-    public int penetration =1;
+    public int penetration = 1;
     protected List<MobEffectInstance> effects;
     protected IEffectStrategy effectStrategy;
     public ResourceLocation texture = TerraEntity.space("textures/entity/projectile/default.png");
@@ -52,18 +53,17 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     CollisionProperties collisionProperties = new CollisionProperties(1,1,0.5f);
     protected double accelerationPower = 0.1;
     protected float power = 0.4f;
-    protected boolean canBeAttacked = true;
-
+    protected boolean canBeAttacked = false;
 
 
     protected boolean canPenetrateBlock = false;
 
-    public CollisionProperties getCollisionProperties(){
+    public CollisionProperties getCollisionProperties() {
         return collisionProperties;
     }
 
 
-    public boolean shouldDoCollision(){
+    public boolean shouldDoCollision() {
         return true;
     }
 
@@ -89,42 +89,53 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         this.hitSound = hitSound;
         return (T) this;
     }
+
     public T setEffect(List<MobEffectInstance> effects) {
         this.effects = effects;
         return (T) this;
     }
-    public T addEffect(MobEffectInstance effect) {
+
+    public T addEffect(@Nullable MobEffectInstance effect) {
         if (effect != null) {
             this.effects.add(effect);
         }
         return (T) this;
     }
+
     public float getDamage() {return damage;}
+
     public void addDamage(float damage) {this.damage += damage;}
+
     public T setDamage(float damage) {
         this.damage = damage;
         return (T) this;
     }
-    public T setPenetrate(int penetration){
+
+    public T setPenetrate(int penetration) {
         this.penetration = penetration;
         return (T) this;
     }
-    public T setClientTickCallback(Consumer<BaseProj> clientTickCallback){
+
+    public T setClientTickCallback(Consumer<BaseProj> clientTickCallback) {
         this.clientTickCallback = clientTickCallback;
         return (T) this;
     }
-    public T setTexture(ResourceLocation texture){
+
+    public T setTexture(ResourceLocation texture) {
         this.texture = texture;
         return (T) this;
     }
-    public T setEffectStrategy(IEffectStrategy effectStrategy){
+
+    public T setEffectStrategy(IEffectStrategy effectStrategy) {
         this.effectStrategy = effectStrategy;
         return (T) this;
     }
-    public T setCanBeHurt(){
+
+    public T setCanBeHurt() {
         this.canBeAttacked = true;
         return (T) this;
     }
+
     public T setCanPenetrateBlock(boolean canPenetrateBlock) {
         this.canPenetrateBlock = canPenetrateBlock;
         return (T) this;
@@ -133,8 +144,23 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     /**
      * 简单弹幕的贴图
      */
-    public ResourceLocation getTexture(){return texture;}
+    public ResourceLocation getTexture() {return texture;}
 
+    protected double getDefaultGravity() {
+        return 0f;
+    }
+
+    protected void applyGravity() {
+        double d0 = this.getGravity();
+        if (d0 != (double)0.0F) {
+            this.setDeltaMovement(this.getDeltaMovement().add((double)0.0F, -d0, (double)0.0F));
+        }
+
+    }
+
+    protected double getGravity() {
+        return 0.108f;
+    }
     /**
      * 生存时间
      */
@@ -143,10 +169,11 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     /**
      * 无限生存时间
      */
-    public boolean isInfinite(){
+    public boolean isInfinite() {
         return false;
     }
-    public boolean shouldBeSaved(){
+
+    public boolean shouldBeSaved() {
         return false;
     }
 
@@ -154,9 +181,9 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         double d1 = Math.max(0.0, 1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
         Vec3 vec3;
         entity.setDeltaMovement(getDeltaMovement().scale(0.3f));
-        if(getOwner() != null) {
-            vec3 = entity.position().subtract(getOwner().position()).multiply(1.0, 0.0, 1.0).normalize().scale((((LivingEntity) getOwner()).getAttributeBaseValue(Attributes.ATTACK_KNOCKBACK) + 0.1f)  * power * d1);
-        }else{
+        if (getOwner() != null) {
+            vec3 = entity.position().subtract(getOwner().position()).multiply(1.0, 0.0, 1.0).normalize().scale((((LivingEntity) getOwner()).getAttributeBaseValue(Attributes.ATTACK_KNOCKBACK) + 0.1f) * power * d1);
+        } else {
             vec3 = getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale(power * d1);
         }
         if (vec3.lengthSqr() > 0.0) {
@@ -173,26 +200,26 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> data){
         super.onSyncedDataUpdated(data);
-        if(level().isClientSide) {
+        if (level().isClientSide) {
             if (data == DATA_INIT_SPEED) {
                 this.initSpeed = new Vec3(this.entityData.get(DATA_INIT_SPEED));
                 this.setDeltaMovement(initSpeed);
-            }else if(data == DATA_SCALE){
+            } else if (data == DATA_SCALE) {
                 this.refreshDimensions();
             }
         }
     }
 
-    public void setScale(float scale){
+    public void setScale(float scale) {
         this.entityData.set(DATA_SCALE, scale);
     }
 
-    public float getScale(){
+    public float getScale() {
         return this.entityData.get(DATA_SCALE);
     }
 
     @Override
-    public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {
+    public EntityDimensions getDimensions(Pose pose) {
         return super.getDimensions(pose).scale(this.entityData.get(DATA_SCALE));
     }
 
@@ -228,22 +255,20 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         }
 
 
-        if(!level().isClientSide){
+        if (!level().isClientSide) {
             this.doCollisionAttack(this::canHitEntity, this::doHurt);
 
             if (!this.isInfinite() && tickCount > getLifetime()) {
                 discard();
-                return;
             }
 //            if(isInWall()){
 //                discard();
 //            }
-        }else if(clientTickCallback!= null){
+        } else if (clientTickCallback != null) {
             clientTickCallback.accept(this);
         }
 
     }
-
 
 
     //弹幕设置
@@ -254,6 +279,7 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         float f2 = Mth.cos(pY * (float) (Math.PI / 180.0)) * Mth.cos(pX * (float) (Math.PI / 180.0));
         this.shoot(f, f1, f2, pVelocity, pInaccuracy);
     }
+
     @Override
     public void onAddedToWorld(){
         super.onAddedToWorld();
@@ -265,92 +291,95 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
             this.damage += defaultDamage();
         }
     }
+
     @Override
-    protected void onHitEntity(@NotNull EntityHitResult pResult) {
-        Entity hurter = pResult.getEntity();
-        if(hurter instanceof LivingEntity living && canHitEntity(living)
-        ) {
+    protected void onHitEntity(EntityHitResult result) {
+        Entity victim = result.getEntity();
+        if (victim instanceof LivingEntity living && canHitEntity(living)) {
             doHurt(living);
-        }else if(hurter instanceof PartEntity part && part.getParent() instanceof LivingEntity living && canHitEntity(living)){
+        } else if (LibUtils.getOwner(victim) instanceof LivingEntity living && canHitEntity(living)) {
             doHurt(living);
         }
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if(this.canBeAttacked() && !this.level().isClientSide()){
+        if (this.canBeAttacked() && !this.level().isClientSide()) {
             this.kill();
         }
         return super.hurt(source, amount);
     }
 
-    public float defaultDamage(){
+    public float defaultDamage() {
 //        if(getOwner() != null)
 //            return (int) ((LivingEntity)getOwner()).getAttribute(Attributes.ATTACK_DAMAGE).getValue();
         return 0;
     }
 
-    protected void doHurt(Entity hurter){
-        if(hurter instanceof LivingEntity living) {
-            Entity entity = this.getOwner();
-            hitList.add(hurter.getUUID());
+    protected void doHurt(Entity victim) {
+        if (victim instanceof LivingEntity living) {
+            hitList.add(living.getUUID());
             for (MobEffectInstance effect : effects) {
                 living.addEffect(new MobEffectInstance(effect)); // 需要复制，不然duration会减为0
             }
-            if(effectStrategy != null){
-                if(this.getOwner() != null && this.getOwner() instanceof LivingEntity living1) {
+            if (effectStrategy != null) {
+                if (this.getOwner() != null && this.getOwner() instanceof LivingEntity living1) {
                     this.effectStrategy.getEffect().accept(living1, living);
                 }
             }
-            if (hitSound != null)
-                level().playSound(this, this.blockPosition(), hitSound.get(), SoundSource.AMBIENT, 1.0f, 1.0f);
-
-            if(hurter.hurt(getDamageSource(living), damage)){
-                if(this.getOwner() instanceof LivingEntity owner){
-                    owner.setLastHurtMob(hurter);
-                }
-                doKnockBack(living);
+        }
+        if (hitSound != null) {
+            level().playSound(this, this.blockPosition(), hitSound.get(), SoundSource.AMBIENT, 1.0f, 1.0f);
+        }
+        victim = LibUtils.getOwner(victim);
+        if (victim instanceof LivingEntity living && victim.hurt(getDamageSource(living), damage)) {
+            if (this.getOwner() instanceof LivingEntity owner) {
+                owner.setLastHurtMob(victim);
             }
+            doKnockBack(living);
+        }
 
-            if (this.level() instanceof ServerLevel serverlevel) {
-                penetration--;
-                if (penetration <= 0) {
-                    discard();
-                }
+        if (this.level() instanceof ServerLevel) {
+            penetration--;
+            if (penetration <= 0) {
+                discard();
             }
         }
     }
 
-    public DamageSource getDamageSource(LivingEntity hurter){
-        if(getOwner() instanceof ISummonMob mob) {
+    public DamageSource getDamageSource(LivingEntity victim) {
+        if (getOwner() instanceof ISummonMob mob) {
             return TETags.DamageTypes.of(level(), TETags.DamageTypes.SUMMONER, mob.summon_getOwner());
         }
-        if(getOwner() != null && getOwner() instanceof LivingEntity living){
+        if (getOwner() != null && getOwner() instanceof LivingEntity living) {
             return damageSources().mobProjectile(this, living);
         }
         return this.damageSources().generic();
     }
 
     @Override
-    protected boolean canHitEntity(@NotNull Entity target) {
+    protected boolean canHitEntity(Entity target) {
+        // 如果目标是 PartEntity，使用父实体进行检查
+        target = LibUtils.getOwner(target);
+        if (target == null) return false;
+
         // 不能攻击自己和不能被弹幕攻击的实体
-        if(target == getOwner() || !target.isAttackable()){
+        if (target == getOwner() || !target.isAttackable()) {
             return false;
         }
-        // 不能攻击已经被弹幕攻击过的实体
-        if(hitList.contains(target.getUUID()))
+        // 不能攻击已经被弹幕攻击过的实体（使用父实体的 UUID）
+        if (hitList.contains(target.getUUID()))
             return false;
         // 召唤物不能攻击主人的仆从
-        if(!TEUtils.attackTamableTest.test(getOwner(), target)
-        ){
+        if (!TEUtils.attackTamableTest.test(getOwner(), target)) {
             return false;
         }
         // 有主人的弹幕只能攻击主人可以攻击的目标
-        if(getOwner()!=null && getOwner() instanceof LivingEntity living && target instanceof LivingEntity tar)
+        if (getOwner() != null && getOwner() instanceof LivingEntity living && target instanceof LivingEntity tar) {
             return living.canAttack(tar);
+        }
         return false;
     }
-
 
 
     @Override
@@ -360,14 +389,14 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
 
 
     @Override
-    protected void onHitBlock(@NotNull BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult pResult) {
         super.onHitBlock(pResult);
-        if(!this.level().isClientSide() && !this.canPenetrateBlock) {
+        if (!this.level().isClientSide() && !this.canPenetrateBlock) {
             this.discard();
         }
     }
 
-    public boolean canBeAttacked(){
+    public boolean canBeAttacked() {
         return canBeAttacked;
     }
 

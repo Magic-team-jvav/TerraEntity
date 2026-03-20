@@ -15,7 +15,7 @@ import java.util.List;
  * @param locks
  *
  */
-public record OrLock(List<ITradeLock> locks) implements ITradeLock  {
+public record OrLock(List<ITradeLock> locks) implements ITradeLock {
 
     public static final MapCodec<OrLock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ITradeLock.TYPED_CODEC.listOf().fieldOf("locks").forGetter(OrLock::locks)

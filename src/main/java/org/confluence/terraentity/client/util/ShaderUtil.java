@@ -45,7 +45,9 @@ public class ShaderUtil {
         BufferUploader.drawWithShader(bufferbuilder.end());
     }
 
+
     public static void blitScreen(ShaderInstance shader, Consumer<ShaderInstance> setupShader){
+
 
         RenderSystem.assertOnRenderThread();
         GlStateManager._colorMask(true, true, true, false);

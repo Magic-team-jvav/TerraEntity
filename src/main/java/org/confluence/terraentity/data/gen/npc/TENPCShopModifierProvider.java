@@ -17,6 +17,7 @@ import org.confluence.terraentity.registries.npc_trade_modify.variant.TradeListM
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+
 /**
  * 用来测试，发布时应该删掉
  */

@@ -35,13 +35,15 @@ import net.minecraftforge.fml.common.Mod;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.client.buffer.DebugBlocksHelper;
+import org.confluence.terraentity.client.buffer.DebugEntityHelper;
 import org.confluence.terraentity.client.buffer.NPCChatBubbleBuffer;
 import org.confluence.terraentity.client.gui.CustomizeBossHealthBar;
 import org.confluence.terraentity.client.init.model.EntityBlockModelRegister;
 import org.confluence.terraentity.client.post.BrainTranslucent;
+import org.confluence.terraentity.client.post.TongueRenderer;
 import org.confluence.terraentity.config.ClientConfig;
 import org.confluence.terraentity.effect.harmful.TheTongueEffect;
-import org.confluence.terraentity.entity.boss.wallofflesh.WallOfFleshMouse;
+import org.confluence.terraentity.entity.boss.wallofflesh.WallOfFleshMouth;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.init.entity.TEMonsterEntities;
@@ -79,25 +81,27 @@ public class RenderEvent {
 
     public static boolean isIrisShader = false;
     public static boolean isAfterSky = false;
+
+
     @SubscribeEvent
     public static void renderLevelStage(RenderLevelStageEvent event) {
         if(event.getStage()== RenderLevelStageEvent.Stage.AFTER_LEVEL){
-            isIrisShader = ModChecker.isIrisLoaded.get() && !(RenderSystem.getShader() instanceof ShaderInstance);
+            isIrisShader = ModChecker.iris.isLoaded() && !(RenderSystem.getShader() instanceof ShaderInstance);
 
             BrainTranslucent.render(event);
-            NPCChatBubbleBuffer.getInstance().render(event);
-
-            isAfterSky = false;
-        }
-        else if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES){
-
             DebugBlocksHelper.Singleton().render(event);
+            NPCChatBubbleBuffer.getInstance().render(event);
+            isAfterSky = false;
+        } else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            TongueRenderer.renderFirstPerson(event);
 
-        }else if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY){
+        } else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             isAfterSky = true;
+        } else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
+//            isIrisShader = ModChecker.iris.isLoaded() && RenderSystem.getShader() instanceof ExtendedShader;
+            DebugEntityHelper.INSTANCE.render(event);
         }
     }
-
 
     @SubscribeEvent
     public static void MobRenderTongue(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> event) {
@@ -109,7 +113,7 @@ public class RenderEvent {
         if (livingEntity.hasEffect(TEEffects.THE_TONGUE.get())) {
             MobEffect rawEffect = livingEntity.getEffect(TEEffects.THE_TONGUE.get()).getEffect();
             if (rawEffect instanceof TheTongueEffect effect) {
-                WallOfFleshMouse mouth = effect.getWallOfFleshMouth();
+                WallOfFleshMouth mouth = effect.getWallOfFleshMouth();
                 if (mouth != null && mouth.isAlive() && livingEntity.isAlive()) {
                     Vec3 init = mouth.position();
 

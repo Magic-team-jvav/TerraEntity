@@ -14,7 +14,9 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.entity.PartEntity;
 import org.confluence.terraentity.api.entity.ICollisionAttackEntity;
+import org.confluence.terraentity.api.entity.IPartEntityTargetable;
 import org.confluence.terraentity.api.entity.ISummonMob;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -24,9 +26,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class AbstractSummonMob extends TamableAnimal implements GeoEntity, ISummonMob, ICollisionAttackEntity {
+public abstract class AbstractSummonMob extends TamableAnimal implements GeoEntity, ISummonMob, ICollisionAttackEntity, IPartEntityTargetable {
 
     protected float distanceToOwner;
+    @Nullable
+    private Entity actualTargetEntity; // 实际目标实体（可以是 PartEntity）
 
     public AbstractSummonMob(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -39,32 +43,45 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
 
     /* Collision Attack API */
 
-    CollisionProperties collisionProperties = new CollisionProperties(5,5,0.75f);
+    CollisionProperties collisionProperties = new CollisionProperties(5, 5, 0.75f);
 
     public CollisionProperties getCollisionProperties() {
         return collisionProperties;
     }
 
     @Override
-    public boolean shouldDoCollision(){
-        return getTarget() != null;
-
+    public boolean shouldDoCollision() {
+        return getTarget() != null || actualTargetEntity != null;
     }
 
     @Override
     public void tick() {
         super.tick();
-        if(summon_discardWhenOwnerDie()) return;
+        if (summon_discardWhenOwnerDie()) return;
 
-        doCollisionAttack(e -> e instanceof LivingEntity living && this.canAttack(living),
-                this::doHurtTarget);
+        cleanupInvalidActualTarget();
 
-        if(this.getOwner() != null) {
+        doCollisionAttack(this::canAttackTarget, this::doHurtTarget);
+
+        if (this.getOwner() != null) {
             this.distanceToOwner = this.distanceTo(this.getOwner());
         }
     }
 
-/* Summon API */
+
+    @Override
+    @Nullable
+    public Entity getActualTargetEntity() {
+        return actualTargetEntity;
+    }
+
+
+    @Override
+    public void setActualTargetEntity(@Nullable Entity entity) {
+        this.actualTargetEntity = entity;
+    }
+
+    /* Summon API */
 
     public int cost;
 
@@ -83,11 +100,26 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
         summon_registerCommonGoals();
     }
 
+    @Deprecated
     @Override
-    public boolean canAttack(LivingEntity living) {
-        return super.canAttack(living) &&
-                (living instanceof Enemy && !(living instanceof NeutralMob) || living == getTarget());
+    public final boolean canAttack(LivingEntity living) {
+        return super.canAttack(living);
+    }
 
+    public boolean canAttackTarget(Entity target) {
+        // 如果目标是 PartEntity，检查父实体是否可以攻击
+        if (target instanceof PartEntity<?> partEntity) {
+            Entity parent = partEntity.getParent();
+            if (parent instanceof LivingEntity living) {
+                // 如果 actualTargetEntity 就是这个 PartEntity，或者父实体是 Enemy，则可以攻击
+                return living.canBeSeenAsEnemy() && canAttack(living) && (actualTargetEntity == target || parent instanceof Enemy && !(parent instanceof NeutralMob) || parent == getTarget());
+            }
+            return false;
+        }
+        if (target instanceof LivingEntity living) {
+            return  living.canBeSeenAsEnemy() &&  canAttack(living) && (target instanceof Enemy && !(target instanceof NeutralMob) || target == getTarget());
+        }
+        return false;
     }
 
     @Override
@@ -124,6 +156,11 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
     }
 
     @Override
+    public boolean startRiding(Entity entity, boolean force) {
+        return false;
+    }
+
+    @Override
     public boolean doHurtTarget(Entity entity) {
         return summon_doHurtTarget(this, entity);
     }
@@ -138,7 +175,7 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
         return DATA_OWNERUUID_ID;
     }
 
-/* Geo API */
+    /* Geo API */
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -147,7 +184,7 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
         return cache;
     }
 
-/* super API */
+    /* super API */
 
     @Override
     public boolean isFood(ItemStack itemStack) {

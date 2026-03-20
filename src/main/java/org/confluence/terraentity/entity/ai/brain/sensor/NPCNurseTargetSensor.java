@@ -5,6 +5,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import org.confluence.terraentity.entity.npc.AbstractTerraNPC;
 import org.confluence.terraentity.init.TEAi;
+import org.confluence.terraentity.integration.ModChecker;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ public class NPCNurseTargetSensor<T extends AbstractTerraNPC> extends NPCNearest
     protected boolean isMatchingEntity(T owner, LivingEntity target) {
         double percent = target.getHealth() / target.getMaxHealth();
         if(target instanceof Player) {
+            if (ModChecker.confluence.isLoaded()) return false;
             // 玩家生命小于0.33才治疗
             return percent <= 0.33f;
         }
@@ -29,6 +31,7 @@ public class NPCNurseTargetSensor<T extends AbstractTerraNPC> extends NPCNearest
         return TEAi.MemoryModules.NEAREST_VISIBLE_ALLIANCE_NURSE_TARGET.get();
     }
 
+    @Override
     protected Optional<LivingEntity> getNearestEntity(T entity) {
         // 生命值过低优先治疗自己
         double percent = entity.getHealth() / entity.getMaxHealth();

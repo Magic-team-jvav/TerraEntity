@@ -3,12 +3,18 @@ package org.confluence.terraentity.client.init.model;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.init.TEEntities;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.List;
+
 public class EntityBlockModelRegister extends AbstractModelRegister<EntityType<?>> {
     private static EntityBlockModelRegister instance;
+
     public static EntityBlockModelRegister getInstance() {
         if(instance == null) {
             instance = new EntityBlockModelRegister();
@@ -16,13 +22,15 @@ public class EntityBlockModelRegister extends AbstractModelRegister<EntityType<?
         return instance;
     }
 
+    public static ModelResourceLocation SNATCHER_LEAF = new ModelResourceLocation(TerraEntity.space("item/entity/snatcher_leaf"), "inventory");
+
     @Override
     protected @Nullable ModelResourceLocation process(ResourceLocation location) {
-
-        String name = location.getNamespace() + ":" +location.getPath().substring(19).replace("_leaf.json", "");
-        for(var entity: TEEntities.ENTITIES.getEntries()){
+        String name = location.getNamespace() + ":" + location.getPath().substring(19).replace("_leaf.json", "");
+        List<RegistryObject<EntityType<?>>> list = TEEntities.getEntities().map(DeferredRegister::getEntries).flatMap(Collection::stream).toList();
+        for (var entity : list) {
             String entityName = entity.getId().toString();
-            if(entityName.equals(name)){
+            if (entityName.equals(name)) {
                 ModelResourceLocation modelResourceLocation = new ModelResourceLocation(TerraEntity.space(location.getPath().substring(12).replace(".json", "")), "inventory");
                 this.put(entity.get(), modelResourceLocation);
                 return modelResourceLocation;
@@ -35,6 +43,4 @@ public class EntityBlockModelRegister extends AbstractModelRegister<EntityType<?
     protected String getFolder() {
         return "item/entity";
     }
-
-
 }

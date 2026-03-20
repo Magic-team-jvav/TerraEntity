@@ -10,7 +10,6 @@ import software.bernie.geckolib.model.GeoModel;
 
 import java.util.function.Supplier;
 
-
 public class GeoBossModel<T extends Entity & GeoAnimatable> extends GeoModel<T> {
     private final ResourceLocation MODEL ;
     protected ResourceLocation TEXTURES ;

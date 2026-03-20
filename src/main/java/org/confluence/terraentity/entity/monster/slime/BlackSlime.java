@@ -123,7 +123,7 @@ public class BlackSlime extends Slime implements DeathAnimOptions {
                 DamageSource damagesource = this.damageSources().mobAttack(this);
                 if (this.level() instanceof ServerLevel serverlevel)
                     doEnchantDamageEffects(this, pLivingEntity);
-                if (TEUtils.isMaster(level()) || (TEUtils.isAtLeastExpert(level()) && level().random.nextBoolean())) {
+                if (TEUtils.isMaster(level(), blockPosition()) || (TEUtils.isAtLeastExpert(level(), blockPosition()) && level().random.nextBoolean())) {
                     pLivingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 300, 0), this);
                 }
             }
@@ -132,15 +132,9 @@ public class BlackSlime extends Slime implements DeathAnimOptions {
     @Override
     public @NotNull Component getName() {
         if (!hasCustomName()){
-            switch (getSize()) {
-                case 4 -> {
-                    return Component.translatable("entity.terra_entity.mother_slime");
-                }
-                case 1 -> {
-                    return Component.translatable("entity.terra_entity.baby_slime");
-                }
-            }
-
+            int size = getSize();
+            if (size == 1) return Component.translatable("entity.terra_entity.baby_slime");
+            if (size == 4) return Component.translatable("entity.terra_entity.mother_slime");
         }
         return super.getName();
     }

@@ -5,8 +5,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import org.confluence.terraentity.mixed.SelfGetter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 

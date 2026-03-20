@@ -31,6 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.confluence.terraentity.api.entity.IAttackableProjectile;
+import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.config.ClientConfig;
 import org.confluence.terraentity.entity.util.trail.BoomerangTrail;
 import org.confluence.terraentity.init.TEAttachments;
@@ -56,7 +57,6 @@ public class BoomerangProjectile extends Projectile {
 
     public Queue<Vec3> trailQueue;
     public Queue<Vec3> trailQueue2;
-
 
     public BoomerangProjectile(EntityType<? extends Projectile> entityType, Level level) {
         super(entityType, level);
@@ -89,20 +89,22 @@ public class BoomerangProjectile extends Projectile {
         this.entityData.define(DATA_BACKING, false);
         this.entityData.define(DATA_BACKING_TIME, 0);
     }
+
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> var1){
-        if(var1 == DATA_BACKING_TIME){
+        if (var1 == DATA_BACKING_TIME) {
             this.backTime = this.entityData.get(DATA_BACKING_TIME);
-        }else if(var1 == DATA_BACKING){
+        } else if (var1 == DATA_BACKING) {
             this.isBacking = this.entityData.get(DATA_BACKING);
-        }else if(var1 == DATA_WEAPON){
+        } else if (var1 == DATA_WEAPON) {
             weapon = this.entityData.get(DATA_WEAPON);
             modifier = ((Boomerang) weapon.getItem()).boomerangModifier;
-            if(this.modifier.trail != null) {
+            if (this.modifier.trail != null) {
                 trail = this.modifier.trail.get();
             }
         }
     }
+
     @Override
     public void onAddedToWorld(){
         super.onAddedToWorld();
@@ -111,50 +113,47 @@ public class BoomerangProjectile extends Projectile {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        if(!level().isClientSide){
-            Entity hurter = result.getEntity();
-            Entity actualHurter = hurter;
-            if(hurter instanceof PartEntity<?> part){
-                hurter = part.getParent();
-            }
-            if(this.getOwner() instanceof LivingEntity owner && this.getOwner() != actualHurter) {
-                DamageSource source = this.damageSources().mobProjectile(this, owner);
-                if (hurter instanceof LivingEntity living && actualHurter.isAlive() && TEUtils.projectileCanHurtEntityTest.test(this, living)) {
-                    penetrationCount--;
-                    float damage = (float) owner.getAttributeValue(Attributes.ATTACK_DAMAGE) + modifier.damage - 1;
+        if (level().isClientSide) return;
+        Entity hurter = result.getEntity();
+        Entity actualHurter = hurter;
+        if (hurter instanceof PartEntity<?> part) {
+            hurter = part.getParent();
+        }
+        if (this.getOwner() instanceof LivingEntity owner && this.getOwner() != actualHurter) {
+            DamageSource source = this.damageSources().mobAttack(owner); // 回旋镖是近战伤害
+            if (hurter instanceof LivingEntity living && actualHurter.isAlive() && TEUtils.projectileCanHurtEntityTest.test(this, living)) {
+                penetrationCount--;
+                float damage = (float) owner.getAttributeValue(Attributes.ATTACK_DAMAGE) + modifier.damage - 1;
+                if (actualHurter.hurt(source, damage)) {
                     var data = IDataComponentType.getData(weapon, TEDataComponentTypes.EFFECT_STRATEGY);
                     if (data != null) {
                         data.applyAll((LivingEntity) this.getOwner(), living);
                     }
                     owner.setLastHurtMob(actualHurter);
-                    if(actualHurter.hurt(this.damageSources().mobProjectile(this, owner), damage)){
-                        //击退
-                        this.doKnockback(living);
-                        if(owner instanceof ServerPlayer player) {
-                            this.weapon.hurt(1, this.random, player);
-                        }
-
+                    //击退
+                    doKnockback(living);
+                    if(owner instanceof ServerPlayer player) {
+                        this.weapon.hurt(1, this.random, player);
                     }
                 }
+            }
 
-                IAttackableProjectile.tryHit(hurter, source);
+            IAttackableProjectile.tryHit(hurter, source);
 
-                if (!modifier.canPenetrate && penetrationCount <= 0 && modifier.forwardTick - tickCount > 10) {
-                    if (!isBacking) {
-                        backTime = this.tickCount;
-                        this.entityData.set(DATA_BACKING_TIME, backTime);
-                        this.entityData.set(DATA_BACKING, true);
-                        backSpeed = (float) this.getDeltaMovement().length();
-                    }
-                    isBacking = true;
+            if (!modifier.canPenetrate && penetrationCount <= 0 && modifier.forwardTick - tickCount > 10) {
+                if (!isBacking) {
+                    backTime = this.tickCount;
+                    this.entityData.set(DATA_BACKING_TIME, backTime);
+                    this.entityData.set(DATA_BACKING, true);
+                    backSpeed = (float) this.getDeltaMovement().length();
                 }
+                isBacking = true;
             }
         }
     }
 
     @Override
     protected boolean canHitEntity(Entity target) {
-
         return TEUtils.projectileCanHitEntityTest.test(this, target);
     }
 
@@ -165,11 +164,11 @@ public class BoomerangProjectile extends Projectile {
         if (vec3.lengthSqr() > 0.0) {
             entity.push(vec3.x, 0.1, vec3.z);
         }
-
     }
+
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if(!isBacking){
+        if (!isBacking) {
             this.playSound(SoundEvents.WOOD_PLACE, 0.5f, 1.5f);
         }
         isBacking = true;
@@ -178,17 +177,18 @@ public class BoomerangProjectile extends Projectile {
         entityData.set(DATA_BACKING, true);
 
         super.onHitBlock(result);
-        if(level().isClientSide) {
+        if (level().isClientSide) {
             BlockPos blockpos = result.getBlockPos();
             BlockState blockstate = this.level().getBlockState(blockpos);
             Vec3 dir = this.getDeltaMovement().normalize().scale(2);
-            Vec3 mid = new Vec3(blockpos.getX()+0.5f , blockpos.getY()+0.5f, blockpos.getZ()+0.5f).add(Vec3.atLowerCornerOf(result.getDirection().getNormal()));
+            Vec3 mid = new Vec3(blockpos.getX() + 0.5f, blockpos.getY() + 0.5f, blockpos.getZ() + 0.5f).add(Vec3.atLowerCornerOf(result.getDirection().getNormal()));
             this.level().addParticle((new BlockParticleOption(ParticleTypes.BLOCK, blockstate)).setPos(blockpos), mid.x, mid.y, mid.z, -dir.x, -dir.y, -dir.z);
             this.level().addParticle((new BlockParticleOption(ParticleTypes.BLOCK, blockstate)).setPos(blockpos), mid.x, mid.y, mid.z, -dir.x, -dir.y, -dir.z);
         }
     }
+
     @Override
-    public void tick(){
+    public void tick() {
         Entity entity = this.getOwner();
         if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
             super.tick();
@@ -208,7 +208,7 @@ public class BoomerangProjectile extends Projectile {
             if (!this.isInWater()) {
                 f = 0.95F;
             } else {
-                for(int i = 0; i < 4; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     float f1 = 0.25F;
                     this.level().addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * 0.25, d1 - vec3.y * 0.25, d2 - vec3.z * 0.25, vec3.x, vec3.y, vec3.z);
                 }
@@ -221,45 +221,45 @@ public class BoomerangProjectile extends Projectile {
         }
 
 
-        if(level().isClientSide){
-            if(trail != null) {
+        if (level().isClientSide) {
+            if (trail != null) {
                 trail.generateTrail(this, tickCount);
             }
         }
 
-        if(this.getOwner()!= null && this.getOwner() instanceof LivingEntity living){
-            if(!isBacking){
+        if (this.getOwner() != null && this.getOwner() instanceof LivingEntity living) {
+            if (!isBacking) {
                 int delta = 10;
                 double actualSpeed = Math.min(
-                        Mth.lerp((float) (modifier.forwardTick - tickCount) / delta,0.01F,modifier.flySpeed),
+                        Mth.lerp((float) (modifier.forwardTick - tickCount) / delta, 0.01F, modifier.flySpeed),
                         modifier.flySpeed
                 );
 //                this.setDeltaMovement(getDeltaMovement().normalize().scale(actualSpeed));
                 Vec3 dir = getDeltaMovement().normalize();
-                Vec3 motion = dir.scale(actualSpeed );
+                Vec3 motion = dir.scale(actualSpeed);
                 this.setDeltaMovement(motion);
 
-                if(this.modifier.forwardTick <= this.tickCount) {
+                if (this.modifier.forwardTick <= this.tickCount) {
                     isBacking = true;
                     backTime = this.tickCount;
                     this.noPhysics = true;
                     entityData.set(DATA_BACKING, true);
                 }
-            }else{
-                Vec3 distinct = living.position().add(0,living.getBbHeight() * 0.5f,0);
+            } else {
+                Vec3 distinct = living.position().add(0, 1F, 0);
                 Vec3 dir = distinct.subtract(this.position()).normalize();
                 int delta = 10;
-                double actualSpeed = Math.min(Mth.lerp((float) (tickCount - backTime) / delta,backSpeed+0.01F,modifier.backSpeed),modifier.backSpeed);
+                double actualSpeed = Math.min(Mth.lerp((float) (tickCount - backTime) / delta, backSpeed + 0.01F, modifier.backSpeed), modifier.backSpeed);
                 Vec3 motion = dir.scale(actualSpeed);
                 this.setDeltaMovement(motion);
 //                this.move(MoverType.SELF, this.getDeltaMovement());
-                if(this.distanceToSqr(distinct) <  modifier.backSpeed * 0.8F){
+                if (this.distanceToSqr(distinct) < modifier.backSpeed * 0.8F) {
                     discard();
                 }
             }
         }
-        if(level().isClientSide){
-            if(ClientConfig.GENERATE_PROJECTILE_PARTICLE.get() && modifier.particle != null) {
+        if (level().isClientSide) {
+            if (ClientConfig.GENERATE_PROJECTILE_PARTICLE.get() && modifier.particle != null) {
                 ParticleOptions particle = modifier.particle.get();
                 for (int i = 0; i < modifier.particleCount; i++) {
                     level().addParticle(particle, this.getX() + random.nextFloat() - 0.5f, this.getY() + random.nextFloat() - 0.5f, this.getZ() + random.nextFloat() - 0.5f, 0, 0, 0);
@@ -268,6 +268,7 @@ public class BoomerangProjectile extends Projectile {
         }
 
     }
+
     @Override
     public void shootFromRotation(Entity shooter, float x, float y, float z, float velocity, float inaccuracy) {
         float f = -Mth.sin(y * 0.017453292F) * Mth.cos(x * 0.017453292F);
@@ -284,17 +285,15 @@ public class BoomerangProjectile extends Projectile {
     }
 
     @Override
-    public void onRemovedFromWorld(){
-        if(!level().isClientSide && !weapon.isEmpty() && getOwner() != null) {
+    public void onRemovedFromWorld() {
+        if (!level().isClientSide && !weapon.isEmpty() && getOwner() != null) {
             Boomerang.setBacked(weapon, SingleBooleanComponent.TRUE);
 
-            getOwner().getCapability(TEAttachments.WEAPON_STORAGE).ifPresent(c->{
-                c.tryReduce(weapon.getItem());
-            });
+            WeaponStorage.of(getOwner()).tryReduce(weapon.getItem());
             //  提前部署
-            if(getOwner() instanceof Player player
+            if (getOwner() instanceof Player player
 //                    && (modifier.shouldWaitForBack && !modifier.shouldApplyCd || modifier.maxCount - 1 == count)
-            ){
+            ) {
 
                 player.getCooldowns().removeCooldown(weapon.getItem());
 

@@ -1,27 +1,19 @@
 package org.confluence.terraentity.data.init.loot.conditioin;
 
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.Serializer;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
 import org.confluence.terraentity.data.init.loot.TELootParams;
 import org.confluence.terraentity.init.TELoots;
-import org.confluence.terraentity.init.TEParticles;
-import org.confluence.terraentity.init.entity.TEMonsterEntities;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
 import java.util.function.Supplier;
 
 public record VariantCondition(int variant) implements LootItemCondition {

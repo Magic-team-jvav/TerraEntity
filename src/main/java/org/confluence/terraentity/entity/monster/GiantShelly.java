@@ -58,7 +58,7 @@ public class GiantShelly extends AbstractFSMMonster implements IVanillaVariant<I
 
             @Override
             public void init(CircleMobSkills skills) {
-                free = new MobSkill<GiantShelly>(RawAnimation.begin().thenLoop("free"), 40, 0)
+                free = new MobSkill<GiantShelly>(null, 40, 0)
                         .onInit(e->{
                             if(e.getAttribute(Attributes.ARMOR).hasModifier(armorAdditionModifier)){
                                 e.getAttribute(Attributes.ARMOR).removeModifier(armorAdditionModifier);

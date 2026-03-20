@@ -10,10 +10,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import org.confluence.terraentity.init.TEItems;
-import org.confluence.terraentity.init.item.TEBoomerangItems;
-import org.confluence.terraentity.init.item.TESummonItems;
-import org.confluence.terraentity.init.item.TEWhipItems;
-import org.confluence.terraentity.init.item.TEYoyosItems;
+import org.confluence.terraentity.init.item.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -39,6 +36,7 @@ public class TERecipeProvider extends AbstractRecipeProvider {
                 .save(recipeOutput);
 
         // 鞭子
+
         registerWhip(recipeOutput, TEWhipItems.LEATHER_WHIP.get(), Items.LEATHER, "has_leather");
         registerWhip(recipeOutput, TEWhipItems.SLUB_WHIP.get(), Items.BAMBOO, "has_bamboo");
         registerWhip(recipeOutput, TEWhipItems.AMBER_WHIP.get(), Items.COPPER_INGOT, "has_copper_ingot");
@@ -103,6 +101,25 @@ public class TERecipeProvider extends AbstractRecipeProvider {
         registerYoyo(recipeOutput, TEYoyosItems.RALLY.get(), Items.IRON_INGOT, "has_iron_ingot");
         registerYoyo(recipeOutput, TEYoyosItems.MALAISE.get(), Items.SHULKER_SHELL, "has_shulker_shell");
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TEBossSummonsItems.HILL_OF_FLESH_SUMMONS.get())
+                .requires(TEBossSummonsItems.WALL_OF_FLESH_SUMMONS.get())
+                .unlockedBy("has_voodoo_doll", has(TEBossSummonsItems.WALL_OF_FLESH_SUMMONS.get()))
+                .save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TEBossSummonsItems.WALL_OF_FLESH_SUMMONS.get())
+                .requires(TEBossSummonsItems.HILL_OF_FLESH_SUMMONS.get())
+                .unlockedBy("has_voodoo_doll", has(TEBossSummonsItems.HILL_OF_FLESH_SUMMONS.get()))
+                .save(recipeOutput);
+
+        /*
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, TESummonItems.TERRAPRISMA.get())
+                .requires(TESummonItems.SUMMON_WOODEN_SWORD_STAFF)
+                .requires(TESummonItems.SUMMON_STONE_SWORD_STAFF)
+                .requires(TESummonItems.SUMMON_GOLDEN_SWORD_STAFF)
+                .requires(TESummonItems.SUMMON_DIAMOND_SWORD_STAFF)
+                .requires(TESummonItems.SUMMON_NETHERITE_SWORD_STAFF)
+                .unlockedBy("has_golden_sword_staff", has(TESummonItems.SUMMON_GOLDEN_SWORD_STAFF))
+                .save(recipeOutput);
+         */
     }
 
     private static void registerYoyo(Consumer<FinishedRecipe> recipeOutput, ItemLike yoyo, ItemLike material, String name){
@@ -126,6 +143,7 @@ public class TERecipeProvider extends AbstractRecipeProvider {
                 .unlockedBy(name,has(yoyo))
                 .save(recipeOutput);
     }
+
     protected static void netheriteSmithing(Consumer<FinishedRecipe> recipeOutput, Item ingredientItem, RecipeCategory category, Item resultItem) {
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.of(ingredientItem), Ingredient.of(Items.NETHERITE_INGOT), category, resultItem

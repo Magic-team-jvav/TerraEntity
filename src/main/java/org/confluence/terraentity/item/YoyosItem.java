@@ -9,26 +9,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.confluence.terraentity.TerraEntity;
+import org.confluence.terraentity.api.event.YoyosThrowingEvent;
 import org.confluence.terraentity.api.item.ILeftClickStateItem;
 import org.confluence.terraentity.api.item.IProjectileModifier;
 import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.entity.proj.BaseProj;
 import org.confluence.terraentity.entity.proj.YoyosEntity;
 import org.confluence.terraentity.init.TEAttachments;
-import org.confluence.terraentity.init.entity.TESummonEntities;
+import org.confluence.terraentity.init.entity.TEProjectileEntities;
 import org.confluence.terraentity.registries.hit_effect.IEffectStrategy;
+import org.confluence.terraentity.utils.AdapterUtils;
 
 import java.util.List;
 
 public class YoyosItem<T extends BaseProj<?>> extends Item implements ILeftClickStateItem, IProjectileModifier<T> {
-
     final int stringColor;
     final float attackDamage;
     final float maxRange;
     final float existTime;
     final ResourceLocation texture;
     IEffectStrategy effectStrategy;
-
 
     public YoyosItem(Properties properties, float attackDamage, int maxRange, int stringColor, float existTime, String suffix) {
         super(properties);
@@ -68,30 +68,32 @@ public class YoyosItem<T extends BaseProj<?>> extends Item implements ILeftClick
 
     @Override
     public void onLeftClick(Player player, ItemStack itemStack) {
+        if (player.level().isClientSide) return;
         WeaponStorage weaponStorage = player.getCapability(TEAttachments.WEAPON_STORAGE).orElse(null);
         if(weaponStorage.yoyosEntity != null && weaponStorage.yoyosEntity.isAlive()){
             weaponStorage.yoyosEntity.onReceiveLeftClick(player, itemStack);
             return;
         }
         Level level = player.level();
-        YoyosEntity<?> proj = TESummonEntities.YOYOS_ENTITY.get().create(level);
-        if(proj!= null){
+        YoyosEntity proj = TEProjectileEntities.YOYO_PROJ.get().create(level);
+        if (proj != null) {
             player.getCooldowns().addCooldown(itemStack.getItem(), (int) (this.existTime * 20));
             weaponStorage.yoyosEntity = proj;
             proj.setPos(player.getX(), player.getY(0.5f), player.getZ());
-            proj.summon_setOwnerUUID(player.getUUID());
+            proj.setOwner(player);
             proj.setWeaponItem(itemStack);
+            AdapterUtils.postEvent(new YoyosThrowingEvent(player, itemStack, proj));
             level.addFreshEntity(proj);
         }
     }
 
     @Override
     public void onLeftRelease(Player player, ItemStack itemStack) {
-        WeaponStorage weaponStorage = player.getCapability(TEAttachments.WEAPON_STORAGE).orElse(null);
-        if(weaponStorage.yoyosEntity != null && weaponStorage.yoyosEntity.isAlive()){
+        if (player.level().isClientSide) return;
+        WeaponStorage weaponStorage = WeaponStorage.of(player);
+        if (weaponStorage.yoyosEntity != null && weaponStorage.yoyosEntity.isAlive()) {
             weaponStorage.yoyosEntity.onReceiveLeftRelease(player, itemStack);
         }
-
     }
 
     @Override
@@ -101,8 +103,9 @@ public class YoyosItem<T extends BaseProj<?>> extends Item implements ILeftClick
 
     @Override
     public void onWhellScroll(Player player, ItemStack itemStack, int scrollAmount){
-        WeaponStorage weaponStorage = player.getCapability(TEAttachments.WEAPON_STORAGE).orElse(null);
-        if(weaponStorage.yoyosEntity != null && weaponStorage.yoyosEntity.isAlive()){
+        if (player.level().isClientSide) return;
+        WeaponStorage weaponStorage = WeaponStorage.of(player);
+        if (weaponStorage.yoyosEntity != null && weaponStorage.yoyosEntity.isAlive()) {
             weaponStorage.yoyosEntity.onReceiveWhellScroll(player, itemStack, scrollAmount);
         }
     }

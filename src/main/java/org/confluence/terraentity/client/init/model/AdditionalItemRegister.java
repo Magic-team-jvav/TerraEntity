@@ -18,7 +18,7 @@ public class AdditionalItemRegister extends AbstractModelRegister<Item> {
         return instance;
     }
 
-    public static ModelResourceLocation FINCH_STAFF_MODEL = new ModelResourceLocation(TerraEntity.space("item/finch_staff_empty"), "inventory");
+    public static ModelResourceLocation FINCH_STAFF_MODEL = new ModelResourceLocation(TerraEntity.space("finch_staff_empty"), "inventory");
 
     @Override
     public void register(ModelEvent.RegisterAdditional event){

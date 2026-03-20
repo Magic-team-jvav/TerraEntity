@@ -14,8 +14,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.confluence.terraentity.api.item.ILeftClickStateItem;
 import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.init.TEAttachments;
+import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.item.BaseWhipItem;
 import org.confluence.terraentity.item.YoyosItem;
+import org.confluence.terraentity.network.c2s.EventPacketC2S;
 import org.confluence.terraentity.network.c2s.ServerBoundEventPacket;
 import org.lwjgl.glfw.GLFW;
 
@@ -78,6 +80,16 @@ public class GameInputEvent {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void KeyPressed(InputEvent.Key event) {
+        if (event.getAction() == InputConstants.PRESS && ModChecker.curios.isLoaded()) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null && TEKeyBindings.RIDE.get().isDown()) { // 这个方法不会在其它地方触发导致崩溃
+                EventPacketC2S.rideOrLeave(player);
             }
         }
     }

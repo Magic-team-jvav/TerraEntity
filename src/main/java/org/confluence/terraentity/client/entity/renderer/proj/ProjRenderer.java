@@ -2,7 +2,6 @@ package org.confluence.terraentity.client.entity.renderer.proj;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import com.mojang.math.Axis;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -82,8 +81,9 @@ public class ProjRenderer<T extends BaseProj> extends EntityRenderer<T> {
 
         float yaw = (float) Math.atan2(v.z, v.x);
         // 旋转到正前方yaw
-        poseStack.mulPose(Axis.YN.rotation((float) (yaw + Math.PI/2)));
+        poseStack.mulPose(Axis.YN.rotation((float) (yaw - Math.PI/2)));
         float pitch = (float) Math.atan2(v.y, Math.sqrt(v.x*v.x + v.z*v.z));
+
         // 旋转到正前方pitch
         poseStack.mulPose(Axis.ZN.rotation( pitch));
     }

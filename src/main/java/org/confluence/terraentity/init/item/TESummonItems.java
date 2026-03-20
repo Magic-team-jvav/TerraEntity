@@ -13,9 +13,6 @@ import org.confluence.terraentity.item.SummonItem;
 public class TESummonItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TerraEntity.MODID);
 
-    public static final RegistryObject<Item> CHESTER_STAFF = ITEMS.register("chester_staff", () -> new ChesterSummonItem<>(new Item.Properties(), TESummonEntities.CHESTER));
-    public static final RegistryObject<Item> WALLET = ITEMS.register("wallet", () -> new ChesterSummonItem<>(new Item.Properties(), TESummonEntities.PIGGY_BANK));
-
     public static final RegistryObject<Item> FINCH_STAFF = ITEMS.register("finch_staff", () -> new SummonItem<>(new Item.Properties(), TESummonEntities.SUMMON_FINCH, 1, 2));
     public static final RegistryObject<Item> IRON_GOLEM_STAFF = ITEMS.register("iron_golem_staff", () -> new SummonItem<>(new Item.Properties(), TESummonEntities.SUMMON_IRON_GOLEM, 1, 8));
     public static final RegistryObject<Item> SLIME_STAFF = ITEMS.register("slime_staff", () -> new SummonItem<>(new Item.Properties(), TESummonEntities.SUMMON_SLIME, 1, 5));

@@ -33,8 +33,11 @@ public class TheHungryRenderer<T extends TheHungry> extends GeoNormalRenderer<T>
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         Vec3 init = entity.getInitPos();
-        if(init == null){
+        if(entity.isFree() || init == null){
             return;
+        }
+        if(entity.needLastPos && entity.lastInitPos != null){
+            init = entity.lastInitPos.lerp(init, partialTick);
         }
 
         poseStack.pushPose();

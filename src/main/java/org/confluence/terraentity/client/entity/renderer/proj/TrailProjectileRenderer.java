@@ -28,39 +28,116 @@ public class TrailProjectileRenderer extends EntityRenderer<TrailProjectile> {
     public void render(TrailProjectile entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         List<Vec3> trails = entity.getTrails();
         if (trails.isEmpty()) return;
+        
         int trailColor = entity.getTrailColor();
         float r = (trailColor & 255) / 255.0F;
         float g = (trailColor >> 8 & 255) / 255.0F;
         float b = (trailColor >> 16 & 255) / 255.0F;
-        Vec3 pos0;
-        Vec3 pos1;
+        float alpha = 0.8f;
+
         poseStack.pushPose();
-        Matrix4f matrix4f = poseStack.last().pose();
-        VertexConsumer bufferbuilder = bufferSource.getBuffer(RenderType.lightning());
+        Matrix4f matrix = poseStack.last().pose();
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.lightning());
+        Vec3 entityPos = entity.position();
 
         for (int i = 1; i < trails.size(); i++) {
-            pos0 = trails.get(i - 1).subtract(entity.position());
-            pos1 = trails.get(i).subtract(entity.position());
+            Vec3 prevPos = trails.get(i-1).subtract(entityPos);
+            Vec3 currentPos = trails.get(i).subtract(entityPos);
 
-            float x1 = (float) pos0.x;
-            float y1 = (float) pos0.y;
-            float z1 = (float) pos0.z;
-            float x2 = (float) pos1.x;
-            float y2 = (float) pos1.y;
-            float z2 = (float) pos1.z;
-            float baseWidth = 0.3f;
-            float width0 = baseWidth / trails.size() * (i - 1);
-            float width1 = baseWidth / trails.size() * i;
+            Vec3 dir = currentPos.subtract(prevPos);
+            if (dir.lengthSqr() > 0.001) {
+                dir = dir.normalize();
 
-            bufferbuilder.vertex(matrix4f, x1, y1, z1 - width0).color(r, g, b, 0.8f).endVertex();
-            bufferbuilder.vertex(matrix4f, x1, y1, z1 + width0).color(r, g, b, 0.8f).endVertex();
-            bufferbuilder.vertex(matrix4f, x2, y2, z2 + width1).color(r, g, b, 0.8f).endVertex();
-            bufferbuilder.vertex(matrix4f, x2, y2, z2 - width1).color(r, g, b, 0.8f).endVertex();
+                // 计算立方体的方向向量
+                Vec3 up = new Vec3(0, 1, 0);
+                Vec3 right = dir.cross(up);
+                if (right.lengthSqr() < 0.001) {
+                    up = new Vec3(1, 0, 0);
+                    right = dir.cross(up);
+                }
+                right = right.normalize();
+                Vec3 forward = dir.cross(right).normalize();
 
-            bufferbuilder.vertex(matrix4f, x1, y1, z1 + width0).color(r, g, b, 0.8f).endVertex();
-            bufferbuilder.vertex(matrix4f, x1, y1, z1 - width0).color(r, g, b, 0.8f).endVertex();
-            bufferbuilder.vertex(matrix4f, x2, y2, z2 - width1).color(r, g, b, 0.8f).endVertex();
-            bufferbuilder.vertex(matrix4f, x2, y2, z2 + width1).color(r, g, b, 0.8f).endVertex();
+                float width0 = 0.15f * (i-1) / trails.size();
+                float width1 = 0.15f * i / trails.size();
+
+                // 计算立方体截面的4个顶点
+                Vec3[] prevPoints = new Vec3[4];
+                Vec3[] currentPoints = new Vec3[4];
+
+                // 前一截面的4个顶点
+                prevPoints[0] = prevPos.add(right.scale(width0)).add(forward.scale(width0));  // 右上
+                prevPoints[1] = prevPos.add(right.scale(-width0)).add(forward.scale(width0)); // 左上
+                prevPoints[2] = prevPos.add(right.scale(-width0)).add(forward.scale(-width0)); // 左下
+                prevPoints[3] = prevPos.add(right.scale(width0)).add(forward.scale(-width0));  // 右下
+
+                // 当前截面的4个顶点
+                currentPoints[0] = currentPos.add(right.scale(width1)).add(forward.scale(width1));  // 右上
+                currentPoints[1] = currentPos.add(right.scale(-width1)).add(forward.scale(width1)); // 左上
+                currentPoints[2] = currentPos.add(right.scale(-width1)).add(forward.scale(-width1)); // 左下
+                currentPoints[3] = currentPos.add(right.scale(width1)).add(forward.scale(-width1));  // 右下
+
+                // 绘制立方体的6个面
+                // 前面
+                buffer.vertex(matrix, (float)prevPoints[0].x, (float)prevPoints[0].y, (float)prevPoints[0].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)prevPoints[1].x, (float)prevPoints[1].y, (float)prevPoints[1].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[1].x, (float)currentPoints[1].y, (float)currentPoints[1].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[0].x, (float)currentPoints[0].y, (float)currentPoints[0].z)
+                        .color(r, g, b, alpha).endVertex();
+
+                // 后面
+                buffer.vertex(matrix, (float)prevPoints[2].x, (float)prevPoints[2].y, (float)prevPoints[2].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)prevPoints[3].x, (float)prevPoints[3].y, (float)prevPoints[3].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[3].x, (float)currentPoints[3].y, (float)currentPoints[3].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[2].x, (float)currentPoints[2].y, (float)currentPoints[2].z)
+                        .color(r, g, b, alpha).endVertex();
+
+                // 左面
+                buffer.vertex(matrix, (float)prevPoints[1].x, (float)prevPoints[1].y, (float)prevPoints[1].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)prevPoints[2].x, (float)prevPoints[2].y, (float)prevPoints[2].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[2].x, (float)currentPoints[2].y, (float)currentPoints[2].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[1].x, (float)currentPoints[1].y, (float)currentPoints[1].z)
+                        .color(r, g, b, alpha).endVertex();
+
+                // 右面
+                buffer.vertex(matrix, (float)prevPoints[3].x, (float)prevPoints[3].y, (float)prevPoints[3].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)prevPoints[0].x, (float)prevPoints[0].y, (float)prevPoints[0].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[0].x, (float)currentPoints[0].y, (float)currentPoints[0].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[3].x, (float)currentPoints[3].y, (float)currentPoints[3].z)
+                        .color(r, g, b, alpha).endVertex();
+
+                // 上面
+                buffer.vertex(matrix, (float)prevPoints[0].x, (float)prevPoints[0].y, (float)prevPoints[0].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)prevPoints[3].x, (float)prevPoints[3].y, (float)prevPoints[3].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[3].x, (float)currentPoints[3].y, (float)currentPoints[3].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[0].x, (float)currentPoints[0].y, (float)currentPoints[0].z)
+                        .color(r, g, b, alpha).endVertex();
+
+                // 下面
+                buffer.vertex(matrix, (float)prevPoints[1].x, (float)prevPoints[1].y, (float)prevPoints[1].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)prevPoints[2].x, (float)prevPoints[2].y, (float)prevPoints[2].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[2].x, (float)currentPoints[2].y, (float)currentPoints[2].z)
+                        .color(r, g, b, alpha).endVertex();
+                buffer.vertex(matrix, (float)currentPoints[1].x, (float)currentPoints[1].y, (float)currentPoints[1].z)
+                        .color(r, g, b, alpha).endVertex();
+            }
         }
         poseStack.popPose();
     }

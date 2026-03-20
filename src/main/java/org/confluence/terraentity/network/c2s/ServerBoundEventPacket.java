@@ -11,7 +11,6 @@ import net.minecraftforge.network.NetworkEvent;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.api.item.ILeftClickStateItem;
 import org.confluence.terraentity.attachment.WeaponStorage;
-import org.confluence.terraentity.entity.boss.Skeletron;
 import org.confluence.terraentity.entity.npc.AbstractTerraNPC;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.init.entity.TEBossEntities;

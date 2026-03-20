@@ -44,6 +44,5 @@ public class TEBiomeTagsProvider extends TagsProvider<Biome> {
                 Biomes.STONY_PEAKS,
                 Biomes.STONY_SHORE
         );
-
     }
 }

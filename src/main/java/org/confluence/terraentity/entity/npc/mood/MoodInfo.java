@@ -8,6 +8,10 @@ import net.minecraft.world.entity.EntityType;
 
 /**
  * npc心情类型绑定的信息
+ *
+ * @param entityType 测试对象的实体类型
+ * @param info       心情翻译描述
+ * @param mood       心情类型枚举
  */
 public record MoodInfo(EntityType<?> entityType, String info, Mood mood) {
     public static final MoodInfo EMPTY = new MoodInfo(null, "", Mood.NEUTRAL);

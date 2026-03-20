@@ -203,8 +203,9 @@ public class Snatcher extends AbstractMonster{
                 Vec3 vec31 = vec3.add(dir.scale(50));
                 BlockHitResult result = level().clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this));
 
+                // 当根紧贴表面
                 if (result.getType() == BlockHitResult.Type.BLOCK) {
-                    Vec3 hitDir = Vec3.atLowerCornerOf(result.getDirection().getNormal()).scale(-0.5f);
+                    Vec3 hitDir = Vec3.atLowerCornerOf(result.getDirection().getNormal()).scale(0.5f).add(0, 0.5, 0);
                     setInitPos(result.getBlockPos().getCenter().add(hitDir).toVector3f());
                     this.initDir = dir.normalize();
                     canSurvive = true;
@@ -219,8 +220,11 @@ public class Snatcher extends AbstractMonster{
     }
 
     @Override
-    public AABB getBoundingBoxForCulling() {
-        return this.getBoundingBox().inflate(10);
+    public @NotNull AABB getBoundingBoxForCulling() {
+        if(this.initPos == null){
+            return super.getBoundingBoxForCulling().inflate(10);
+        }
+        return new AABB(this.position(), this.initPos);
     }
 
     public Vec3 getInitPos(){

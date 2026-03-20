@@ -1,8 +1,14 @@
 buildscript {
     repositories {
-        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        maven {
+            // 阿里云镜像，方便国内开发
+            url = uri("https://maven.aliyun.com/repository/public/")
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)', changing: true
@@ -92,7 +98,7 @@ repositories {
     flatDir {
         dir 'libs'
     }
-//    mavenLocal()
+    mavenLocal()
     maven {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
@@ -105,6 +111,13 @@ repositories {
 
     maven {
         url = "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
     }
 
     maven {
@@ -121,6 +134,11 @@ repositories {
             includeGroup("com.eliotlash.mclib")
         }
     }
+
+    maven {
+        name = "Curios"
+        url = uri("https://maven.theillusivec4.top/")
+    }
 }
 
 boolean dev = project.hasProperty('dev')
@@ -131,9 +149,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // JEI
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.3.0.4")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.3.0.4")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.3.0.4")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.20.0.106")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.20.0.106")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.20.0.106")
 
     if(dev){
         implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
@@ -143,6 +161,7 @@ dependencies {
             jarJar.ranged(it, "[${geckolib_version},)")
         }
     }
+    implementation fg.deobf("curse.maven:curios-309927:6418456")
 
 
     implementation("com.eliotlash.mclib:mclib:20")

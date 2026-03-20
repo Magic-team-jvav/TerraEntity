@@ -21,6 +21,4 @@ public class AzurelibFileLoaderMixin {
         String result = original.call(sw, input);
         return ClientTerraEntity.wrapFile(result, location);
     }
-
-
 }

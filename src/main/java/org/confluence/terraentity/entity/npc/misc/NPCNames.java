@@ -32,10 +32,10 @@ public record NPCNames(Map<String, Float> namesWeights) {
         private Map<EntityType<?>, NPCNames> npcNames = ImmutableMap.of();
 
         @Override
-        protected void apply(Map<ResourceLocation, JsonElement> object) {
+        protected void apply(Map<ResourceLocation, JsonElement> resourceList) {
 
             Map<EntityType<?>, NPCNames> map = new IdentityHashMap<>();
-            for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
+            for (Map.Entry<ResourceLocation, JsonElement> entry : resourceList.entrySet()) {
                 BuiltInRegistries.ENTITY_TYPE.getOptional(entry.getKey()).ifPresent(entityType -> NPCNames.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
                         .resultOrPartial(errorMsg -> TerraEntity.LOGGER.warn("Could not decode npc names with json id {} - error: {}", entry.getKey(), errorMsg))
                         .ifPresent(npcNames -> map.computeIfAbsent(entityType, type -> new NPCNames(new HashMap<>())).namesWeights.putAll(npcNames.namesWeights)));

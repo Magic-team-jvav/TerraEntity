@@ -94,7 +94,7 @@ public abstract class HillOfFleshPart extends PartEntity<HillOfFlesh> {
             }
         }else{
             if(this.getParent().tickCount % 25 == this.getId() % 25){
-                float r = this.getParent().getOutRadium() ;
+                float r = this.getParent().getOutRadius() ;
 
                 // 优先索敌玩家
                 LivingEntity living = null;
@@ -195,7 +195,6 @@ public abstract class HillOfFleshPart extends PartEntity<HillOfFlesh> {
     public boolean is(@NotNull Entity entity) {
         return this == entity || this.parentMob == entity;
     }
-
 
     @Override
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {

@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -77,6 +78,11 @@ public class SummonItem<T extends Mob & ISummonMob> extends Item {
             return InteractionResultHolder.pass(itemstack);
         }
         return InteractionResultHolder.fail(itemstack);
+    }
+
+    protected boolean canDiscard(Entity entity, Player player){
+        // 这里设计不合理，不过也没有其他需求
+        return entity instanceof ISummonMob summonMob && !summonMob.isPet() &&  summonMob.summon_getOwner() == player;
     }
 
 

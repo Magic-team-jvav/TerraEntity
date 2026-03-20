@@ -4,13 +4,17 @@ import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -36,10 +40,11 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.api.entity.IAttackableProjectile;
 import org.confluence.terraentity.config.ServerConfig;
 import org.confluence.terraentity.TerraEntity;
-import org.confluence.terraentity.api.entity.Boss;
+import org.confluence.lib.api.entity.Boss;
 import org.confluence.terraentity.entity.boss.AbstractTerraBossBase;
 import org.confluence.terraentity.api.entity.ISummonMob;
 import org.confluence.terraentity.mixed.IAttributeInstance;
@@ -112,8 +117,8 @@ public final class TEUtils {
      * @return 返回朝向对应角度（yaw、pitch）的单位向量
      */
     public static Vec3 rotToDir(float yaw, float pitch) {
-        float yawRad = (float) Math.toRadians(yaw);
-        float pitchRad = (float) Math.toRadians(pitch);
+        float yawRad = yaw * Mth.DEG_TO_RAD;
+        float pitchRad = pitch * Mth.DEG_TO_RAD;
         // Mth类的三角函数优化较好
         double y = -1 * Mth.sin(pitchRad);
         double div = Mth.cos(pitchRad);
@@ -198,15 +203,15 @@ public final class TEUtils {
     /**
      * 为专家?在处理if...else if时应先使用isMaster
      */
-    public static boolean isAtLeastExpert(Level level) {
-        return level.getDifficulty().getId() >= Difficulty.NORMAL.getId();
+    public static boolean isAtLeastExpert(Level level, BlockPos pos) {
+        return LibUtils.isAtLeastExpert(level, pos);
     }
 
     /**
      * 为大师?在处理if...else if时应先使用此方法
      */
-    public static boolean isMaster(Level level) {
-        return level.getDifficulty() == Difficulty.HARD;
+    public static boolean isMaster(Level level, BlockPos pos) {
+        return LibUtils.isMaster(level, pos);
     }
 
     /**
@@ -217,22 +222,31 @@ public final class TEUtils {
      * @param master  大师难度的值
      * @return 选择到的值
      */
+    public static <T> T switchByDifficulty(Level level, BlockPos pos, T classic, T expert, T master) {
+        return LibUtils.switchByDifficulty(level, pos, classic, expert, master);
+    }
+
     public static <T> T switchByDifficulty(Level level, T classic, T expert, T master) {
-        return switch (level.getDifficulty()) {
-            case PEACEFUL, EASY -> classic;
-            case NORMAL -> expert;
-            case HARD -> master;
-        };
+        return LibUtils.switchByDifficulty(level, BlockPos.ZERO, classic, expert, master);
     }
 
     /**
      * 获取当前难度的不同属性加成倍率
+     *
      * @return 倍率
      */
+    public static float getMultiple(Level level, BlockPos pos, Attribute attribute) {
+        if (attribute == Attributes.MAX_HEALTH)
+            return switchByDifficulty(level, pos, 0.66f, 1f, 1.5f);
+        else if (attribute == Attributes.ATTACK_DAMAGE)
+            return switchByDifficulty(level, pos, 0.66f, 1f, 1.5f);
+        else return 1f;
+    }
+
     public static float getMultiple(Level level, Attribute attribute) {
-        if(attribute == Attributes.MAX_HEALTH)
+        if (attribute == Attributes.MAX_HEALTH)
             return switchByDifficulty(level, 0.66f, 1f, 1.5f);
-        else if(attribute == Attributes.ATTACK_DAMAGE)
+        else if (attribute == Attributes.ATTACK_DAMAGE)
             return switchByDifficulty(level, 0.66f, 1f, 1.5f);
         else return 1f;
     }
@@ -248,7 +262,7 @@ public final class TEUtils {
     static Function<Float,AttributeModifier> difficultyHealthModifier = (f)->new AttributeModifier(UUID.fromString("e4acb5ea-eae7-4615-8a74-195f095f651c"),difficultyHealthKey, f - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
     public static void multiplePlayerEnhance(LivingEntity entity) {
         if(!entity.level().isClientSide) {
-            float multiplier = getMultiple(entity.level(), Attributes.MAX_HEALTH);
+            float multiplier = getMultiple(entity.level(),entity.blockPosition(), Attributes.MAX_HEALTH);
             int size = Math.min(entity.level().players().size(), 8);
             var healthAttribute = entity.getAttribute(Attributes.MAX_HEALTH);
             if (healthAttribute != null) {
@@ -273,11 +287,12 @@ public final class TEUtils {
     static Supplier<AttributeModifier> monster_damageModifier = ()->new AttributeModifier(UUID.fromString("1983c535-c32a-425a-a5d5-e761cd4949d8"),damageKey, ServerConfig.MONSTER_ATTRIBUTES_MULTIPLIER_DAMAGE.get() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     public static void monsterEnhance(LivingEntity entity) {
-
-        if(entity instanceof Boss || entity instanceof AbstractTerraBossBase || entity instanceof ISummonMob ) return;
-        if(!ServerConfig.ENHANCE_ALL_MONSTER.get() && !BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getNamespace().equals(TerraEntity.MODID)) return;
-        if(!entity.level().isClientSide) {
-            float multiplier = getMultiple(entity.level(), Attributes.MAX_HEALTH);
+        if (entity instanceof Boss || entity instanceof AbstractTerraBossBase || entity instanceof ISummonMob)
+            return;
+        if (!ServerConfig.ENHANCE_ALL_MONSTER.get() && !BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getNamespace().equals(TerraEntity.MODID))
+            return;
+        if (!entity.level().isClientSide) {
+            float multiplier = getMultiple(entity.level(), entity.blockPosition(), Attributes.MAX_HEALTH);
             var healthAttribute = entity.getAttribute(Attributes.MAX_HEALTH);
             if (healthAttribute != null) {
                 if (!healthAttribute.hasModifier(monster_healthModifier.get())) {
@@ -354,23 +369,32 @@ public final class TEUtils {
 
     /**
      * 计算向量夹角
+     *
      * @param v1
      * @param v2
      * @return degree
      */
-    public static double angleBetween(Vec3 v1,Vec3 v2){
-        return Math.acos(v1.dot(v2)/v1.length()/v2.length());
+    public static double angleBetween(Vec3 v1, Vec3 v2) {
+        return Math.acos(v1.dot(v2) / v1.length() / v2.length());
     }
 
-    public static Vec3 sphere(float r, float theta, float beta){
-        double x = r * Math.sin(theta) * Math.cos(beta);
-        double y = r * Math.sin(theta) * Math.sin(beta);
-        double z = r * Math.cos(theta);
+    /**
+     * 球坐标
+     *
+     * @param r     半径
+     * @param theta yaw
+     * @param beta  pitch - 90°
+     * @return 方向向量
+     */
+    public static Vec3 sphere(float r, float theta, float beta) {
+        double x = r * Math.sin(beta) * Math.cos(theta);
+        double y = r * Math.cos(beta);
+        double z = r * Math.sin(beta) * Math.sin(theta);
         return new Vec3(x, y, z);
     }
 
 
-    public static Vec3 circle(float r, float theta){
+    public static Vec3 circle(float r, float theta) {
         double x = r * Math.cos(theta);
         double y = r * Math.sin(theta);
         return new Vec3(x, 0, y);
@@ -434,17 +458,48 @@ public final class TEUtils {
         throw new IllegalStateException("Failed to find random item.");
     }
 
+    public static <T> T getRandomByWeightInt(List<T> items, List<Integer> weights) {
+        if (items == null || weights == null || items.size() != weights.size() || items.isEmpty()) {
+            throw new IllegalArgumentException("Items and weights must be non-null, non-empty, and of the same size.");
+        }
+
+        // 计算总权重
+        float totalWeight = 0.0f;
+        for (var weight : weights) {
+            totalWeight += weight;
+        }
+
+        if (totalWeight == 0.0f) {
+            throw new IllegalArgumentException("Total weight cannot be zero.");
+        }
+
+        float randomValue = ThreadLocalRandom.current().nextFloat(0, totalWeight);
+
+        // 遍历物品，累积权重，直到累积权重超过随机数
+        float cumulativeWeight = 0.0f;
+        for (int i = 0; i < items.size(); i++) {
+            cumulativeWeight += weights.get(i);
+            if (cumulativeWeight >= randomValue) {
+                return items.get(i);
+            }
+        }
+        // 理论上不会走到这里
+        throw new IllegalStateException("Failed to find random item.");
+    }
+
+
     /**
      * 获取玩家视角下距离指定距离的实体
+     *
      * @param entity
      * @param distance
      * @return
      */
-    public static @Nullable EntityHitResult getEyeTraceHitResult(Entity entity, double distance){
+    public static @Nullable EntityHitResult getEyeTraceHitResult(Entity entity, double distance) {
         AABB aabb = entity.getBoundingBox().inflate(distance);
         Vec3 from = entity.getEyePosition();
         Vec3 to = entity.getEyePosition().add(entity.getLookAngle().scale(distance));
-        return ProjectileUtil.getEntityHitResult(entity.level(), entity, from, to, aabb, e-> true, 0.1F);
+        return ProjectileUtil.getEntityHitResult(entity.level(), entity, from, to, aabb, e -> true, 0.1F);
     }
 
     /**
@@ -460,14 +515,14 @@ public final class TEUtils {
     /**
      * 获取视角前方的位置
      */
-    public static Vec3 getEyeVec3(Entity entity, float distance, float partialTicks){
+    public static Vec3 getEyeVec3(Entity entity, float distance, float partialTicks) {
         return entity.getEyePosition(partialTicks).add(entity.getLookAngle().normalize().scale(distance));
     }
 
     /**
      * 有无视线阻挡
      */
-    public static boolean canSeePos(Entity entity, Vec3 pos){
+    public static boolean canSeePos(Entity entity, Vec3 pos) {
         return entity.level().clip(new ClipContext(entity.getEyePosition(), pos, ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, entity)).getType() == HitResult.Type.MISS;
     }
 
@@ -536,7 +591,7 @@ public final class TEUtils {
      *
      * @param currDir            当前弹幕的方向向量
      * @param targetDir          方向向量，记录了追踪的最终方向与长度（想要达到的速度）
-     * @param angleInterpolator      提供角度插值；输入为当前方向和追踪方向的角度差，输出为追踪所变换的角度
+     * @param angleInterpolator  提供角度插值；输入为当前方向和追踪方向的角度差，输出为追踪所变换的角度
      * @param lengthInterpolator 提供向量长度（即速度）插值；输入为当前方向和追踪方向的长度差，输出为追踪所变换的向量长度
      * @return 变换完毕的向量
      */
@@ -634,50 +689,50 @@ public final class TEUtils {
 
     /**
      * 获取包围盒内锥形射线内的目标
-     * @param ori 起始点
-     * @param end 终止点
-     * @param range 若owner为null，则为包围盒范围，否则无效
+     *
+     * @param ori      起始点
+     * @param end      终止点
+     * @param range    若owner为null，则为包围盒范围，否则无效
      * @param maxAngle 最大角度
      * @return 若直接命中，返回命中的目标；否则返回最近有效的目标
      */
-    public static LivingEntity getAABBAngleTarget(Vec3 ori, Vec3 end, Level level, @Nullable Entity owner, double range, double maxAngle, Predicate<Entity> filter){
+    public static LivingEntity getAABBAngleTarget(Vec3 ori, Vec3 end, Level level, @Nullable Entity owner, double range, double maxAngle, Predicate<Entity> filter) {
         //扩大包围盒
         AABB aabb;
-        if(owner!=null){
+        if (owner != null) {
             aabb = owner.getBoundingBox().inflate(range);
-        }
-        else{
-            aabb = new AABB(ori,end).inflate(range);
+        } else {
+            aabb = new AABB(ori, end).inflate(range);
         }
         Vec3 direction = end.subtract(ori);
         List<HitResult> hits = new ArrayList<>();
         List<HitResult> subHits = new ArrayList<>();
-        List<? extends Entity> entities = level.getEntities(owner,aabb, entity1 -> entity1.isPickable() && entity1.isAlive() && filter.test(entity1));
-        for(var e : entities){
+        List<? extends Entity> entities = level.getEntities(owner, aabb, entity1 -> entity1.isPickable() && entity1.isAlive() && filter.test(entity1));
+        for (var e : entities) {
             //获取视线交点
-            Vec3 vec3 = e.getBoundingBox().clip(ori,end).orElse(null);
+            Vec3 vec3 = e.getBoundingBox().clip(ori, end).orElse(null);
             //优先指向的目标
-            if(vec3!=null){
+            if (vec3 != null) {
                 //System.multiOut.println("point directly");
-                EntityHitResult entityHitResult = new EntityHitResult(e,vec3);
+                EntityHitResult entityHitResult = new EntityHitResult(e, vec3);
                 hits.add(entityHitResult);
             }//自瞄其他夹角小于一定度数的目标
-            else if(hits.isEmpty() && TEUtils.angleBetween(e.position().subtract(ori),end.subtract(ori)) < maxAngle *  Math.PI/180){
-                EntityHitResult entityHitResult = new EntityHitResult(e,e.position());
+            else if (hits.isEmpty() && TEUtils.angleBetween(e.position().subtract(ori), end.subtract(ori)) < maxAngle * Math.PI / 180) {
+                EntityHitResult entityHitResult = new EntityHitResult(e, e.position());
                 subHits.add(entityHitResult);
             }
         }
 
 
-        if(!hits.isEmpty()){
+        if (!hits.isEmpty()) {
             //射线命中的目标 按距离排序
-            hits.sort((o1,o2)-> {
+            hits.sort((o1, o2) -> {
                 double v1 = o1.getLocation().distanceToSqr(ori);
                 double v2 = o2.getLocation().distanceToSqr(ori);
-                if (v1==v2)return 0;
+                if (v1 == v2) return 0;
                 return v1 < v2 ? -1 : 1;
             });
-            for(HitResult hitResult : hits) {
+            for (HitResult hitResult : hits) {
                 if (hitResult instanceof EntityHitResult entityHitResult &&
                         (
                                 entityHitResult.getEntity() instanceof LivingEntity livingEntity &&
@@ -687,17 +742,17 @@ public final class TEUtils {
                     return livingEntity;
                 }
             }
-        }else if(!subHits.isEmpty()){
+        } else if (!subHits.isEmpty()) {
             //未命中的目标 按角度排序
-            subHits.sort((o1,o2)-> {
+            subHits.sort((o1, o2) -> {
                 double v1 = TEUtils.angleBetween(o1.getLocation().subtract(ori), direction);
                 double v2 = TEUtils.angleBetween(o2.getLocation().subtract(ori), direction);
-                if (v1 == v2)return 0;
-                return v1 < v2 ?-1:1;
+                if (v1 == v2) return 0;
+                return v1 < v2 ? -1 : 1;
             });
             HitResult hitResult = subHits.get(0);
-            if(hitResult instanceof  EntityHitResult entityHitResult &&
-                    entityHitResult.getEntity() instanceof LivingEntity livingEntity){
+            if (hitResult instanceof EntityHitResult entityHitResult &&
+                    entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
                 return livingEntity;
             }
         }
@@ -706,12 +761,12 @@ public final class TEUtils {
 
     public static Vec3 getPlayerHandPos(Player player) {
         int i = player.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
-        float f =  player.yBodyRot* 0.017453292F + 1f;
+        float f = player.yBodyRot * 0.017453292F + 1f;
         double d0 = Mth.sin(f);
         double d1 = Mth.cos(f);
         float f1 = player.getScale();
-        double d2 = (double)i * 0.25 * (double)f1;
-        double d3 = 0.8 * (double)f1;
+        double d2 = (double) i * 0.25 * (double) f1;
+        double d3 = 0.8 * (double) f1;
         return new Vec3(-d1 * d2 - d0 * d3, 0, -d0 * d2 + d1 * d3);
     }
 
@@ -719,16 +774,19 @@ public final class TEUtils {
      * 测试攻击驯养动物
      */
     public static BiPredicate<Entity, Entity> attackTamableTest = (owner, target) -> {
-        if(
+        Entity actualTarget = target instanceof PartEntity<?> part ? part.getParent() : target;
+        if (actualTarget == null) return false;
+
+        if (
                 owner != null && (
-                        target instanceof TamableAnimal animal &&
+                        actualTarget instanceof TamableAnimal animal &&
                                 owner instanceof LivingEntity living &&
                                 animal.isOwnedBy(living)
                 )
-        ){
+        ) {
             return false;
         }
-        if(target instanceof ISummonMob) {
+        if (actualTarget instanceof ISummonMob) {
             return false;
         }
 
@@ -738,27 +796,26 @@ public final class TEUtils {
     /**
      * <h1>统一弹幕目标伤害过滤</h1>
      */
-    public static BiPredicate<Projectile, Entity> projectileCanHurtEntityTest = (projectile, target)-> {
-
-        if(target instanceof IAttackableProjectile projectile1 && projectile1.canBeAttacked()){
+    public static BiPredicate<Projectile, Entity> projectileCanHurtEntityTest = (projectile, target) -> {
+        if (target instanceof IAttackableProjectile projectile1 && projectile1.canBeAttacked()) {
             return true;
         }
 
-        if (!target.isAttackable() ||  target instanceof     Npc  || target instanceof ArmorStand) {
+        if (!target.isAttackable() || target instanceof Npc || target instanceof ArmorStand) {
             return false;
         }
-        if(target instanceof  LivingEntity living){
-            if(!living.canBeSeenByAnyone() || !living.canBeSeenAsEnemy()){
+        if (target instanceof LivingEntity living) {
+            if (!living.canBeSeenByAnyone() || !living.canBeSeenAsEnemy()) {
                 return false;
             }
         }
         Entity entity = projectile.getOwner();
         // 防止击中仆从
-        if(!attackTamableTest.test(entity, target)){
+        if (!attackTamableTest.test(entity, target)) {
             return false;
         }
 
-        if(entity == null || !entity.isPassengerOfSameVehicle(target)) {
+        if (entity == null || !entity.isPassengerOfSameVehicle(target)) {
             return true;
         }
         return target != entity;
@@ -767,12 +824,12 @@ public final class TEUtils {
     /**
      * <h1>统一弹幕能否命中目标和索敌过滤</h1>
      */
-    public static BiPredicate<Projectile, Entity> projectileCanHitEntityTest = (projectile, target)-> {
+    public static BiPredicate<Projectile, Entity> projectileCanHitEntityTest = (projectile, target) -> {
         Entity entity = projectile.getOwner();
         // 不能攻击主人
-        if(entity == target) return false;
+        if (entity == target) return false;
 
-        if(target instanceof IAttackableProjectile projectile1 && projectile1.canBeAttacked()){
+        if (target instanceof IAttackableProjectile projectile1 && projectile1.canBeAttacked()) {
             return true;
         }
 
@@ -781,21 +838,25 @@ public final class TEUtils {
             return false;
         }
 
-        if(!(target instanceof LivingEntity)){
+        if (!(target instanceof LivingEntity)) {
             // 可以攻击多体节生物
-            if(target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity){
+            if (target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity) {
                 return true;
             }
             return false;
         }
 
-        if(entity != null && entity.isPassengerOfSameVehicle(target)) {
+        if (entity != null && entity.isPassengerOfSameVehicle(target)) {
             // 不能攻击坐骑
             return false;
         }
         return true;
 
     };
+
+    public static boolean isPassInvulnerableDamageSource(DamageSource source, DamageSources sources) {
+        return source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) || source == sources.genericKill();
+    }
 
     /**
      * 获取向量从v1指向v2的旋转四元数
@@ -828,9 +889,10 @@ public final class TEUtils {
 
     /**
      * 计算射线与AABB的交点
+     *
      * @param start 射线起点
-     * @param dir 射线方向
-     * @param aabb 包围盒
+     * @param dir   射线方向
+     * @param aabb  包围盒
      * @return 若交点存在，返回交点坐标；否则返回null
      */
     public static @Nullable Vec3 calRayToAABB(Vec3 start, Vec3 dir, AABB aabb) {
@@ -887,8 +949,8 @@ public final class TEUtils {
         }
     }
 
-    public static double lerpMotion(double partialTickTotal, double transitionTime, double start, double end){
-        return Mth.lerp(org.joml.Math.min(partialTickTotal  / transitionTime,1), start, end);
+    public static double lerpMotion(double partialTickTotal, double transitionTime, double start, double end) {
+        return Mth.lerp(org.joml.Math.min(partialTickTotal / transitionTime, 1), start, end);
     }
 
 /*
@@ -922,11 +984,11 @@ public final class TEUtils {
         return book;
     }
 
-    public static<T extends Entity> T spawnEntity(Supplier<? extends T> entitySupplier, ServerLevel serverLevel, Vec3 pos){
+    public static <T extends Entity> T spawnEntity(Supplier<? extends T> entitySupplier, ServerLevel serverLevel, Vec3 pos) {
         T entity = entitySupplier.get();
         if (entity != null) {
             entity.moveTo(pos);
-            if(internalSpawnEntity(entity, serverLevel)){
+            if (internalSpawnEntity(entity, serverLevel)) {
                 serverLevel.addFreshEntityWithPassengers(entity);
             }
             return entity;
@@ -934,15 +996,16 @@ public final class TEUtils {
         return null;
     }
 
-    public static<T extends Entity> T spawnEntity(EntityType<? extends T> type, ServerLevel level, Vec3 pos){
+    public static <T extends Entity> T spawnEntity(EntityType<? extends T> type, ServerLevel level, Vec3 pos) {
         return spawnEntity(() -> type.create(level), level, pos);
     }
 
     /**
      * 通过finalize事件初始化生物
+     *
      * @return 是否应该生成
      */
-    public static boolean internalSpawnEntity(Entity entity, ServerLevel serverLevel){
+    public static boolean internalSpawnEntity(Entity entity, ServerLevel serverLevel) {
         if (entity instanceof Mob mob) {
             mob.yHeadRot = mob.getYRot();
             mob.yBodyRot = mob.getYRot();
@@ -963,21 +1026,39 @@ public final class TEUtils {
      * <p>E.G</p>
      * <p>1.2 -> +20%</p>
      */
-    public static float getAttributePercent(Attribute attribute, LivingEntity entity){
+    public static float getAttributePercent(Attribute attribute, LivingEntity entity) {
         AttributeInstance instance = entity.getAttribute(attribute);
-        if(instance!= null){
+        if (instance != null) {
             return (float) ((IAttributeInstance) instance).terraentity$getPercentage();
         }
         return 1;
     }
 
-    public static <K, V> Map<K,V> listToMap(Stream<? extends Pair<K, V>> pairs){
+    public static <K, V> Map<K, V> listToMap(Stream<? extends Pair<K, V>> pairs) {
         return pairs.collect(Collectors.toMap(Pair::key, Pair::value));
     }
 
-    public static Vec3 entityLerpMovement(Entity entity, float partialTick){
+    public static Vec3 entityLerpMovement(Entity entity, float partialTick) {
         return new Vec3(entity.xo, entity.yo, entity.zo).lerp(entity.position(), partialTick);
 //        return new Vec3(entity.getX())
     }
 
+    public static BlockPos findNearbyBlockEntity(Level level, BlockPos center, int radius, BiPredicate<BlockPos, BlockEntity> predicate) {
+        for (int i = -radius; i <= radius; i++) {
+            for (int j = -radius; j <= radius; j++) {
+                Map<BlockPos, BlockEntity> entities = level.getChunk(
+                        SectionPos.blockToSectionCoord(center.getX()) + i,
+                        SectionPos.blockToSectionCoord(center.getZ()) + j).getBlockEntities();
+                if (!entities.isEmpty()) {
+                    for (Map.Entry<BlockPos, BlockEntity> entry : entities.entrySet()) {
+                        if (predicate.test(entry.getKey(), entry.getValue())) {
+                            return entry.getKey();
+                        }
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
 }

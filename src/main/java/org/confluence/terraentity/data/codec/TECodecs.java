@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.PrimitiveCodec;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class TECodecs {
@@ -58,5 +59,8 @@ public class TECodecs {
     public static <K, V> Codec<Map<K, V>> dispatchedMap(final Codec<K> keyCodec, final Function<K, Codec<? extends V>> valueCodecFunction) {
         return new DispatchedMapCodec<>(keyCodec, valueCodecFunction);
     }
+
+
+    public static Codec<UUID> UUID_CODEC = Codec.STRING.xmap(UUID::fromString, UUID::toString);
 
 }

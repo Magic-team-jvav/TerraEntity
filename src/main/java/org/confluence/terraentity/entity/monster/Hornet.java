@@ -174,7 +174,7 @@ public class Hornet extends AbstractMonster implements FlyingAnimal{
 
     protected class BeeShootGoal extends Goal {
         protected int SHOOT_TIME;
-        int timeToShoot;
+        protected int timeToShoot;
         protected int prepareTime = 5;
         protected Hornet bee;
         float inaccuracy;
@@ -235,7 +235,6 @@ public class Hornet extends AbstractMonster implements FlyingAnimal{
                 timeToShoot = SHOOT_TIME;
             }
         }
-
         protected boolean canShoot(Entity target) {
             if(TEUtils.angleBetween(bee.getForward(), target.getEyePosition().subtract(bee.getEyePosition())) < 0.1f){
                 return true;

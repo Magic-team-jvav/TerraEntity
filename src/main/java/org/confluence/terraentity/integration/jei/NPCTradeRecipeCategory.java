@@ -46,8 +46,13 @@ public class NPCTradeRecipeCategory implements IRecipeCategory<NPCRecipe> {
     }
 
     @Override
-    public IDrawable getBackground() {
-        return new JeiBackGround(128, 54, null);
+    public int getWidth() {
+        return 128;
+    }
+
+    @Override
+    public int getHeight() {
+        return 54;
     }
 
     @Override

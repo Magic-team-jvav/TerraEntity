@@ -1,9 +1,7 @@
 package org.confluence.terraentity.entity.monster.demoneye;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 
 /** 白天的AI
@@ -32,8 +30,6 @@ public class DemonEyeLeaveGoal extends Goal {
 
     @Override
     public void tick(){
-        ServerLevel level = (ServerLevel) mob.level();
-
         Vec3 motion = mob.getDeltaMovement();
         if(motion.length() < 0.5){
             mob.addDeltaMovement(targetMotion);

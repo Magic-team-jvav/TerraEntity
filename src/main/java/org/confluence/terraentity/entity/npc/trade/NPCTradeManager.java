@@ -1,18 +1,24 @@
 package org.confluence.terraentity.entity.npc.trade;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.player.Player;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.api.npc.trade.ITrade;
@@ -31,14 +37,20 @@ import java.util.*;
  * 交易清单
  */
 public class NPCTradeManager {
-
-//    public static DynamicOps<JsonElement> serverOps;
+    public static final Codec<NPCTradeManager> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ITrade.TYPED_CODEC.listOf().optionalFieldOf("trades").forGetter(i -> Optional.ofNullable(i.trades)),
+            ITradeGenerator.TYPED_CODEC.optionalFieldOf("trades_generator").forGetter(i -> Optional.ofNullable(i.tradeList))
+    ).apply(instance, (trades, tradeList) -> {
+        return trades.map(NPCTradeManager::new).orElseGet(() -> tradeList.map(NPCTradeManager::new).orElseGet(() -> new NPCTradeManager(List.of())));
+    }));
+    public static FriendlyByteBuf.Writer<NPCTradeManager> WRITER = AdapterUtils.CodecWriter(CODEC);
+    public static FriendlyByteBuf.Reader<NPCTradeManager> READER = AdapterUtils.CodecReader(CODEC);
 
     private List<ITrade> trades;
     private List<ITrade> availableTrades;
     private ITradeHolder owner;
-    protected List<Integer> toBeSync = new ArrayList<>();
-    ITradeGenerator tradeList;
+    private final List<Integer> toBeSync = new ArrayList<>();
+    private ITradeGenerator tradeList;
 
     /**
      * 记录需要更新的交易表
@@ -91,8 +103,8 @@ public class NPCTradeManager {
             this.trades = new ArrayList<>(tradeList.generateTrades(holder));
             this.tradeList = null;
         }
-        if(id != null) { // 正常情况只会在第一次生成时不为null
-            TradeModifiers.applyModifiers(this, id);
+        if (id != null) { // 正常情况只会在第一次生成时不为null
+            TradeModifiers.getInstance().applyModifiers(this, id);
         }
         this.setOwner(holder);
     }
@@ -167,8 +179,7 @@ public class NPCTradeManager {
         boolean dirty = false;
         this.availableTrades = new ArrayList<>();
         for (ITrade trade : this.trades) {
-            ITradeLock lock = trade.lock();
-            if (lock == null || lock.canTrade(player, owner, index)) {
+            if (trade.lock().canTrade(player, owner, index)) {
                 this.availableTrades.add(trade);
                 if (bitMask.remove(index)) {
                     dirty = true;
@@ -209,59 +220,6 @@ public class NPCTradeManager {
         return this.trades.isEmpty();
     }
 
-
-    public static final String KEY = "npc/shop";
-//    public static final Codec<NPCTradeManager> CODEC =Codec.withAlternative(
-//            RecordCodecBuilder.create(instance -> instance.group(
-//            ITrade.TYPED_CODEC.listOf().fieldOf("trades").forGetter(NPCTradeManager::trades)
-//    ).apply(instance, NPCTradeManager::new)),
-//            RecordCodecBuilder.create(instance -> instance.group(
-//                    ITradeList.TYPED_CODEC.fieldOf("trades_generator").forGetter(i->i.tradeList)
-//            ).apply(instance, NPCTradeManager::new))
-//            );
-
-    public static final Codec<NPCTradeManager> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ITrade.TYPED_CODEC.listOf().optionalFieldOf("trades").forGetter(i -> Optional.ofNullable(i.trades)),
-            ITradeGenerator.TYPED_CODEC.optionalFieldOf("trades_generator").forGetter(i -> Optional.ofNullable(i.tradeList))
-    ).apply(instance, (trades, tradeList) -> {
-        return trades.map(NPCTradeManager::new).orElseGet(() -> tradeList.map(NPCTradeManager::new).orElseGet(() -> new NPCTradeManager(List.of())));
-    }));
-
-    public static FriendlyByteBuf.Writer<NPCTradeManager> WRITER = AdapterUtils.CodecWriter(CODEC);
-    public static FriendlyByteBuf.Reader<NPCTradeManager> READER = AdapterUtils.CodecReader(CODEC);
-
-    public static final Codec<Map<ResourceLocation, NPCTradeManager>> MAP_CODEC = Codec.unboundedMap(ResourceLocation.CODEC, CODEC);
-
-    public static FriendlyByteBuf.Writer<Map<ResourceLocation, NPCTradeManager>> MAP_WRITER = AdapterUtils.CodecWriter(MAP_CODEC);
-    public static FriendlyByteBuf.Reader<Map<ResourceLocation, NPCTradeManager>> MAP_READER = AdapterUtils.CodecReader(MAP_CODEC);
-
-
-    private static final Map<ResourceLocation, NPCTradeManager> TRADE_MAP = new HashMap<>();
-    private static final Map<ResourceLocation, Tag> TAG_MAP = new HashMap<>();
-
-    /**
-     * 同步给客户端
-     */
-    public static void reset(Map<ResourceLocation, Tag> tradeMap){
-        TRADE_MAP.clear();
-        for (Map.Entry<ResourceLocation, Tag> entry : tradeMap.entrySet()) {
-//            RegistryOps<Tag> ops = registryAccess.createSerializationContext(NbtOps.INSTANCE);
-            NPCTradeManager.CODEC.parse(NbtOps.INSTANCE, entry.getValue()).result().ifPresentOrElse(r -> {
-                TRADE_MAP.put(entry.getKey(), r);
-            }, () -> {
-                throw new RuntimeException("Failed to read trade list " + entry.getKey());
-            });
-        }
-    }
-
-    public static Map<ResourceLocation, Tag> getTagMap() {
-        return TAG_MAP;
-    }
-
-    public static Map<ResourceLocation, NPCTradeManager> getTradeMap() {
-        return TRADE_MAP;
-    }
-
     /**
      * 获取NPC商店的交易列表
      *
@@ -269,10 +227,7 @@ public class NPCTradeManager {
      */
     @Nullable
     public static NPCTradeManager getTradeById(ResourceLocation id) {
-        if (!TRADE_MAP.containsKey(id)) {
-            return null;
-        }
-        return TRADE_MAP.get(id);
+        return Loader.getInstance().tradeMap.getOrDefault(id, null);
     }
 
     /**
@@ -283,53 +238,72 @@ public class NPCTradeManager {
      */
     @Nullable
     public static NPCTradeManager getCopy(ResourceLocation id, DynamicOps<Tag> ops) {
-//        if(!TRADE_MAP.containsKey(id)){
-//            return null;
-//        }
-//        NPCTradeManager.serverOps = registryAccess.createSerializationContext(JsonOps.INSTANCE);
-//        var encode = CODEC.encodeStart(ops, TRADE_MAP.get(id));
-//        if(encode.result().isPresent()){
-//            var result = CODEC.decode(ops, encode.result().get());
-//            if(result.result().isPresent()){
-//                return result.result().get().getFirst();
-//            }else{
-//                if(result.error().isPresent()){
-//                    TerraEntity.LOGGER.error("Failed to decode trade list {} : {}", id, result.error().get());
-//                }
-//            }
-//            return null;
-//        }else{
-//            if(encode.error().isPresent()){
-//                TerraEntity.LOGGER.error("Failed to encode trade list {} : {}", id, encode.error().get());
-//            }
-//            return null;
-//        }
-        Tag tag = TAG_MAP.get(id);
+        Tag tag = Loader.getInstance().tagMap.get(id);
         if (tag == null) return null;
         return CODEC.parse(ops, tag).result().orElse(null);
     }
 
-    public static void readTradesFromJson(MinecraftServer server) {
-        ResourceManager manager = server.getResourceManager();
-        JsonOps ops = JsonOps.INSTANCE;
+    public static class Loader extends SimpleJsonResourceReloadListener {
+        public static final String KEY = "npc/shop";
+        private static Loader INSTANCE;
+        private Map<ResourceLocation, NPCTradeManager> tradeMap = ImmutableMap.of();
+        private Map<ResourceLocation, Tag> tagMap = ImmutableMap.of();
 
-        Map<ResourceLocation, Resource> jsons = manager.listResources(KEY, r -> r.getPath().endsWith(".json"));
-        jsons.forEach((k, v) -> {
-            ResourceLocation id = TerraEntity.fromSpaceAndPath(k.getNamespace(),
-                    k.getPath().replace(".json", "").replace(KEY + "/", ""));
-            try (Reader reader = v.openAsReader()) {
-                JsonElement element = JsonParser.parseReader(reader);
-                NPCTradeManager.CODEC.parse(ops, element).result().ifPresentOrElse(r -> {
-                    TRADE_MAP.put(id, r);
-                    TAG_MAP.put(id, JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, element));
-                }, () -> {
-                    throw new RuntimeException("Failed to read trade list " + k);
-                });
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchElementException e){
-                throw new RuntimeException("Failed to read trade list " + k, e);
+        private Loader() {
+            super(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create(), KEY);
+        }
+
+        @Override
+        protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+            ImmutableMap.Builder<ResourceLocation, NPCTradeManager> map1 = ImmutableMap.builder();
+            ImmutableMap.Builder<ResourceLocation, Tag> map2 = ImmutableMap.builder();
+
+            DynamicOps<JsonElement> ops = JsonOps.INSTANCE;
+            map.forEach((key, value) -> {
+                var res = NPCTradeManager.CODEC.decode(ops, value);
+                if(res.error().isPresent()) {
+                    TerraEntity.LOGGER.error("Failed to read trade list {} :{}", key, res.error().get().message());
+                } else {
+                    res.result().ifPresent(r -> {
+                        map1.put(key, r.getFirst());
+                        map2.put(key, JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, value));
+                    });
+                }
+            });
+
+            this.tradeMap = map1.build();
+            this.tagMap = map2.build();
+        }
+
+        public void syncFromServer(RegistryAccess registryAccess, Map<ResourceLocation, Tag> map) {
+            ImmutableMap.Builder<ResourceLocation, NPCTradeManager> map1 = ImmutableMap.builder();
+
+            DynamicOps<Tag> ops = NbtOps.INSTANCE;
+            map.forEach((key, value) -> {
+                var res = NPCTradeManager.CODEC.decode(ops, value);
+                if (res.error().isPresent()) {
+                    TerraEntity.LOGGER.error("Failed to sync trade list {} :{}", key, res.error().get().message());
+                } else {
+                    res.result().ifPresent(r->map1.put(key, r.getFirst()));
+                }
+            });
+
+            this.tradeMap = map1.build();
+        }
+
+        public Map<ResourceLocation, NPCTradeManager> getTradeMap() {
+            return tradeMap;
+        }
+
+        public Map<ResourceLocation, Tag> getTagMap() {
+            return tagMap;
+        }
+
+        public static Loader getInstance() {
+            if (INSTANCE == null) {
+                INSTANCE = new Loader();
             }
-        });
+            return INSTANCE;
+        }
     }
 }

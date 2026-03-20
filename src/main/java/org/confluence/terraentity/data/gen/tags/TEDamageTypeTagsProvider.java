@@ -1,10 +1,13 @@
 package org.confluence.terraentity.data.gen.tags;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.DamageTypeTagsProvider;
 import net.minecraft.tags.DamageTypeTags;
 
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.confluence.terraentity.init.TETags;
@@ -21,16 +24,15 @@ public class TEDamageTypeTagsProvider extends DamageTypeTagsProvider {
     }
     @Override
     protected void addTags(HolderLookup.Provider holderLookup) {
-
         tag(DamageTypeTags.BYPASSES_COOLDOWN)
                 .add(TETags.DamageTypes.SUMMONER)
         ;
-
-//        tag(DamageTypeTags.NO_KNOCKBACK).add(
-//                TETags.DamageTypes.SUMMON,
-//                TETags.DamageTypes.SUMMONER,
-//                TETags.DamageTypes.FROST_BURN
-//        );
+        TagKey<DamageType> NO_KNOCKBACK = TagKey.create(Registries.DAMAGE_TYPE,TETags.DamageTypes.NO_KNOCKBACK.location());
+        tag(NO_KNOCKBACK).add(
+                TETags.DamageTypes.SUMMON,
+                TETags.DamageTypes.SUMMONER,
+                TETags.DamageTypes.FROST_BURN
+        );
 
     }
 

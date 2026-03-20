@@ -18,6 +18,7 @@ public class HillHungry extends TheHungry {
 
     public HillHungry(EntityType<? extends Monster> type, Level level, AttributeBuilder builder) {
         super(type, level, builder);
+        this.needLastPos = true;
     }
 
     @Override

@@ -1,20 +1,34 @@
 package org.confluence.terraentity.integration;
 
-import com.google.common.base.Suppliers;
-import net.minecraftforge.fml.ModList;
-
-
-import java.util.function.Supplier;
+import net.minecraftforge.eventbus.api.IEventBus;
 
 public class ModChecker {
+    public static final ModLoadPair confluence = create("confluence");
+    public static final ModLoadPair iris = create("iris");
+    public static final ModLoadPair irons_spellbooks = create("irons_spellbooks");
+    public static final ModLoadPair curios = create("curios");
+    public static final ModLoadPair terraCurio = create("terra_curio");
+    public static final ModLoadPair veil = create("veil");
+    public static final ModLoadPair sodiumdynamiclights = create("sodiumdynamiclights");
+    public static final ModLoadPair sodiumextras = create("sodiumextras");
+    public static final ModLoadPair nyfsspiders = create("nyfsspiders");
 
+    public static void registerEvents(IEventBus modBus) {
+//        if (irons_spellbooks.isLoaded()) {
+//            NeoForge.EVENT_BUS.register(IronSpellEvents.class);
+//        }
+//        if (curios.isLoaded()) {
+//            NeoForge.EVENT_BUS.register(CuriosEvents.class);
+//        }
+//        if (sodiumextras.isLoaded()) {
+//            modBus.addListener(SodiumExtrasEvents::onCommonSetup);
+//        }
+//        if (nyfsspiders.isLoaded()) {
+//            NeoForge.EVENT_BUS.register(NyfsSpidersEvents.class);
+//        }
+    }
 
-    public static Supplier<Boolean> isConfluenceLoaded = Suppliers.memoize(()->ModList.get().isLoaded("confluence"));
-
-    public static Supplier<Boolean> isIrisLoaded = Suppliers.memoize(()-> ModList.get().isLoaded("iris"));
-
-
-
-
-
+    private static ModLoadPair create(String key) {
+        return new ModLoadPair(key);
+    }
 }

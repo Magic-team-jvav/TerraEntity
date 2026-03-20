@@ -10,6 +10,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.confluence.terraentity.entity.npc.house.HouseManager;
 
+// 暂时还只存主世界，后面要存储维度信息
 public class HouseStoreSaver extends SavedData {
 
     public static final String NAME = "house_storage";

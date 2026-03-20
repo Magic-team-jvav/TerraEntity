@@ -30,11 +30,9 @@ import java.util.Random;
  * 血爬虫
  */
 public class BloodCrawler extends Spider implements GeoEntity {
-
     private static final int ATTACK_DAMAGE = 15;
     private static final int MAX_HEALTH = 31;
-    private static final int DEFENSE = 2;
-
+    private static final int ARMOR = 8;
 
     public BloodCrawler(EntityType<? extends Spider> type, Level level) {
         super(type, level);
@@ -46,56 +44,43 @@ public class BloodCrawler extends Spider implements GeoEntity {
         return spawnReason == MobSpawnType.NATURAL; // 无视光照
     }
 
+    @Override
     protected void registerGoals() {
         super.registerGoals();
 
         this.targetSelector.removeAllGoals(a->!(a instanceof HurtByTargetGoal));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class,false));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class,false));
-
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Spider.createMobAttributes()
-            .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)  // 攻击力
-            .add(Attributes.MAX_HEALTH, MAX_HEALTH)        // 生命值
-            .add(Attributes.ARMOR, DEFENSE)                 // 防御值
-            .add(Attributes.MOVEMENT_SPEED, 0.38)          // 移动速度
-            .add(Attributes.FOLLOW_RANGE, 32)             // 跟随距离
-            .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.01)  // 召唤物品的几率
-            .add(Attributes.KNOCKBACK_RESISTANCE, 0.8);     // 击退抗性
-    }
-    public static boolean checkBloodCrawlerSpawn(EntityType<? extends Mob> type, LevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
-        if (!(pLevel instanceof Level level)) {
-            return false; // 如果 pLevel 不是 Level 的实例，返回 false
-        }
-
-        if (!checkMobSpawnRules(type, pLevel, pSpawnType, pPos, pRandom)) {
-            return false; // 如果不满足基本生成规则，返回 false
-        }
-
-        int y = pPos.getY();
-        if (y >= 260) {
-            return false; // 不能生成在 y = 260 或更高的位置
-        }
-
-        return true;
+                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)  // 攻击力
+                .add(Attributes.MAX_HEALTH, MAX_HEALTH)        // 生命值
+                .add(Attributes.ARMOR, ARMOR)                 // 防御值
+                .add(Attributes.MOVEMENT_SPEED, 0.38)          // 移动速度
+                .add(Attributes.FOLLOW_RANGE, 32)             // 跟随距离
+                .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.01)  // 召唤物品的几率
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.8);     // 击退抗性
     }
 
     @Override
     protected SoundEvent getDeathSound() {
         return TESounds.BLOOD_CRAWLER_DEATH.get();
     }
+
     @Override
     protected SoundEvent getAmbientSound() {
         return TESounds.BLOOD_CRAWLER_FREE.get();
     }
+
     @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource pDamageSource) {
         return TESounds.BLOOD_CRAWLER_HURT.get();
     }
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
@@ -107,5 +92,4 @@ public class BloodCrawler extends Spider implements GeoEntity {
         controllers.add(DefaultAnimations.genericWalkIdleController(this));
         controllers.add(DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE));
     }
-
 }

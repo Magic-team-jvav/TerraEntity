@@ -30,11 +30,8 @@ public class NPCNearbyOthersSensor extends Sensor<AbstractTerraNPC> {
     protected void doTick(@NotNull ServerLevel level, @NotNull AbstractTerraNPC entity) {
         List<AbstractTerraNPC> nearbyEntities = this.getNearestEntity(entity, level);
         entity.getBrain().setMemory(TEAi.MemoryModules.NEARBY_NPC.get(), nearbyEntities);
-        if (entity.getMood() != null) {
-            entity.getMood().evaluate(nearbyEntities);
-            entity.syncMood();
-        }
-
+        entity.getMood().evaluate(nearbyEntities);
+        entity.syncMood();
     }
 
     protected List<AbstractTerraNPC> getNearestEntity(AbstractTerraNPC entity, ServerLevel level) {

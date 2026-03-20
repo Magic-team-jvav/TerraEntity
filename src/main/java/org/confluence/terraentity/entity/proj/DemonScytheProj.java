@@ -4,13 +4,22 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.confluence.lib.common.entity.IAxisZRotate;
 
-public class DemonScytheProj extends LineProj {
+public class DemonScytheProj extends LineProj implements IAxisZRotate {
+    public final Rotate rotate = new Rotate();
+
     public DemonScytheProj(EntityType<? extends LineProj> pEntityType, Level pLevel, MobEffectInstance effect) {
         super(pEntityType, pLevel, effect);
-
     }
 
+    @Override
+    public void baseTick() {
+        super.baseTick();
+        if (level().isClientSide) {
+            rotateZ(rotate, getDeltaMovement().lengthSqr(), 0.125F); // 无重力影响
+        }
+    }
 
     @Override
     protected Vec3 warpSpeed(Vec3 speed) {
@@ -22,7 +31,6 @@ public class DemonScytheProj extends LineProj {
         }
         return speed;
     }
-
 
     @Override
     public void onAddedToWorld(){

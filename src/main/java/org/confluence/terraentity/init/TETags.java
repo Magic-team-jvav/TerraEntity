@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
@@ -15,18 +16,27 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import org.confluence.terraentity.TerraEntity;
+import org.confluence.terraentity.integration.curios.CuriosHelper;
 
 public class TETags {
 
     public static class Items {
         public static final TagKey<Item> WHIP_ENCHANTABLE = registerItem("whip_enchantable");
         public static final TagKey<Item> BOOMERANG_ENCHANTABLE = registerItem("boomerang_enchantable");
+        public static final TagKey<Item> CURIOS_MOUNT = registerCuriosItem(CuriosHelper.MOUNT_KEY);
+        public static final TagKey<Item> CURIOS_PET = registerCuriosItem(CuriosHelper.PET_KEY);
+        public static final TagKey<Item> CURIOS_LIGHT_PET = registerCuriosItem(CuriosHelper.LIGHT_PET_KEY);
 
         public static final TagKey<Item> WEAPONS = TagKey.create(Registries.ITEM, TerraEntity.fromSpaceAndPath("c", "weapons"));
     }
 
     public static class Blocks {
         public static final TagKey<Block> HONEY = registerBlock("honey");
+        public static final TagKey<Block> NPC_HOUSE_CONSTITUTE = registerBlock("house_constitute");
+        public static final TagKey<Block> NPC_HOUSE_CHAIR = registerBlock("house_chair");
+        public static final TagKey<Block> NPC_HOUSE_TABLE = registerBlock("house_table");
+
+
     }
 
     public static class EntityTypes {
@@ -53,9 +63,9 @@ public class TETags {
         public static final ResourceKey<DamageType> SUMMONER = registerDamageType("summoner");
         public static final ResourceKey<DamageType> FROST_BURN = registerDamageType("frost_burn");
         public static final ResourceKey<DamageType> PASS_ARMOR = registerDamageType("pass_armor");
+        public static final ResourceKey<DamageType> NO_KNOCKBACK = registerDamageType("no_knockback");
 
-
-
+        public static final TagKey<DamageType> NO_KNOCKBACK_DAMAGE_TYPE = TagKey.create(Registries.DAMAGE_TYPE, DamageTypes.NO_KNOCKBACK.location());
         public static DamageSource of(Level level, ResourceKey<DamageType> key) {
             return of(level, key, null, null);
         }
@@ -73,11 +83,16 @@ public class TETags {
             context.register(SUMMONER, new DamageType("summoner_damage_type", 0.1F));
             context.register(FROST_BURN, new DamageType("frost_burn_damage_type", 0.1F));
             context.register(PASS_ARMOR, new DamageType("pass_armor_damage_type", 0.1F));
+            context.register(NO_KNOCKBACK, new DamageType("no_knockback_damage_type", 0.1F));
+
         }
     }
 
     private static TagKey<Item> registerItem(String id) {
         return ItemTags.create(TerraEntity.space(id));
+    }
+    private static TagKey<Item> registerCuriosItem(String id) {
+        return ItemTags.create(TerraEntity.fromSpaceAndPath("curios", id));
     }
     private static TagKey<Block> registerBlock(String id) {
         return BlockTags.create(TerraEntity.space(id));

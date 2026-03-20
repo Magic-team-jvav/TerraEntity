@@ -49,7 +49,7 @@ public final class TEJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
 
-        NPCTradeManager.getTradeMap().forEach((npc, manager)->{
+        NPCTradeManager.Loader.getInstance().getTradeMap().forEach((npc, manager)->{
             List<ITrade> trades = manager.getRawTrades().getAllSupportedTrades();
 //            if(ConfluenceMagicLib.isConfluenceLoaded()){
 //                // 汇流加载时，替换掉配方

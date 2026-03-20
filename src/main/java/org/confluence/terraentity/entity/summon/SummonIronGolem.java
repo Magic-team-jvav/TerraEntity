@@ -16,13 +16,19 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.entity.PartEntity;
+import org.confluence.terraentity.api.entity.IPartEntityTargetable;
 import org.confluence.terraentity.api.entity.ISummonMob;
 import org.confluence.terraentity.entity.ai.goal.summon.SummonMeleeAttackGoal;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class SummonIronGolem extends IronGolem implements ISummonMob {
+public class SummonIronGolem extends IronGolem implements ISummonMob , IPartEntityTargetable {
+
+    @Nullable
+    private Entity actualTargetEntity;
 
     static AttributeModifier moveSpeedModify = new AttributeModifier(UUID.fromString("452f475f-5b04-41a8-8ba4-deb6279659c5"),"speed_enhance",0.2, AttributeModifier.Operation.MULTIPLY_BASE ) ;
     public SummonIronGolem(EntityType<? extends IronGolem> entityType, Level level) {
@@ -115,6 +121,11 @@ public class SummonIronGolem extends IronGolem implements ISummonMob {
         summon_onRemovedFromLevel();
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        cleanupInvalidActualTarget();
+    }
 
     @Override
     public boolean canAttack(LivingEntity target) {
@@ -137,4 +148,27 @@ public class SummonIronGolem extends IronGolem implements ISummonMob {
         return false;
     }
 
+    @Override
+    @Nullable
+    public Entity getActualTargetEntity() {
+        return actualTargetEntity;
+    }
+
+
+    @Override
+    public void setActualTargetEntity(@Nullable Entity entity) {
+        this.actualTargetEntity = entity;
+    }
+
+    @Override
+    public boolean canAttackTarget(Entity target) {
+        LivingEntity entity = null;
+        if(target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity parent){
+            entity = parent;
+        }else if(target instanceof LivingEntity living) {
+            entity = living;
+        }
+
+        return entity != null && this.canAttack(entity);
+    }
 }

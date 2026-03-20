@@ -56,6 +56,8 @@ public final class ModRenderTypes {
                         dissolveBlitShader = shader;
                     }
             );
+
+
             event.registerShader(new ShaderInstance(resourceProvider,
                             TerraEntity.space("pixel_style_dissolve"),
                             DefaultVertexFormat.POSITION_TEX),
@@ -88,6 +90,10 @@ public final class ModRenderTypes {
     public static ShaderInstance getDissolveBlitShader() {
         return Shaders.dissolveBlitShader;
     }
+
+
+
+
 
     public static ShaderInstance getPixelStyleShader() {
         return Shaders.pixelStyleShader;

@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class DemonEye extends Monster implements Enemy, VariantHolder<DemonEyeVariant>, GeoEntity, DeathAnimOptions, IMinion {
+    public static final String VARIANT_KEY = "Variant";
     private static final EntityDataAccessor<Integer> DATA_VARIANT_ID = SynchedEntityData.defineId(DemonEye.class, EntityDataSerializers.INT);
     private final AnimatableInstanceCache CACHE = GeckoLibUtil.createInstanceCache(this);
     public Vec3 moveTargetPoint;
@@ -87,14 +88,14 @@ public class DemonEye extends Monster implements Enemy, VariantHolder<DemonEyeVa
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.putInt("Variant", this.getVariant().id);
+        pCompound.putInt(VARIANT_KEY, this.getVariant().id);
         minion_saveData(pCompound);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        this.setVariant(DemonEyeVariant.byId(pCompound.getInt("Variant")));
+        this.setVariant(DemonEyeVariant.byId(pCompound.getInt(VARIANT_KEY)));
         minion_readData(pCompound);
     }
 
@@ -166,7 +167,7 @@ public class DemonEye extends Monster implements Enemy, VariantHolder<DemonEyeVa
     @Override
     public void knockback(double pStrength, double pX, double pZ) {
         // TODO: 调数值
-        super.knockback(pStrength * 2, pX, pZ);
+        super.knockback(pStrength * (getVariant().big ? 1.5 : 2), pX, pZ);
     }
 
     @Override
@@ -198,7 +199,7 @@ public class DemonEye extends Monster implements Enemy, VariantHolder<DemonEyeVa
     /* Minion API */
 
     protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID = SynchedEntityData.defineId(DemonEye.class, EntityDataSerializers.OPTIONAL_UUID);
-
+    ;
 
 
     @Override
@@ -206,8 +207,8 @@ public class DemonEye extends Monster implements Enemy, VariantHolder<DemonEyeVa
         return DATA_OWNER_UUID;
     }
 
-    public void minion_setOwner(Entity owner){
-        if(owner instanceof EyeOfCthulhu eye) {
+    public void minion_setOwner(Entity owner) {
+        if (owner instanceof EyeOfCthulhu eye) {
             minion_setOwnerUUID(owner.getUUID());
             this.owner = eye;
         }

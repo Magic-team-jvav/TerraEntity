@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.entity.PartEntity;
 import org.confluence.terraentity.entity.ai.goal.FlyRangeAttackGoal;
 import org.confluence.terraentity.entity.proj.BaseProj;
 
@@ -91,10 +93,18 @@ public class FlyRangeAttackSummonMob<P extends BaseProj<?>> extends AbstractSumm
             proj.setOwner(this);
             proj.setPos(this.position());
             proj.setDamage((float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
-            double x = target.getX() - this.getX();
-            double y = target.getY() + target.getEyeHeight() * 0.5f - this.getY();
-            double z = target.getZ() - this.getZ();
-            proj.shoot(x,y,z, 1, v);
+
+            // 检查是否有 PartEntity 实际目标，如果有则使用 PartEntity 的位置
+            Entity attackTarget = target;
+            var actualTarget = this.getActualTargetEntity();
+            if (actualTarget instanceof PartEntity<?>) {
+                attackTarget = actualTarget;
+            }
+
+            double x = attackTarget.getX() - this.getX();
+            double y = attackTarget.getY() + (attackTarget instanceof LivingEntity living ? living.getEyeHeight() * 0.5f : attackTarget.getBbHeight() * 0.5f) - this.getY();
+            double z = attackTarget.getZ() - this.getZ();
+            proj.shoot(x,y,z, 1F, v);
             level().addFreshEntity(proj);
         }
     }

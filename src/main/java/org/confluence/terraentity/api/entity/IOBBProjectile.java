@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 
 /**
  * 以玩家为中心的OBB弹幕碰撞器
+ * @param <T>
  */
 public interface IOBBProjectile extends ICollisionAttackEntity, IOriented {
 

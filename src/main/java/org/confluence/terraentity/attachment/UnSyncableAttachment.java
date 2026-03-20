@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.confluence.terraentity.entity.boss.hillofflesh.HillOfFlesh;
+import org.confluence.terraentity.item.DebugItem;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class UnSyncableAttachment implements INBTSerializable<CompoundTag> {
@@ -14,6 +15,7 @@ public class UnSyncableAttachment implements INBTSerializable<CompoundTag> {
      * 防止在风暴中走不出来
      */
     int invulnerableStormTime = 20;
+    DebugItem.DebugMode debugMode = DebugItem.DebugMode.BT_WEB_VIEWER;
 
 
     public void setFightingHillOfFlesh(HillOfFlesh fightingHillOfFlesh) {
@@ -41,6 +43,13 @@ public class UnSyncableAttachment implements INBTSerializable<CompoundTag> {
         return invulnerableStormTime > 0;
     }
 
+    public DebugItem.DebugMode getDebugMode() {
+        return this.debugMode;
+    }
+
+    public void setDebugMode(DebugItem.DebugMode debugMode) {
+        this.debugMode = debugMode;
+    }
 
 
     @Override

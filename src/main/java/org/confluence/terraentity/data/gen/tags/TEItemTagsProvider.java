@@ -8,8 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.confluence.terraentity.init.TETags;
-import org.confluence.terraentity.init.item.TEBoomerangItems;
-import org.confluence.terraentity.init.item.TEWhipItems;
+import org.confluence.terraentity.init.item.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,15 +23,33 @@ public class TEItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-//        TEBoomerangItems.ITEMS.getEntries().forEach(item -> {
-//            tag(ItemTags..DURABILITY_ENCHANTABLE).add(item.get());
-//            tag(TETags.Items.BOOMERANG_ENCHANTABLE).add(item.get());
-//        });
-//        TEWhipItems.ITEMS.getEntries().forEach(item -> {
+        TEBoomerangItems.ITEMS.getEntries().forEach(item -> {
 //            tag(ItemTags.DURABILITY_ENCHANTABLE).add(item.get());
-//            tag(TETags.Items.WHIP_ENCHANTABLE).add(item.get());
-//        });
-
-
+            tag(TETags.Items.BOOMERANG_ENCHANTABLE).add(item.get());
+        });
+        TEWhipItems.ITEMS.getEntries().forEach(item -> {
+//            tag(ItemTags.dur).add(item.get());
+            tag(TETags.Items.WHIP_ENCHANTABLE).add(item.get());
+//            tag(Tags.Items.).add(item.get()); // 鞭子属于近战武器
+        });
+        TESummonItems.ITEMS.getEntries().forEach(item ->{
+            tag(TETags.Items.WEAPONS);
+        });
+        TERideableItems.ITEMS.getEntries().forEach(item ->{
+            tag(TETags.Items.CURIOS_MOUNT).add(item.get());
+        });
+        TEPetItems.ITEMS.getEntries().forEach(item ->{
+            tag(TETags.Items.CURIOS_PET).add(item.get());
+        });
+//        tag(LibTags.Items.WIP).add(
+//                TEArmors.POSSESSED_ARMOR.helmet.get(),
+//                TEArmors.POSSESSED_ARMOR.chestplate.get(),
+//                TEArmors.POSSESSED_ARMOR.leggings.get(),
+//                TEArmors.POSSESSED_ARMOR.boots.get(),
+//                TEArmors.WRAITH_ARMOR.helmet.get(),
+//                TEArmors.WRAITH_ARMOR.chestplate.get(),
+//                TEArmors.WRAITH_ARMOR.leggings.get(),
+//                TEArmors.WRAITH_ARMOR.boots.get()
+//        );
     }
 }

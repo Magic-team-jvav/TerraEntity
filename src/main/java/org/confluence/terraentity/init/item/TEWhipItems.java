@@ -9,6 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.data.component.EffectStrategyComponent;
 import org.confluence.terraentity.init.TEDataComponentTypes;
+import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.init.TEParticles;
 import org.confluence.terraentity.item.BaseWhipItem;
 import org.confluence.terraentity.registries.hit_effect.variant.TimePossibilityAmplifierEffect;
@@ -56,6 +57,19 @@ public class TEWhipItems {
             .setParticle(TEParticles.LEAVES, 0.01f)
             .component(TEDataComponentTypes.EFFECT_STRATEGY, EffectStrategyComponent.of(
                     new TimePossibilityAmplifierEffect("mud", ()->MobEffects.MOVEMENT_SLOWDOWN, 40,0,0,1)
+            )));
+    public static final RegistryObject<BaseWhipItem> SNAPTHORN = registerWhip("snapthorn", 18f, 3, 0.7f, 15,1.85f, p->p
+            .setDurability(3600)
+            .component(TEDataComponentTypes.EFFECT_STRATEGY, EffectStrategyComponent.of(
+                    new TimePossibilityAmplifierEffect("snapthorn", ()->MobEffects.POISON, 60,1,1,2)
+                    // 丛林之怒效果，增加攻速
+            )));
+    public static final RegistryObject<BaseWhipItem> SPINAL_TAP = registerWhip("spinal_tap", 29f, 4, 0.8f, 13,1.6f, p->p  // 11
+            .setDurability(3600));
+    public static final RegistryObject<BaseWhipItem> FIRECRACKER = registerWhip("firecracker", 37f, 0, 0.5f, 15,1.85f, p->p  // 16 0.1=2格距离，生存为准，需要多加俩格
+            .setDurability(3600)
+            .component(TEDataComponentTypes.EFFECT_STRATEGY, EffectStrategyComponent.of(
+                    new TimePossibilityAmplifierEffect("firecracker", TEEffects.HELLFIRE, 40,0,0,1)
             )));
 
     public static RegistryObject<BaseWhipItem> registerWhip(String name,float damage,float markDamage, float attackSpeed,int cooldown,float range, Function<BaseWhipItem.WhipProperties, Item.Properties> whipFactory){

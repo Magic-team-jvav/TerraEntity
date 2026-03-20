@@ -38,4 +38,6 @@ public class NPCAttackTriggerBrain<T extends AbstractTerraNPC> extends AttackTri
         float r = living.getAttackRange() + 5;// +5额外侦测距离
         return r * r;
     }
+
+
 }

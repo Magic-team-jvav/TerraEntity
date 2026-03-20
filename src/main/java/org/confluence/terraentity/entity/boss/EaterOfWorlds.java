@@ -17,7 +17,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.confluence.terraentity.api.entity.Boss;
+import org.confluence.lib.api.entity.Boss;
 import org.confluence.terraentity.api.entity.IHeightControlMob;
 import org.confluence.terraentity.config.ServerConfig;
 import org.confluence.terraentity.data.mappeddata.BossSkillMapDatas;
@@ -52,7 +52,7 @@ public class EaterOfWorlds extends AbstractTerraBossBase implements Boss, IHeigh
     boolean ifBaseHead = false;
     boolean truthDie = false;
     int genTick = 10;//生成体节延迟
-    boolean shouldMove = true;
+    boolean shouldMove = false;
     float moveSpeed;
     float turnSpeed;
     Vec3 targetPos = new Vec3(0, 0, 0);
@@ -133,7 +133,7 @@ public class EaterOfWorlds extends AbstractTerraBossBase implements Boss, IHeigh
         ).apply(instance, SkillParams::new));
 
         public static SkillParams getDefaultParams(){
-            return new SkillParams(60,5,3,0.6f,10,2.8f,
+            return new SkillParams(60,5,2,0.5f,10,2.8f,
                     30, 200);
         }
     }
@@ -188,8 +188,8 @@ public class EaterOfWorlds extends AbstractTerraBossBase implements Boss, IHeigh
                 (AbstractTerraBossBase)->{
                     isDashing = true;
 
-                    if(this.isFtw()) moveSpeed = moveSpeedBase * 2f; // ftw 神吞的冲刺加速
-                    else moveSpeed = moveSpeedBase * 1.5f;
+                    if(this.isFtw()) moveSpeed = moveSpeedBase * 1.5f; // ftw 神吞的冲刺加速
+                    else moveSpeed = moveSpeedBase * 1.1f;
 
                     turnSpeed = 5F;
                     shouldMove = true;

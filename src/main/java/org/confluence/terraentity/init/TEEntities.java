@@ -10,36 +10,33 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.init.entity.*;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.stream.Stream;
 
 public final class TEEntities {
-
-    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, TerraEntity.MODID);
-
-    public static String Key(String key){
+    public static String Key(String key) {
         return TerraEntity.MODID + ":" + key;
     }
 
-    public static <T extends Mob> RegistryObject<EntityType<T>> registerMonster(String name, EntityType.EntityFactory<T> entityFactory, float width, float height){
-        return registerEntity(name, entityFactory, MobCategory.MONSTER, width, height);
+    public static <T extends Mob> RegistryObject<EntityType<T>> registerMonster(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, float width, float height) {
+        return registerEntity(register, name, entityFactory, MobCategory.MONSTER, width, height);
     }
 
-    public static <T extends Mob> RegistryObject<EntityType<T>> registerCreature(String name, EntityType.EntityFactory<T> entityFactory, float width, float height){
-        return registerEntity(name, entityFactory, MobCategory.CREATURE, width, height);
+    public static <T extends Mob> RegistryObject<EntityType<T>> registerCreature(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, float width, float height) {
+        return registerEntity(register, name, entityFactory, MobCategory.CREATURE, width, height);
     }
 
-    public static <T extends Mob> RegistryObject<EntityType<T>> registerEntity(String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height){
-        return ENTITIES.register(name, () -> EntityType.Builder.of(entityFactory, category).sized(width, height).clientTrackingRange(10).build(Key(name)));
+    public static <T extends Mob> RegistryObject<EntityType<T>> registerEntity(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height) {
+        return register.register(name, () -> EntityType.Builder.of(entityFactory, category).sized(width, height).clientTrackingRange(10).build(Key(name)));
     }
-
 
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-
         TEMonsterEntities.registerRenderers(event);
         TEBossEntities.registerRenderers(event);
         TEProjectileEntities.registerRenderers(event);
@@ -47,7 +44,6 @@ public final class TEEntities {
         TERideableEntities.registerRenderers(event);
         TENpcEntities.registerRenderers(event);
         TEAnimals.registerRenderers(event);
-
     }
 
     public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
@@ -57,7 +53,6 @@ public final class TEEntities {
         TESummonEntities.registerEntityAttributes(event);
         TENpcEntities.registerEntityAttributes(event);
         TEAnimals.registerEntityAttributes(event);
-
     }
 
     public static void spawnPlacementRegister(SpawnPlacementRegisterEvent event) {
@@ -67,13 +62,31 @@ public final class TEEntities {
     }
 
     public static void register(IEventBus bus){
-        TEBossEntities.register();
-        TESummonEntities.register();
-        TERideableEntities.register();
-        TEMonsterEntities.register();
-        TEProjectileEntities.register();
-        TENpcEntities.register();
-        TEAnimals.register();
-        ENTITIES.register(bus);
+        TEBossEntities.register(bus);
+        TESummonEntities.register(bus);
+        TERideableEntities.register(bus);
+        TEMonsterEntities.register(bus);
+        TEProjectileEntities.register(bus);
+        TENpcEntities.register(bus);
+        TEAnimals.register(bus);
+    }
+
+    public static @NotNull Stream<DeferredRegister<EntityType<?>>> getEntities() {
+        return Stream.of(
+                TEAnimals.ENTITIES,
+                TEBossEntities.ENTITIES,
+                TEMonsterEntities.ENTITIES,
+                TENpcEntities.ENTITIES,
+                TEProjectileEntities.ENTITIES,
+                TERideableEntities.ENTITIES,
+                TESummonEntities.ENTITIES
+        );
+    }
+
+    public static Stream<RegistryObject<EntityType<?>>> getEntitiesStream() {
+        return TEEntities.getEntities()
+                .map(DeferredRegister::getEntries)
+                .flatMap(Collection::stream)
+                ;
     }
 }

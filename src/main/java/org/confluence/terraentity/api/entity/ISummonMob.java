@@ -29,10 +29,7 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraftforge.fml.ModLoader;
 import org.confluence.terraentity.api.event.SummonEvent;
-import org.confluence.terraentity.entity.ai.goal.summon.SummonFollowOwnerGoal;
-import org.confluence.terraentity.entity.ai.goal.summon.SummonOwnerHurtByTargetGoal;
-import org.confluence.terraentity.entity.ai.goal.summon.SummonOwnerHurtTargetGoal;
-import org.confluence.terraentity.entity.ai.goal.summon.SummonPriorAttackGoal;
+import org.confluence.terraentity.entity.ai.goal.summon.*;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.init.TETags;
 import org.confluence.terraentity.item.SummonItem;
@@ -142,7 +139,7 @@ public interface ISummonMob extends OwnableEntity {
      * 当距离平方超过这个数时，会尝试传送到owner附近
      */
     default float summon_getDistanceToTeleportToOwner() {
-        return 16 * 16;
+        return 20 * 20;
     }
 
     /**
@@ -235,7 +232,7 @@ public interface ISummonMob extends OwnableEntity {
             float f1 = summon_getKnockback(entity, damagesource);
             if (f1 > 0.0F && entity instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity)entity;
-                livingentity.knockback(f1 * 0.5F, Mth.sin(asEntity().getYRot() * 0.017453292F), -Mth.cos(asEntity().getYRot() * 0.017453292F));
+//                livingentity.knockback(f1 * 0.5F, Mth.sin(asEntity().getYRot() * 0.017453292F), -Mth.cos(asEntity().getYRot() * 0.017453292F));
                 asEntity().setDeltaMovement(asEntity().getDeltaMovement().multiply(0.6, 1.0, 0.6));
             }
 
@@ -277,6 +274,7 @@ public interface ISummonMob extends OwnableEntity {
         asEntity().targetSelector.addGoal(1, new SummonPriorAttackGoal<>(asEntity(), false));
         asEntity().targetSelector.addGoal(2, new SummonOwnerHurtByTargetGoal(asEntity()));
         asEntity().targetSelector.addGoal(3, new SummonOwnerHurtTargetGoal(asEntity()));
+        asEntity().targetSelector.addGoal(4, new SummonAttackPartEntityGoal(asEntity()));
         asEntity().targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(asEntity(), Monster.class, 10, true, true, living -> (living instanceof Enemy && !(living instanceof NeutralMob))));
         asEntity().targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(asEntity(), Slime.class, 10, true, true, living -> (living instanceof Enemy && !(living instanceof NeutralMob))));
     }

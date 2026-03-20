@@ -1,6 +1,8 @@
 package org.confluence.terraentity.init.entity;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -9,82 +11,60 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.renderer.mob.NPCRenderer;
 import org.confluence.terraentity.entity.npc.*;
 import org.confluence.terraentity.init.TEEntities;
 
 public class TENpcEntities {
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, TerraEntity.MODID);
 
-    /**
-     * 向导
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> GUIDE = TEEntities.registerEntity("guide", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 爆破专家
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> DEMOLITIONIST = TEEntities.registerEntity("demolitionist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 哥布林
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> GOBLIN_TINKERER = TEEntities.registerEntity("goblin_tinkerer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 武器商
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> ARMS_DEALER = TEEntities.registerEntity("arms_dealer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 护士
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> NURSE = TEEntities.registerEntity("nurse", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 商人
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> MERCHANT = TEEntities.registerEntity("merchant", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 油漆工
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> PAINTER = TEEntities.registerEntity("painter", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 渔夫
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> ANGLER = TEEntities.registerEntity("angler", AnglerNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> FEMALE_ANGLER = TEEntities.registerEntity("female_angler", AnglerNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 树妖
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> DRYAD = TEEntities.registerEntity("dryad", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 染料商
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> DYE_TRADER = TEEntities.registerEntity("dye_trader", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 老人
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> OLD_MAN = TEEntities.registerEntity("old_man", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 机械师
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> MECHANIC = TEEntities.registerEntity("mechanic", MechanicNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 旅商
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> TRAVELING_MERCHANT = TEEntities.registerEntity("traveling_merchant", TravelingMerchantNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 巫医
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> WITCH_DOCTOR = TEEntities.registerEntity("witch_doctor", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 派对女孩
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> PARTY_GIRL = TEEntities.registerEntity("party_girl", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 服装商
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> CLOTHIER = TEEntities.registerEntity("clothier", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
-    /**
-     * 松露人
-     */
-    public static final RegistryObject<EntityType<AbstractTerraNPC>> TRUFFLE = TEEntities.registerEntity("truffle", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 向导
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> GUIDE = register("guide", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 爆破专家
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> DEMOLITIONIST = register("demolitionist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 哥布林
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> GOBLIN_TINKERER = register("goblin_tinkerer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 武器商
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> ARMS_DEALER = register("arms_dealer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 护士
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> NURSE = register("nurse", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 商人
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> MERCHANT = register("merchant", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 油漆工
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> PAINTER = register("painter", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 渔夫
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> ANGLER = register("angler", AnglerNPC::new, MobCategory.CREATURE, 0.6f, 1.65f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> FEMALE_ANGLER = register("female_angler", AnglerNPC::new, MobCategory.CREATURE, 0.45f, 1.45F);
+    /// 树妖
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> DRYAD = register("dryad", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 染料商
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> DYE_TRADER = register("dye_trader", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 老人
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> OLD_MAN = register("old_man", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 机械师
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> MECHANIC = register("mechanic", MechanicNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 旅商
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> TRAVELING_MERCHANT = register("traveling_merchant", TravelingMerchantNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 巫医
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> WITCH_DOCTOR = register("witch_doctor", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 派对女孩
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> PARTY_GIRL = register("party_girl", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 服装商
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> CLOTHIER = register("clothier", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 动物学家
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> ZOOLOGIST = register("zoologist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 松露人
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> TRUFFLE = register("truffle", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    /// 巫师
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> WIZARD = register("wizard", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+
+    private static <T extends Mob> RegistryObject<EntityType<T>> register(String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height) {
+        return TEEntities.registerEntity(ENTITIES, name, entityFactory, category, width, height);
+    }
 
     @OnlyIn(Dist.CLIENT)
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -105,8 +85,10 @@ public class TENpcEntities {
         event.registerEntityRenderer(TRAVELING_MERCHANT.get(), c -> new NPCRenderer<>(c, TRAVELING_MERCHANT.getId()));
         event.registerEntityRenderer(WITCH_DOCTOR.get(), c -> new NPCRenderer<>(c, WITCH_DOCTOR.getId()));
         event.registerEntityRenderer(PARTY_GIRL.get(), c -> new NPCRenderer<>(c, PARTY_GIRL.getId()));
-        event.registerEntityRenderer(CLOTHIER.get(), c -> new NPCRenderer<>(c, OLD_MAN.getId()));
+        event.registerEntityRenderer(CLOTHIER.get(), c -> new NPCRenderer<>(c, CLOTHIER.getId()));
         event.registerEntityRenderer(TRUFFLE.get(), c -> new NPCRenderer<>(c, TRUFFLE.getId()));
+        event.registerEntityRenderer(ZOOLOGIST.get(), c -> new NPCRenderer<>(c, ZOOLOGIST.getId()));
+        event.registerEntityRenderer(WIZARD.get(), c -> new NPCRenderer<>(c, WIZARD.getId()));
     }
 
     public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
@@ -128,6 +110,8 @@ public class TENpcEntities {
         event.put(PARTY_GIRL.get(), AbstractTerraNPC.createAttributes().build());
         event.put(CLOTHIER.get(), AbstractTerraNPC.createAttributes().build());
         event.put(TRUFFLE.get(), AbstractTerraNPC.createAttributes().build());
+        event.put(ZOOLOGIST.get(), AbstractTerraNPC.createAttributes().build());
+        event.put(WIZARD.get(), AbstractTerraNPC.createAttributes().build());
     }
 
     public static void spawnPlacementRegister(SpawnPlacementRegisterEvent event) {
@@ -149,9 +133,10 @@ public class TENpcEntities {
         event.register(PARTY_GIRL.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineNPCSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(CLOTHIER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineNPCSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
         event.register(TRUFFLE.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineNPCSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
+        event.register(ZOOLOGIST.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineNPCSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 
-    public static void register() {
-
+    public static void register(IEventBus bus) {
+        ENTITIES.register(bus);
     }
 }

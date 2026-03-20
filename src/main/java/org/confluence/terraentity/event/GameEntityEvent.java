@@ -10,8 +10,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -21,10 +21,10 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.confluence.lib.api.entity.IDiscardWhenRespawnEntity;
 import org.confluence.terraentity.config.ServerConfig;
 import org.confluence.terraentity.config.TEAttributeModifierConfig;
-import org.confluence.terraentity.api.entity.Boss;
-import org.confluence.terraentity.data.mappeddata.MonsterMappedDatas;
+import org.confluence.lib.api.entity.Boss;
 import org.confluence.terraentity.entity.monster.AbstractMonster;
 import org.confluence.terraentity.entity.monster.demoneye.DemonEye;
 import org.confluence.terraentity.entity.monster.demoneye.DemonEyeVariant;
@@ -33,10 +33,11 @@ import org.confluence.terraentity.entity.monster.slime.BaseSlime;
 import org.confluence.terraentity.entity.monster.slime.BlackSlime;
 import org.confluence.terraentity.api.npc.trade.ITradeHolder;
 import org.confluence.terraentity.api.entity.ISummonMob;
+import org.confluence.terraentity.entity.npc.AbstractTerraNPC;
 import org.confluence.terraentity.init.*;
 import org.confluence.terraentity.init.entity.TEMonsterEntities;
 import org.confluence.terraentity.mixed.IPlayer;
-import org.confluence.terraentity.registries.mappeddata.MappedDataTypes;
+import org.confluence.terraentity.mixed.IZombie;
 import org.confluence.terraentity.utils.TEUtils;
 
 import static org.confluence.terraentity.TerraEntity.MODID;
@@ -46,14 +47,15 @@ public class GameEntityEvent {
     @SubscribeEvent
     public static void entityJoinLevel(EntityJoinLevelEvent event) {
         // 生成信息
-        Boss.sendBossSpawnMessage(event.getEntity());
+        Entity entity = event.getEntity();
+        Boss.sendBossSpawnMessage(entity);
 //        if(event.getEntity() instanceof ServerPlayer player){
 //            player.addItem(new ItemStack(TERiddenItems.HONEYED_GOGGLES.get()));
 //        }
 
         Level level = event.getLevel();
 
-        if (!level.isClientSide && event.getEntity() instanceof Zombie zombie && !zombie.isBaby() && !zombie.isVehicle() && zombie.getRandom().nextFloat() < ServerConfig.CHANCE_TO_SPAWN_SLIME_ON_ZOMBIE_HEAD.get()) {
+        if (!level.isClientSide && entity instanceof Zombie zombie && !zombie.isBaby() && !zombie.isVehicle() && zombie.getRandom().nextFloat() < ServerConfig.CHANCE_TO_SPAWN_SLIME_ON_ZOMBIE_HEAD.get()) {
             BaseSlime slime = (zombie instanceof ZombifiedPiglin ? TEMonsterEntities.LAVA_SLIME.get() : TEMonsterEntities.BLUE_SLIME.get()).create(level);
             if (slime != null) {
                 double position = zombie.getMyRidingOffset();
@@ -61,13 +63,18 @@ public class GameEntityEvent {
 //                slime.finalizeSpawn(level, event.getDifficulty(), MobSpawnType.JOCKEY, null);
                 level.addFreshEntity(slime);
                 slime.startRiding(zombie);
+                IZombie.of(zombie).terra_entity$setSlimeZombie();
             }
+        }
+
+        if (!level.isClientSide && entity instanceof AbstractTerraNPC npc && npc.getSpawnAtPos() == null) {
+            npc.setSpawnAtPos(entity.blockPosition());
         }
     }
 
     @SubscribeEvent
-    public static void entityLeaveLevelEvent (EntityLeaveLevelEvent event) {
-        if(event.getEntity() instanceof ServerPlayer player){
+    public static void entityLeaveLevelEvent(EntityLeaveLevelEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
             // 清除召唤物
             player.getCapability(TEAttachments.SUMMONER_STORAGE).resolve().ifPresent(data->data.clear(player));
         }
@@ -75,15 +82,11 @@ public class GameEntityEvent {
 
     @SubscribeEvent
     public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if(event.getEntity() instanceof ServerPlayer player) {
+        if (event.getEntity() instanceof ServerPlayer player) {
             // 同步召唤栏信息
             player.getCapability(TEAttachments.SUMMONER_STORAGE).resolve().ifPresent(data->data.sync(player));
 
-            if(player.level().getEntities(player, player.getBoundingBox().inflate(32), e-> e instanceof Player && e!= player).isEmpty()){
-                player.level().getEntities(player, player.getBoundingBox().inflate(32), e->e instanceof Boss).forEach(e->{
-                    e.discard();
-                });
-            }
+            IDiscardWhenRespawnEntity.process(player);
 
         }
     }
@@ -95,10 +98,9 @@ public class GameEntityEvent {
             player.getCapability(TEAttachments.SUMMONER_STORAGE).resolve().ifPresent(data->data.clear(player));
         }
     }
-static int count = 0;
+
     @SubscribeEvent
     public static void livingDamageEntity(LivingDamageEvent event) {
-        System.out.println(count++);
         // LivingEntity e = (LivingEntity) event.getSource().getEntity();
         // Caused by: java.lang.ClassCastException: class net.minecraft.world.entity.projectile.Arrow cannot be cast to class net.minecraft.world.entity.LivingEntity
         LivingEntity e1 = event.getEntity();
@@ -209,9 +211,9 @@ static int count = 0;
 //        data.accept(mob);
     }
 
+
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)  {
-
-
+//        SyncLevelNamePacketS2C.sendToClient((ServerPlayer) event.getEntity());
     }
 }

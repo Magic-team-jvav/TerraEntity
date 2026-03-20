@@ -18,7 +18,7 @@ import java.util.Optional;
  * @param to 结束时间
  * @param reverse 是否翻转,默认为false,即时间区间内可以交易
  */
-public record TimeLock(int from, int to, boolean reverse) implements ITradeLock  {
+public record TimeLock(int from, int to, boolean reverse) implements ITradeLock {
 
     public static final MapCodec<TimeLock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.INT.fieldOf("from").forGetter(TimeLock::from),
@@ -29,10 +29,10 @@ public record TimeLock(int from, int to, boolean reverse) implements ITradeLock 
     @Override
     public boolean canTrade(Player player, ITradeHolder npc, int index) {
         int dayTime = (int) (npc.level().dayTime() % 24000);
-        if(reverse){
-            return dayTime < from || dayTime > to;
+        if (from > to) { // 从前一天晚上到第二天凌晨会从23999跳到0
+            return (dayTime >= from || dayTime <= to) != reverse;
         }
-        return dayTime >= from && dayTime < to ;
+        return (dayTime >= from && dayTime <= to) != reverse;
     }
 
     @Override

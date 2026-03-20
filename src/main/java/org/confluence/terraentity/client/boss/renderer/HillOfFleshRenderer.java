@@ -61,7 +61,7 @@ public class HillOfFleshRenderer extends GeoNormalRenderer<HillOfFlesh> {
 
             height = Mth.lerp(progress * 2, 1, 20);
         }else{
-            radius = animatable.getOutRadium();
+            radius = animatable.getOutRadius();
             height = Mth.lerp(progress * 2 - 1, 20, height);
         }
 
@@ -226,7 +226,7 @@ public class HillOfFleshRenderer extends GeoNormalRenderer<HillOfFlesh> {
             poseStack.pushPose();
             RenderUtils.translateMatrixToBone(poseStack, bone);
             RenderUtils.translateToPivotPoint(poseStack, bone);
-//            RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+//            RenderUtils.rotateMatrixAroundBone(poseStack, bone);
             RenderUtils.scaleMatrixForBone(poseStack, bone);
 
             float scale = (float) Math.sqrt(1 / animatable.currentScale); // 奇怪的缩放
@@ -263,7 +263,7 @@ public class HillOfFleshRenderer extends GeoNormalRenderer<HillOfFlesh> {
         if(animatable.deathTime > 0){
             poseStack.translate(0, part.getDeathOffsetY(partialTick),0);
         }
-
+        // TODO 神奇！没有任何调整，眼睛就会自动看向目标
         LivingEntity target = part.target;
         if(target != null && animatable.deathTime <= 0){
 
@@ -278,16 +278,16 @@ public class HillOfFleshRenderer extends GeoNormalRenderer<HillOfFlesh> {
             part.stareYaw = (float) (Math.PI/2 - yaw);
             part.starePitch = pitch;
 
-            poseStack.mulPose(Axis.YP.rotation(part.lerpYaw(partialTick)));
-            poseStack.mulPose(Axis.XP.rotation(part.lerpPitch(partialTick)));
+//            poseStack.mulPose(Axis.YP.rotation(part.lerpYaw(partialTick)));
+//            poseStack.mulPose(Axis.XP.rotation(part.lerpPitch(partialTick)));
 
         }else{
 
             part.stareStartYaw = yawPitch[0];
             part.stareStartPitch = yawPitch[1];
 
-            poseStack.mulPose(Axis.YP.rotation(part.lerpYaw(-partialTick)));
-            poseStack.mulPose(Axis.XP.rotation(part.lerpPitch(-partialTick)));
+//            poseStack.mulPose(Axis.YP.rotation(part.lerpYaw(-partialTick)));
+//            poseStack.mulPose(Axis.XP.rotation(part.lerpPitch(-partialTick)));
 
         }
     }

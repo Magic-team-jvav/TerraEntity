@@ -1,7 +1,6 @@
 package org.confluence.terraentity.entity.monster.demoneye;
 
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.phys.Vec3;
 
@@ -14,7 +13,7 @@ public class DemonEyeWanderGoal extends DemonEyeSurroundTargetGoal {
         super(mob);
         maxSpeed=0.2;
     }
-    public DemonEyeWanderGoal(PathfinderMob mob, float maxSpeed){
+    public DemonEyeWanderGoal(PathfinderMob mob,float maxSpeed){
         super(mob);
         this.maxSpeed = maxSpeed;
     }

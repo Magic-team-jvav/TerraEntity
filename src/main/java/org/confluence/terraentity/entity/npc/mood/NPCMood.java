@@ -170,11 +170,11 @@ public class NPCMood {
         private BiMap<ResourceLocation, MoodInfo> byId = ImmutableBiMap.of();
         private Map<EntityType<?>, EntityMood> byType = ImmutableMap.of();
 
-        protected void apply(Map<ResourceLocation, JsonElement> object) {
+        protected void apply(Map<ResourceLocation, JsonElement> resourceList) {
 //            ConditionalOps<JsonElement> ops = makeConditionalOps();
             ImmutableBiMap.Builder<ResourceLocation, MoodInfo> byIdBuilder = ImmutableBiMap.builder();
             ImmutableMap.Builder<EntityType<?>, EntityMood> byTypeBuilder = ImmutableMap.builder();
-            for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
+            for (Map.Entry<ResourceLocation, JsonElement> entry : resourceList.entrySet()) {
                 BuiltInRegistries.ENTITY_TYPE.getOptional(entry.getKey()).ifPresent(entityType -> EntityMood.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
                         .resultOrPartial(errorMsg -> TerraEntity.LOGGER.warn("Could not decode npc moods with json id {} - error: {}", entry.getKey(), errorMsg))
                         .ifPresent(entityMood -> {

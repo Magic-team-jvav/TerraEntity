@@ -31,10 +31,10 @@ public record NPCDialogs(List<String> dialogs) {
         private Map<EntityType<?>, NPCDialogs> dialogs = ImmutableMap.of();
 
         @Override
-        protected void apply(Map<ResourceLocation, JsonElement> object) {
+        protected void apply(Map<ResourceLocation, JsonElement> resourceList) {
 //            ConditionalOps<JsonElement> ops = makeConditionalOps();
             Map<EntityType<?>, NPCDialogs> map = new IdentityHashMap<>();
-            for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
+            for (Map.Entry<ResourceLocation, JsonElement> entry : resourceList.entrySet()) {
                 BuiltInRegistries.ENTITY_TYPE.getOptional(entry.getKey()).ifPresent(entityType -> NPCDialogs.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
                         .resultOrPartial(errorMsg -> TerraEntity.LOGGER.warn("Could not decode npc dialogs with json id {} - error: {}", entry.getKey(), errorMsg))
                         .ifPresent(other -> {

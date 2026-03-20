@@ -15,6 +15,7 @@ import net.minecraftforge.fml.ModList;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.TerraprismaModel;
 import org.confluence.terraentity.entity.summon.Terraprisma;
+import org.confluence.terraentity.integration.iris.IrisHelper;
 import org.confluence.terraentity.mixed.IShaderInstance;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,7 +102,7 @@ public class TerraprismaRenderer extends EntityRenderer<Terraprisma> {
         float red = (float) (entity.getRgb() >> 16 & 255) / 255.0F;
         float green = (float) (entity.getRgb() >> 8 & 255) / 255.0F;
         float blue = (float) (entity.getRgb() & 255) / 255.0F;
-        if(ModList.get().isLoaded("iris") && !(RenderSystem.getShader() instanceof IShaderInstance)) {
+        if(IrisHelper.isIrisShader()) {
 
             poseStack.pushPose();
             poseStack.scale(0.9f,0.9f,0.9f);

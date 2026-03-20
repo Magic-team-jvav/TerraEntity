@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -50,7 +51,7 @@ public interface ITradeTask {
     /**
      * 这个title不为空时会覆盖重写的getTile()的硬编码标题
      */
-    default String title(){
+    default @Nullable String title() {
         return null;
     }
     /**
@@ -67,6 +68,10 @@ public interface ITradeTask {
      */
     default void afterTrade(ITradeHolder npc, int index) {
         setNext(npc, index);
+    }
+
+    default void afterTrade(ServerPlayer player, ITradeHolder npc, int index) {
+        afterTrade(npc, index);
     }
 
     /**

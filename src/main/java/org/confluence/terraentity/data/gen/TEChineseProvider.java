@@ -2,10 +2,12 @@ package org.confluence.terraentity.data.gen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
+import org.confluence.terraentity.entity.npc.house.HouseDetectInfo;
 import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.init.TEItems;
 import org.confluence.terraentity.init.entity.*;
 import org.confluence.terraentity.init.item.*;
+import org.confluence.terraentity.integration.curios.CuriosHelper;
 
 import static org.confluence.terraentity.TerraEntity.MODID;
 
@@ -28,7 +30,10 @@ public class TEChineseProvider extends LanguageProvider {
 
         add("container.terra_entity.chester", "切斯特");
 
-        add(TEMonsterEntities.ICE_SLIME.get(), "冰冻史莱姆");
+        add("key.terra_entity.ride", "使用坐骑(需要CuriosAPI)");
+
+
+        add(TEMonsterEntities.ICE_SLIME.get(), "冰雪史莱姆");
         add(TEMonsterEntities.BLUE_SLIME.get(), "蓝色史莱姆");
         add(TEMonsterEntities.RED_SLIME.get(), "红色史莱姆");
         add(TEMonsterEntities.PURPLE_SLIME.get(), "紫色史莱姆");
@@ -40,6 +45,7 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEMonsterEntities.CORRUPT_SLIME.get(), "腐化史莱姆");
         add(TEMonsterEntities.DESERT_SLIME.get(), "沙漠史莱姆");
         add(TEMonsterEntities.TROPIC_SLIME.get(), "热带史莱姆");
+        add(TEMonsterEntities.LUMINOUS_SLIME.get(), "夜明史莱姆");
         add(TEMonsterEntities.GREEN_SLIME.get(), "绿色史莱姆");
         add(TEMonsterEntities.BLACK_SLIME.get(), "黑色史莱姆");
         add("entity.terra_entity.mother_slime", "史莱姆之母");
@@ -49,21 +55,30 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEMonsterEntities.SWAMP_SLIME.get(), "沼泽史莱姆");
         add(TEMonsterEntities.DUNGEON_SLIME.get(), "地牢史莱姆");
         add(TEMonsterEntities.GOLDEN_SLIME.get(), "金史莱姆");
+        add(TEMonsterEntities.SPIKED_SLIME.get(), "尖刺史莱姆");
+        add(TEMonsterEntities.SPIKED_JUNGLE_SLIME.get(), "尖刺丛林史莱姆");
+        add(TEMonsterEntities.SPIKED_ICE_SLIME.get(), "尖刺冰雪史莱姆");
         add(TEMonsterEntities.DEMON_EYE.get(), "恶魔眼");
         add(TEMonsterEntities.FLYING_FISH.get(), "飞鱼");
         add(TEMonsterEntities.GIANT_SHELLY.get(), "巨型卷壳怪");
+        add(TEMonsterEntities.CRAWDAD.get(), "龙虾");
         add(TEMonsterEntities.NYMPH.get(), "宁芙");
         add(TEMonsterEntities.DRIPPLER.get(), "滴滴怪");
         add(TEMonsterEntities.BLOOD_ZOMBIE.get(), "血腥僵尸");
         add(TEMonsterEntities.SNOW_FLINX.get(), "小雪怪");
 
         add(TEMonsterEntities.PIRANHA.get(), "食人鱼");
+        add(TEMonsterEntities.SHARK.get(), "鲨鱼");
+        add(TEMonsterEntities.ARAPAIMA.get(), "巨骨舌鱼");
+        add(TEMonsterEntities.BLUE_JELLYFISH.get(), "蓝水母");
+        add(TEMonsterEntities.PINK_JELLYFISH.get(), "粉水母");
+        add(TEMonsterEntities.GREEN_JELLYFISH.get(), "绿水母");
 
         add(TEMonsterEntities.WANDERING_EYE_FISH.get(), "游荡眼球怪鱼");
         add(TEMonsterEntities.BLOOD_CRAWLER.get(), "血爬虫");
         add(TEMonsterEntities.BLOODY_SPORE.get(), "血腥芽孢");
         add(TEMonsterEntities.FACE_MONSTER.get(), "脸怪");
-        add(TEMonsterEntities.CRIMSON_KEMERA.get(), "猩红喀迈拉");
+        add(TEMonsterEntities.CRIMERA.get(), "猩红喀迈拉");
         add(TEMonsterEntities.EATER_OF_SOULS.get(), "噬魂怪");
         add(TEMonsterEntities.DECAYEDER.get(), "腐骴");
         add(TEMonsterEntities.DEVOURER.get(), "吞噬怪");
@@ -80,9 +95,13 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEMonsterEntities.SPORE_SKELETON.get(), "孢子骷髅");
         add(TEMonsterEntities.SPORE_ZOMBIE.get(), "孢子僵尸");
         add(TEMonsterEntities.HAT_SPORE_ZOMBIE.get(), "帽子蘑菇僵尸");
+        add(TEMonsterEntities.METEOR_HEAD.get(), "流星头");
         add(TEMonsterEntities.HARPY.get(), "鸟妖");
         add(TEMonsterEntities.DEMON.get(), "恶魔");
         add(TEMonsterEntities.VOODOO_DEMON.get(), "巫毒恶魔");
+        add(TEMonsterEntities.BONE_SERPENT.get(), "骨蛇");
+        add(TEMonsterEntities.WITHER_BONE_SERPENT.get(), "凋零骨蛇");
+        add(TEMonsterEntities.FIRE_IMP.get(), "火焰小鬼");
         add(TEMonsterEntities.ANGER_BONES.get(), "愤怒骷髅");
         add(TEMonsterEntities.SHORT_BONES.get(), "矮骷髅");
         add(TEMonsterEntities.BIG_BONES.get(), "大骷髅");
@@ -92,15 +111,41 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEMonsterEntities.CURSED_SKULL.get(), "诅咒骷髅头");
         add(TEMonsterEntities.DARK_CASTER.get(), "暗黑法师");
         add(TEMonsterEntities.UNDEAD_VIKING.get(), "亡灵维京海盗");
-        add(TEMonsterEntities.THE_HUNGRY.get(), "饿鬼");
         add(TEMonsterEntities.ANTLION_SWARMER.get(), "蚁狮蜂");
         add(TEMonsterEntities.GIANT_ANTLION_SWARMER.get(), "巨型蚁狮蜂");
         add(TEMonsterEntities.GHOST.get(), "鬼魂");
-
+        add(TEMonsterEntities.GRANITE_ELEMENTAL.get(), "花岗精");
+        add(TEMonsterEntities.PIXIE.get(), "妖精");
+        add(TEMonsterEntities.WYVERN.get(), "飞龙");
+        add(TEMonsterEntities.POSSESS_ARMOR.get(), "装甲幻影魔");
+        add(TEMonsterEntities.POSSESS_ARMOR_VOID_VESSEL.get(), "装甲幻影魔-虚空载体");
+        add(TEMonsterEntities.WRAITH.get(), "幻灵");
+        add(TEMonsterEntities.WOODEN_MIMIC.get(), "木宝箱怪");
+        add(TEMonsterEntities.GOLDEN_MIMIC.get(), "金宝箱怪");
+        add(TEMonsterEntities.SHADOW_MIMIC.get(), "暗影宝箱怪");
+        add(TEMonsterEntities.ICE_MIMIC.get(), "冰雪宝箱怪");
+        add(TEMonsterEntities.CRIMSON_MIMIC.get(), "猩红宝箱怪");
+        add(TEMonsterEntities.CORRUPT_MIMIC.get(), "腐化宝箱怪");
+        add(TEMonsterEntities.HALLOWED_MIMIC.get(), "神圣宝箱怪");
+        add(TEMonsterEntities.JUNGLE_MIMIC.get(), "丛林宝箱怪");
+        add(TEMonsterEntities.MUMMY.get(), "木乃伊");
+        add(TEMonsterEntities.DARK_MUMMY.get(), "暗黑木乃伊");
+        add(TEMonsterEntities.BLOOD_MUMMY.get(), "血木乃伊");
+        add(TEMonsterEntities.LIGHT_MUMMY.get(), "光明木乃伊");
+        add(TEMonsterEntities.DARK_LAMIA.get(), "黑暗拉弥亚");
+        add(TEMonsterEntities.LIGHT_LAMIA.get(), "光明拉弥亚");
+        add(TEMonsterEntities.GHOUL.get(), "食尸鬼");
+        add(TEMonsterEntities.TAINTED_GHOUL.get(), "红染食尸鬼");
+        add(TEMonsterEntities.VILE_GHOUL.get(), "腐恶食尸鬼");
+        add(TEMonsterEntities.DREAMER_GHOUL .get(), "神梦食尸鬼");
+        add(TEMonsterEntities.SAND_POACHER .get(), "沙贼");
+        add(TEMonsterEntities.DERPLING.get(), "跳跳兽");
+        add(TEMonsterEntities.HERPLING.get(), "蹦蹦兽");
 
         // boss
         add(TEBossEntities.KING_SLIME.get(), "史莱姆王");
         add(TEBossEntities.EYE_OF_CTHULHU.get(), "克苏鲁之眼");
+        add(TEMonsterEntities.SERVANT_OF_CTHULHU.get(), "克苏鲁之仆");
         add(TEBossEntities.EATER_OF_WORLDS.get(), "世界吞噬怪");
         add(TEBossEntities.EATER_OF_WORLDS_SEGMENT.get(), "世界吞噬怪体节");
         add(TEBossEntities.BRAIN_OF_CTHULHU.get(), "克苏鲁之脑");
@@ -110,9 +155,24 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEMonsterEntities.LITTLE_HORNET.get(), "小黄蜂");
         add(TEBossEntities.SKELETRON.get(), "骷髅王");
         add(TEBossEntities.DUNGEON_GUARDIAN.get(), "地牢守卫");
+        add(TEBossEntities.DEERCLOPS.get(), "独眼巨鹿");
+        add(TEBossEntities.HILL_OF_FLESH.get(), "血肉山");
         add(TEBossEntities.WALL_OF_FLESH.get(), "血肉墙");
-        add(TEBossEntities.WALL_OF_FLESH_EYE.get(), "血肉墙眼");
-        add(TEBossEntities.WALL_OF_FLESH_MOUTH.get(), "血肉墙口");
+        add(TEMonsterEntities.LEECH.get(), "血蛭");
+        add(TEMonsterEntities.THE_HUNGRY.get(), "饿鬼");
+        add(TEMonsterEntities.HILL_HUNGRY.get(), "饿鬼");
+        add(TEMonsterEntities.FLESH_SLIME.get(), "血肉史莱姆");
+        add(TEBossEntities.RETINAZER.get(), "激光眼");
+        add(TEBossEntities.SPAZMATISM.get(), "魔焰眼");
+        add(TEBossEntities.THE_TWINS.get(), "双子魔眼");
+        add(TEBossEntities.SKELETRON_PRIME.get(), "机械骷髅王");
+        add(TEBossEntities.SKELETRON_PRIME_PART.get(), "机械骷髅王（机械臂）");
+        add(TEBossEntities.THE_DESTROYER.get(), "毁灭者");
+        add(TEBossEntities.THE_DESTROYER_PART.get(), "毁灭者体节");
+        add(TEBossEntities.THE_DESTROYER_PROBE.get(), "毁灭者探测器");
+        add(TEBossEntities.PLANTERA.get(), "世纪之花");
+        add(TEBossEntities.PLANTERA_HOOK.get(), "世纪之花钩");
+        add(TEBossEntities.PLANTERA_TENTACLE.get(), "世纪之花触手");
 
 
         // 召唤物
@@ -161,6 +221,9 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.LUMINOUS_SLIME_SPAWN_EGG.get(), "夜明史莱姆刷怪蛋");
         add(TESpawnEggItems.LAVA_SLIME_SPAWN_EGG.get(), "熔岩史莱姆刷怪蛋");
         add(TESpawnEggItems.GOLDEN_SLIME_SPAWN_EGG.get(), "金史莱姆刷怪蛋");
+        add(TESpawnEggItems.SPIKED_SLIME_SPAWN_EGG.get(), "尖刺史莱姆刷怪蛋");
+        add(TESpawnEggItems.SPIKED_JUNGLE_SLIME_SPAWN_EGG.get(), "尖刺丛林史莱姆刷怪蛋");
+        add(TESpawnEggItems.SPIKED_ICE_SLIME_SPAWN_EGG.get(), "尖刺冰雪史莱姆刷怪蛋");
 
         add(TESpawnEggItems.DEMON_EYE_SPAWN_EGG.get(), "恶魔眼刷怪蛋");
         add(TESpawnEggItems.FLYING_FISH_SPAWN_EGG.get(), "飞鱼刷怪蛋");
@@ -168,11 +231,16 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.DEMON_SPAWN_EGG.get(), "恶魔刷怪蛋");
         add(TESpawnEggItems.VOODOO_DEMON_SPAWN_EGG.get(), "巫毒恶魔刷怪蛋");
         add(TESpawnEggItems.GIANT_SHELLY_SPAWN_EGG.get(), "巨型卷壳怪刷怪蛋");
+        add(TESpawnEggItems.CRAWDAD_SPAWN_EGG.get(), "龙虾刷怪蛋");
         add(TESpawnEggItems.GIANT_WORM_SPAWN_EGG.get(), "巨型蠕虫刷怪蛋");
         add(TESpawnEggItems.NYMPH_SPAWN_EGG.get(), "宁芙刷怪蛋");
         add(TESpawnEggItems.TOMB_CRAWLER_SPAWN_EGG.get(), "墓穴爬虫刷怪蛋");
+        add(TESpawnEggItems.BONE_SERPENT_SPAWN_EGG.get(), "骨蛇刷怪蛋");
+        add(TESpawnEggItems.WITHER_BONE_SERPENT_SPAWN_EGG.get(), "凋零骨蛇刷怪蛋");
         add(TESpawnEggItems.ANTLION_SWARMER_SPAWN_EGG.get(), "蚁狮蜂刷怪蛋");
         add(TESpawnEggItems.GIANT_ANTLION_SWARMER_SPAWN_EGG.get(), "巨型蚁狮蜂刷怪蛋");
+        add(TESpawnEggItems.GRANTITE_ELEMENTAL_SPAWN_EGG.get(), "花岗精刷怪蛋");
+
         add(TESpawnEggItems.CAVE_BAT_SPAWN_EGG.get(), "洞穴蝙蝠刷怪蛋");
         add(TESpawnEggItems.ICE_BAT_SPAWN_EGG.get(), "冰雪蝙蝠刷怪蛋");
         add(TESpawnEggItems.JUNGLE_BAT_SPAWN_EGG.get(), "丛林蝙蝠刷怪蛋");
@@ -191,12 +259,18 @@ public class TEChineseProvider extends LanguageProvider {
 
         add(TESpawnEggItems.BLOOD_CRAWLER_SPAWN_EGG.get(), "血爬虫刷怪蛋");
         add(TESpawnEggItems.BLOODY_SPORE_SPAWN_EGG.get(), "血腥芽孢刷怪蛋");
-        add(TESpawnEggItems.CRIMSON_KEMERA_SPAWN_EGG.get(), "猩红喀迈拉刷怪蛋");
+        add(TESpawnEggItems.CRIMERA_SPAWN_EGG.get(), "猩红喀迈拉刷怪蛋");
         add(TESpawnEggItems.FACE_MONSTER_SPAWN_EGG.get(), "脸怪刷怪蛋");
         add(TESpawnEggItems.FIRE_IMG_SPAWN_EGG.get(), "火焰小鬼刷怪蛋");
         add(TESpawnEggItems.SNOW_FLINX_SPAWN_EGG.get(), "小雪怪刷怪蛋");
+        add(TESpawnEggItems.METEOR_HEAD_SPAWN_EGG.get(), "流星头刷怪蛋");
 
         add(TESpawnEggItems.PIRANHA_SPAWN_EGG.get(), "食人鱼刷怪蛋");
+        add(TESpawnEggItems.SHARK_SPAWN_EGG.get(), "鲨鱼刷怪蛋");
+        add(TESpawnEggItems.ARAPAIMA_SPAWN_EGG.get(), "巨骨舌鱼刷怪蛋");
+        add(TESpawnEggItems.BLUE_JELLYFISH_SPAWN_EGG.get(), "蓝水母刷怪蛋");
+        add(TESpawnEggItems.PINK_JELLYFISH_SPAWN_EGG.get(), "粉水母刷怪蛋");
+        add(TESpawnEggItems.GREEN_JELLYFISH_SPAWN_EGG.get(), "绿水母刷怪蛋");
 
 
         add(TESpawnEggItems.EATER_OF_SOULS_SPAWN_EGG.get(), "噬魂怪刷怪蛋");
@@ -214,8 +288,33 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.DARK_CASTER_SPAWN_EGG.get(), "暗黑法师刷怪蛋");
         add(TESpawnEggItems.UNDEAD_VIKING_SPAWN_EGG.get(), "亡灵维京海盗刷怪蛋");
 
+        // 宝箱怪
+        add(TESpawnEggItems.WOODEN_MIMIC_SPAWN_EGG.get(), "木宝箱怪刷怪蛋");
+        add(TESpawnEggItems.GOLDEN_MIMIC_SPAWN_EGG.get(), "金宝箱怪刷怪蛋");
+        add(TESpawnEggItems.SHADOW_MIMIC_SPAWN_EGG.get(), "暗影宝箱怪刷怪蛋");
+        add(TESpawnEggItems.ICE_MIMIC_SPAWN_EGG.get(), "冰雪宝箱怪刷怪蛋");
+        add(TESpawnEggItems.CRIMSON_MIMIC_SPAWN_EGG.get(), "猩红宝箱怪刷怪蛋");
+        add(TESpawnEggItems.CORRUPT_MIMIC_SPAWN_EGG.get(), "腐化宝箱怪刷怪蛋");
+        add(TESpawnEggItems.HALLOWED_MIMIC_SPAWN_EGG.get(), "神圣宝箱怪刷怪蛋");
+        add(TESpawnEggItems.JUNGLE_MIMIC_SPAWN_EGG.get(), "丛林宝箱怪刷怪蛋");
 
-        add(TEMonsterEntities.GOBLIN_SORCERER.get(), "哥布林术士");
+        add(TESpawnEggItems.MUMMY_SPAWN_EGG.get(), "木乃伊刷怪蛋");
+        add(TESpawnEggItems.DARK_MUMMY_SPAWN_EGG.get(), "暗黑木乃伊刷怪蛋");
+        add(TESpawnEggItems.BLOOD_MUMMY_SPAWN_EGG.get(), "血木乃伊刷怪蛋");
+        add(TESpawnEggItems.LIGHT_MUMMY_SPAWN_EGG.get(), "光明木乃伊刷怪蛋");
+
+        add(TESpawnEggItems.DARK_LAMIA_SPAWN_EGG.get(), "黑暗拉弥亚刷怪蛋");
+        add(TESpawnEggItems.LIGHT_LAMIA_SPAWN_EGG.get(), "光明拉弥亚刷怪蛋");
+        add(TESpawnEggItems.GHOUL_SPAWN_EGG.get(), "食尸鬼刷怪蛋");
+        add(TESpawnEggItems.TAINTED_GHOUL_SPAWN_EGG.get(), "红染食尸鬼刷怪蛋");
+        add(TESpawnEggItems.VILE_GHOUL_SPAWN_EGG.get(), "腐恶食尸鬼刷怪蛋");
+        add(TESpawnEggItems.DREAMER_GHOUL_SPAWN_EGG .get(), "神梦食尸鬼刷怪蛋");
+        add(TESpawnEggItems.SAND_POACHER_SPAWN_EGG .get(), "沙贼刷怪蛋");
+        add(TESpawnEggItems.DERPLING_SPAWN_EGG.get(), "跳跳兽刷怪蛋");
+        add(TESpawnEggItems.HERPLING_SPAWN_EGG.get(), "蹦蹦兽刷怪蛋");
+
+
+        add(TEMonsterEntities.GOBLIN_SORCERER.get(), "哥布林巫士");
         add(TEMonsterEntities.GOBLIN_ARCHER.get(), "哥布林弓箭手");
         add(TEMonsterEntities.GOBLIN_PEON.get(), "哥布林苦力");
         add(TEMonsterEntities.GOBLIN_WARRIOR.get(), "哥布林战士");
@@ -228,11 +327,31 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEAnimals.BUNNY.get(), "兔兔");
         add(TEAnimals.JEWEL_SQUIRREL.get(), "宝石松鼠");
         add(TEAnimals.JEWEL_BUNNY.get(), "宝石兔");
-        add(TEAnimals.BOOM_BUNNY.get(), "爆炸兔");
+        add(TEAnimals.EXPLOSIVE_BUNNY.get(), "爆炸兔");
         add(TEAnimals.DUCK.get(), "鸭子");
         add(TEAnimals.BIRD.get(), "鸟");
         add(TEAnimals.BLUE_JAY.get(), "冠蓝鸦");
         add(TEAnimals.CARDINAL.get(), "红雀");
+
+
+        add(TEAnimals.CRAB.get(), "螃蟹");
+        add(TEAnimals.GLOWING_SNAIL.get(), "发光蜗牛");
+        add(TEAnimals.GRUBBY.get(), "蛆虫");
+        add(TEAnimals.MAGGOT.get(), "蝇蛆");
+        add(TEAnimals.MAGMA_SNAIL.get(), "岩浆蜗牛");
+        add(TEAnimals.SLUGGY.get(), "鼻涕虫");
+        add(TEAnimals.SNAIL.get(), "蜗牛");
+
+        add(TEAnimals.BUTTERFLY.get(), "蝴蝶");
+        add(TEAnimals.HELL_BUTTERFLY.get(), "地狱蝴蝶");
+        add(TEAnimals.DRAGONFLY.get(), "蜻蜓");
+        add(TEAnimals.FAIRY.get(), "仙灵");
+        add(TEAnimals.FEALING.get(), "飞灵");
+        add(TEAnimals.GRASSHOPPER.get(), "蚱蜢");
+        add(TEAnimals.LADYBUG.get(), "瓢虫");
+        add(TEAnimals.SCORPION.get(), "蝎子");
+        add(TEAnimals.WORM.get(), "蠕虫");
+        add(TEAnimals.PRISMATIC_LACEWING.get(), "七彩草蛉");
 
 
         // boss
@@ -241,10 +360,27 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.EATER_OF_WORLD_SPAWN_EGG.get(), "世界吞噬怪刷怪蛋");
         add(TESpawnEggItems.BRAIN_OF_CTHULHU_SPAWN_EGG.get(), "克苏鲁之脑刷怪蛋");
         add(TESpawnEggItems.QUEEN_BEE_SPAWN_EGG.get(), "蜂王刷怪蛋");
+        add(TESpawnEggItems.DEERCLOPS_SPAWN_EGG.get(), "独眼巨鹿刷怪蛋");
         add(TESpawnEggItems.SKELETRON_SPAWN_EGG.get(), "骷髅王刷怪蛋");
         add(TESpawnEggItems.DUNGEON_GUARDIAN_SPAWN_EGG.get(), "地牢守卫刷怪蛋");
         add(TESpawnEggItems.WALL_OF_FLESH_SPAWN_EGG.get(), "血肉墙刷怪蛋");
+        add(TESpawnEggItems.HILL_OF_FLESH_SPAWN_EGG.get(), "血肉山刷怪蛋");
+        add(TESpawnEggItems.RETINAZER_SPAWN_EGG.get(), "激光眼刷怪蛋");
+        add(TESpawnEggItems.SPAZMATISM_SPAWN_EGG.get(), "魔焰眼刷怪蛋");
+        add(TESpawnEggItems.THE_TWINS_SPAWN_EGG.get(), "双子魔眼刷怪蛋");
+        add(TESpawnEggItems.SKELETRON_PRIME_SPAWN_EGG.get(), "机械骷髅王刷怪蛋");
+        add(TESpawnEggItems.THE_DESTROYER_SPAWN_EGG.get(), "毁灭者刷怪蛋");
+        add(TESpawnEggItems.PLANTERA_SPAWN_EGG.get(), "世纪之花刷怪蛋");
 
+
+        add(TEBossSummonsItems.KING_SLIME_SUMMONS.get(), "史莱姆皇冠");
+        add(TEBossSummonsItems.EYE_OF_CTHULHU_SUMMONS.get(), "可疑眼球");
+        add(TEBossSummonsItems.EATER_OF_WORLDS_SUMMONS.get(), "蠕虫诱饵");
+        add(TEBossSummonsItems.BRAIN_OF_CTHULHU_SUMMONS.get(), "血腥脊椎");
+        add(TEBossSummonsItems.QUEEN_BEE_SUMMONS.get(), "憎恶之蜂");
+        add(TEBossSummonsItems.SKELETRON_SUMMONS.get(), "服装商巫毒娃娃");
+        add(TEBossSummonsItems.WALL_OF_FLESH_SUMMONS.get(), "向导巫毒娃娃(墙)");
+        add(TEBossSummonsItems.HILL_OF_FLESH_SUMMONS.get(), "向导巫毒娃娃(山)");
 
 
         add(TENpcEntities.GUIDE.get(), "向导");
@@ -264,7 +400,9 @@ public class TEChineseProvider extends LanguageProvider {
         add(TENpcEntities.WITCH_DOCTOR.get(), "巫医");
         add(TENpcEntities.PARTY_GIRL.get(), "派对女孩");
         add(TENpcEntities.CLOTHIER.get(), "服装商");
+        add(TENpcEntities.ZOOLOGIST.get(), "动物学家");
         add(TENpcEntities.TRUFFLE.get(), "松露人");
+        add(TENpcEntities.WIZARD.get(), "巫师");
 
         add(TESpawnEggItems.GOBLIN_SORCERER_SPAWN_EGG.get(), "哥布林术士刷怪蛋");
         add(TESpawnEggItems.GOBLIN_ARCHER_SPAWN_EGG.get(), "哥布林弓箭手刷怪蛋");
@@ -273,6 +411,14 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.GOBLIN_THIEF_SPAWN_EGG.get(), "哥布林盗贼刷怪蛋");
         add(TESpawnEggItems.GOBLIN_SCOUT_SPAWN_EGG.get(), "哥布林侦察兵刷怪蛋");
         add(TESpawnEggItems.ANGER_GOBLIN_SPAWN_EGG.get(), "愤怒哥布林刷怪蛋");
+
+        // 肉后怪物
+        add(TESpawnEggItems.WYVERN_SPAWN_EGG.get(), "飞龙刷怪蛋");
+        add(TESpawnEggItems.PIXIE_SPAWN_EGG.get(), "妖精刷怪蛋");
+
+        add(TESpawnEggItems.POSSESS_ARMOR_SPAWN_EGG.get(), "装甲幻影魔刷怪蛋");
+        add(TESpawnEggItems.WRAITH_SPAWN_EGG.get(), "幻灵刷怪蛋");
+
 
         add(TESpawnEggItems.GUIDE_SPAWN_EGG.get(), "向导刷怪蛋");
         add(TESpawnEggItems.DEMOLITIONIST_SPAWN_EGG.get(), "爆破专家刷怪蛋");
@@ -290,13 +436,15 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.WITCH_DOCTOR_SPAWN_EGG.get(), "巫医刷怪蛋");
         add(TESpawnEggItems.PARTY_GIRL_SPAWN_EGG.get(), "派对女孩刷怪蛋");
         add(TESpawnEggItems.CLOTHIER_SPAWN_EGG.get(), "服装商刷怪蛋");
+        add(TESpawnEggItems.ZOOLOGIST_SPAWN_EGG.get(), "动物学家刷怪蛋");
         add(TESpawnEggItems.TRUFFLE_SPAWN_EGG.get(), "松露人刷怪蛋");
+        add(TESpawnEggItems.WIZARD_SPAWN_EGG.get(), "巫师刷怪蛋");
 
 
         // 动物
         add(TESpawnEggItems.SQUIRREL_SPAWN_EGG.get(), "松鼠刷怪蛋");
         add(TESpawnEggItems.JEWEL_SQUIRREL_SPAWN_EGG.get(), "宝石松鼠刷怪蛋");
-        add(TESpawnEggItems.BOOM_BUNNY_SPAWN_EGG.get(), "炸弹兔刷怪蛋");
+        add(TESpawnEggItems.EXPLOSIVE_BUNNY_SPAWN_EGG.get(), "炸弹兔刷怪蛋");
         add(TESpawnEggItems.BUNNY_SPAWN_EGG.get(), "兔兔刷怪蛋");
         add(TESpawnEggItems.JEWEL_BUNNY_SPAWN_EGG.get(), "宝石兔刷怪蛋");
         add(TESpawnEggItems.DUCK_SPAWN_EGG.get(), "鸭子刷怪蛋");
@@ -305,9 +453,29 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESpawnEggItems.CARDINAL_SPAWN_EGG.get(), "红雀刷怪蛋");
 
 
+        add(TESpawnEggItems.CRAB_SPAWN_EGG.get(), "螃蟹刷怪蛋");
+        add(TESpawnEggItems.GLOWING_SNAIL_SPAWN_EGG.get(), "发光蜗牛刷怪蛋");
+        add(TESpawnEggItems.GRUBBY_SPAWN_EGG.get(), "蛆虫刷怪蛋");
+        add(TESpawnEggItems.MAGGOT_SPAWN_EGG.get(), "蝇蛆刷怪蛋");
+        add(TESpawnEggItems.MAGMA_SNAIL_SPAWN_EGG.get(), "岩浆蜗牛刷怪蛋");
+        add(TESpawnEggItems.SLUGGY_SPAWN_EGG.get(), "鼻涕虫刷怪蛋");
+        add(TESpawnEggItems.SNAIL_SPAWN_EGG.get(), "蜗牛刷怪蛋");
+
+        add(TESpawnEggItems.BUTTERFLY_SPAWN_EGG.get(), "蝴蝶刷怪蛋");
+        add(TESpawnEggItems.HELL_BUTTERFLY_SPAWN_EGG.get(), "地狱蝴蝶刷怪蛋");
+        add(TESpawnEggItems.PRISMATIC_LACEWING_SPAWN_EGG.get(), "七彩草蛉刷怪蛋");
+        add(TESpawnEggItems.DRAGONFLY_SPAWN_EGG.get(), "蜻蜓刷怪蛋");
+        add(TESpawnEggItems.FAIRY_SPAWN_EGG.get(), "仙灵刷怪蛋");
+        add(TESpawnEggItems.FEALING_SPAWN_EGG.get(), "飞灵刷怪蛋");
+        add(TESpawnEggItems.GRASSHOPPER_SPAWN_EGG.get(), "蚱蜢刷怪蛋");
+        add(TESpawnEggItems.LADYBUG_SPAWN_EGG.get(), "瓢虫刷怪蛋");
+        add(TESpawnEggItems.SCORPION_SPAWN_EGG.get(), "蝎子刷怪蛋");
+        add(TESpawnEggItems.WORM_SPAWN_EGG.get(), "蠕虫刷怪蛋");
+
+
         // 召唤杖
-        add(TESummonItems.CHESTER_STAFF.get(), "眼骨");
-        add(TESummonItems.WALLET.get(), "钱币槽");
+        add(TEPetItems.CHESTER_STAFF.get(), "眼骨");
+        add(TEPetItems.WALLET.get(), "钱币槽");
 
         add(TESummonItems.FINCH_STAFF.get(), "雀杖");
         add(TESummonItems.SLIME_STAFF.get(), "史莱姆法杖");
@@ -338,6 +506,9 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEWhipItems.SAPPHIRE_WHIP.get(), "蓝玉鞭");
         add(TEWhipItems.AMETHYST_WHIP.get(), "紫晶鞭");
         add(TEWhipItems.SWAMP_WHIP.get(), "沼泽藤蔓");
+        add(TEWhipItems.SNAPTHORN.get(), "荆鞭");
+        add(TEWhipItems.SPINAL_TAP.get(), "脊柱骨鞭");
+        add(TEWhipItems.FIRECRACKER.get(), "鞭炮");
 
         // 回旋镖
         add(TEBoomerangItems.WOOD_BOOMERANG.get(), "木回旋镖");
@@ -363,16 +534,48 @@ public class TEChineseProvider extends LanguageProvider {
 
         // 骑乘
         add(TERideableItems.SLIMY_SADDLE.get(), "粘鞍");
-        add(TERideableItems.HONEYED_GOGGLES.get(), "凃蜜护目镜");
+        add(TERideableItems.HONEYED_GOGGLES.get(), "涂蜜护目镜");
 
         // mob_effect
         add(TEEffects.DEMONIC_THOUGHTS.get(), "邪念");
         add(TEEffects.SUMMON_FOCUS.get(), "狩猎");
         add(TEEffects.HELLFIRE.get(), "狱炎");
         add(TEEffects.FROST_BURN.get(), "霜冻");
+        add(TEEffects.CRIMSON_STORM.get(), "猩红风暴");
+        add(TEEffects.HORRIFIED.get(), "惊恐");
+        add(TEEffects.THE_TONGUE.get(), "狂卷之舌");
+
 
         add(TEItems.HOUSE_DETECTOR.get(), "房屋探测器");
 
+        // 弹幕
+        add(TEProjectileEntities.BOOMERANG_PROJECTILE.get(), "回旋镖射弹");
+        add(TEProjectileEntities.CABBAGE_PROJ.get(), "卷心菜投射物");
+        add(TEProjectileEntities.BEE_STICK_PROJ.get(), "蜜蜂棒射弹");
+        add(TEProjectileEntities.SUMMON_BEE_STICK_PROJ.get(), "召唤蜜蜂棒射弹");
+        add(TEProjectileEntities.SKULL.get(), "骷髅射弹");
+        add(TEProjectileEntities.VILE_SPIT_PROJ.get(), "魔唾液射弹");
+        add(TEProjectileEntities.DARK_CASTER_PROJ.get(), "黑暗法师射弹");
+        add(TEProjectileEntities.FIRE_IMP_PROJ.get(), "火焰小鬼射弹");
+        add(TEProjectileEntities.FIRE_BOUND_PROJ.get(), "火焰束缚射弹");
+        add(TEProjectileEntities.HARPY_FEATURE_PROJ.get(), "鸟妖羽毛射弹");
+        add(TEProjectileEntities.DEMON_SCYTHE_PROJ.get(), "恶魔镰刀射弹");
+        add(TEProjectileEntities.LAVA_PILLAR.get(), "熔岩柱");
+        add(TEProjectileEntities.THE_DESTROYER_LASER_PROJ.get(), "毁灭者激光");
+        add(TEProjectileEntities.SEED.get(), "种子射弹");
+        add(TEProjectileEntities.SPORE.get(), "孢子射弹");
+        add(TEProjectileEntities.SPIKE_BALL.get(), "刺球射弹");
+        add(TEProjectileEntities.WHIP_PROJECTILE.get(), "鞭子射弹");
+        add(TEProjectileEntities.TRAIL_PROJECTILE.get(), "轨迹子弹");
+        add(TEProjectileEntities.TRAIL_SWORD_PROJECTILE.get(), "轨迹剑气");
+        add(TEProjectileEntities.BEE_PROJ.get(), "蜜蜂射弹");
+        add(TEProjectileEntities.SLIME_SPIKE.get(), "史莱姆尖刺");
+        add(TEProjectileEntities.JUNGLE_SPIKE.get(), "丛林尖刺");
+        add(TEProjectileEntities.ICE_SPIKE.get(), "寒冰尖刺");
+        add(TEProjectileEntities.YOYO_PROJ.get(), "悠悠球射弹");
+        add(TEProjectileEntities.THROWN_ICE_PROJECTILE.get(), "投掷寒冰射弹");
+        add(TEProjectileEntities.ICE_PILLAR.get(), "冰刺");
+        add(TEProjectileEntities.SHADOW_HAND.get(), "暗影之手射弹");
 
         add("message.terraentity.boss_spawn", "%s已苏醒！");
         add("message.terraentity.boss_leave", "%s已被打败！");
@@ -390,6 +593,7 @@ public class TEChineseProvider extends LanguageProvider {
         add("terra_entity.configuration.server.boss_attributes_multiplier_damage", "BOSS属性倍率-伤害");
         add("terra_entity.configuration.server.boss_no_physics", "BOSS能否穿墙");
         add("terra_entity.configuration.server.boss_leave_on_day", "特定的BOSS是否在白天离开");
+        add("terra_entity.configuration.server.boss_keep_wandering", "BOSS随机游走");
 
 
         add("terra_entity.configuration.server.display_summon_items", "在创造栏显示召唤物品");
@@ -428,23 +632,24 @@ public class TEChineseProvider extends LanguageProvider {
         add("tooltip.terra_entity.house_detect.mode.check", "探测");
         add("tooltip.terra_entity.house_detect.mode.check.owner", "所有者");
         add("tooltip.terra_entity.house_detect.mode.add", "添加");
-        add("tooltip.terra_entity.house_detect.mode.add.failed", "添加房屋失败，房屋已存在!");
-        add("tooltip.terra_entity.house_detect.mode.add.success", "添加房屋成功!");
+        add("tooltip.terra_entity.house_detect.mode.add.failed", "添加房屋失败，房屋已存在！");
+        add("tooltip.terra_entity.house_detect.mode.add.success", "添加房屋成功！");
         add("tooltip.terra_entity.house_detect.mode.delete", "删除");
-        add("tooltip.terra_entity.house_detect.mode.delete.success", "删除房屋成功!");
-        add("tooltip.terra_entity.house_detect.not_npc", "这不是npc!");
-        add("tooltip.terra_entity.house_detect.no_detect", "使用前先探测房屋!");
-        add("tooltip.terra_entity.house_detect.message.too_large", "这个房间太大了!");
-        add("tooltip.terra_entity.house_detect.message.too_small", "这个房间太小了!");
-        add("tooltip.terra_entity.house_detect.message.no_dynamic_light", "房间缺少光源!");
-        add("tooltip.terra_entity.house_detect.message.found_house", "这个房间很合适!");
+        add("tooltip.terra_entity.house_detect.mode.delete.success", "删除房屋成功！");
+        add("tooltip.terra_entity.house_detect.not_npc", "这不是npc！");
+        add("tooltip.terra_entity.house_detect.no_detect", "使用前先探测房屋！");
+        add(HouseDetectInfo.DetectType.TOO_LARGE.getTranslationKey(), "这个房间太大了！");
+        add(HouseDetectInfo.DetectType.TOO_SMALL.getTranslationKey(), "这个房间太小了！");
+        add(HouseDetectInfo.DetectType.NO_DYNAMIC_LIGHT.getTranslationKey(), "房间缺少光源！");
+        add(HouseDetectInfo.DetectType.NO_CHAIR.getTranslationKey(), "房间缺少椅子！");
+        add(HouseDetectInfo.DetectType.NO_TABLE.getTranslationKey(), "房间缺少桌子！");
+        add(HouseDetectInfo.DetectType.FOUND_HOUSE.getTranslationKey(), "这个房间很合适！");
         add("tooltip.terra_entity.house_detect.info", "按下shift+右键 切换模式");
         add("tooltip.terra_entity.chester.desc", "按下shift+右键 切换目标容器. 你可以用它绑定一个容器");
         add("tooltip.terra_entity.chester.current", "当前容器");
 
 
-
-            // boomerang
+        // boomerang
         add("tooltip.terra_entity.boomerang.penetration", "穿透数量");
         add("tooltip.terra_entity.boomerang.on_hit_effects", "命中效果");
         add("tooltip.terra_entity.boomerang.max_count", "分身数量");
@@ -454,6 +659,9 @@ public class TEChineseProvider extends LanguageProvider {
         add("tooltip.terra_entity.yoyo.max_range", "最大射程");
         add("tooltip.terra_entity.yoyo.exist_time", "使用时间");
         add("tooltip.terra_entity.yoyo.hit_effect", "命中效果");
+
+        // rideable
+        add("tooltip.terra_entity.rideable_item.desc", "按下快捷键以骑乘。默认 R 键");
 
 
         // attribute
@@ -469,20 +677,29 @@ public class TEChineseProvider extends LanguageProvider {
         add("terra_entity.track_type.basis", "基平面");
 
         // hit effect
+        add("terra_entity.effect.strategy.set_fire", "着火啦");
+        add("terra_entity.effect.strategy.yoyo_bee", "召唤蜜蜂");
+
+
         add("terra_entity.effect.strategy.mud", "泥潭");
+        add("terra_entity.effect.strategy.snapthorn", "中毒");
+        add("terra_entity.effect.strategy.firecracker", "狱炎");
 
         add("terra_entity.effect.strategy.bat", "吸血 +1 hp");
         add("terra_entity.effect.strategy.lights_bane", "召唤魔光剑");
         add("terra_entity.effect.strategy.bee_keeper", "召唤蜜蜂");
+        add("terra_entity.effect.strategy.bee_keeper_confused", "100%概率给予困惑");
+        add("terra_entity.effect.strategy.purple_clubberfish", "50%概率给予困惑");
 
+        add("terra_entity.effect.strategy.frozen_burn_5_sec", "霜冻 10秒");
         add("terra_entity.effect.strategy.frozen_burn_3_sec_50_chance", "50%几率 霜冻 3秒");
         add("terra_entity.effect.strategy.tentacle_spikes", "触手钉锤");
         add("terra_entity.effect.strategy.hunting_4_sec", "狩猎 4秒");
-        add("terra_entity.effect.strategy.hell_fire_5_sec", "烈火焚身 5秒");
+        add("terra_entity.effect.strategy.hell_fire_5_sec", "狱炎 5秒");
         add("terra_entity.effect.strategy.set_fire_5_sec", "着火啦 5秒");
         add("terra_entity.effect.strategy.forzen_burn_5_sec", "霜火 5秒");
         add("terra_entity.effect.strategy.blood_butchered", "血腥屠宰");
-        add("terra_entity.effect.strategy.bei_dou", "随机5种效果:\n     霜冻 IV 10秒\n     烈火焚身 IV 10秒\n     凋零 IV 10秒\n     中毒 IV 10秒\n     瞬间伤害 VIII");
+        add("terra_entity.effect.strategy.bei_dou", "随机5种效果:\n     霜冻 IV 10秒\n     狱炎 IV 10秒\n     凋零 IV 10秒\n     中毒 IV 10秒\n     瞬间伤害 VIII");
 
         add("terra_entity.effect.strategy.strength", "愤怒");
 
@@ -521,19 +738,72 @@ public class TEChineseProvider extends LanguageProvider {
         add("terra_entity.subtitle.summon_hornet", "黄蜂：召唤");
         add("terra_entity.subtitle.summon_eye", "飞行召唤物：召唤");
         add("terra_entity.subtitle.summon_imp", "小鬼：召唤");
+        add("terra_entity.subtitle.summon_money_trough", "存钱罐：召唤");
+        add("terra_entity.subtitle.antlion_death", "蚁狮：死亡");
+        add("terra_entity.subtitle.antlion_hurt", "蚁狮：受伤");
+        add("terra_entity.subtitle.antlion_free", "蚁狮：活动");
+        add("terra_entity.subtitle.antlion_swarmer_death", "蚁狮蜂：死亡");
+        add("terra_entity.subtitle.antlion_swarmer_free", "蚁狮蜂：移动");
+        add("terra_entity.subtitle.bat_death", "蝙蝠：死亡");
+        add("terra_entity.subtitle.beetle_death", "胭脂虫：死亡");
+        add("terra_entity.subtitle.blood_jelly_death", "血水母：死亡");
+        add("terra_entity.subtitle.blood_jelly_free", "血水母：漂浮");
+        add("terra_entity.subtitle.bone_serpent_death", "骨蛇：死亡");
+        add("terra_entity.subtitle.demon_death", "恶魔：死亡");
+        add("terra_entity.subtitle.demon_free", "恶魔：嘶吼");
+        add("terra_entity.subtitle.demon_hurt", "恶魔：受伤");
+        add("terra_entity.subtitle.dungeon_spirit_death", "地牢幽灵：消散");
+        add("terra_entity.subtitle.dungeon_spirit_free", "地牢幽灵：飘动");
+        add("terra_entity.subtitle.dungeon_spirit_hurt", "地牢幽灵：受击");
+        add("terra_entity.subtitle.granite_golem_death", "花岗岩巨人：崩塌");
+        add("terra_entity.subtitle.granite_golem_hurt", "花岗岩巨人：受损");
+        add("terra_entity.subtitle.granite_golem_free", "花岗岩巨人：行走");
+        add("terra_entity.subtitle.jellyfish_death", "水母：爆裂");
+        add("terra_entity.subtitle.jellyfish_free", "水母：游动");
+        add("terra_entity.subtitle.jellyfish_hurt", "水母：受刺激");
+        add("terra_entity.subtitle.pixie_death", "妖精：消失");
+        add("terra_entity.subtitle.pixie_free", "妖精：飞舞");
+        add("terra_entity.subtitle.pixie_hurt", "妖精：受惊");
+        add("terra_entity.subtitle.sand_shoot", "沙子：喷射");
+        add("terra_entity.subtitle.soul_death", "灵体：湮灭");
+        add("terra_entity.subtitle.tr_zombie_free", "僵尸：嘶吼");
+        add("terra_entity.subtitle.unicorn_death", "独角兽：悲鸣");
+        add("terra_entity.subtitle.unicorn_hurt", "独角兽：痛鸣");
+        add("terra_entity.subtitle.wyvern_death", "飞龙：坠落");
+        add("terra_entity.subtitle.wyvern_hurt", "飞龙：咆哮");
+        add("terra_entity.subtitle.the_hungry_death", "饿鬼：消亡");
+        add("terra_entity.subtitle.the_hungry_hurt", "饿鬼：受击");
+        add("terra_entity.subtitle.wall_of_flesh_hurt", "血肉：受创");
+        add("terra_entity.subtitle.wall_of_flesh_roar", "血肉：咆哮");
+        add("terra_entity.subtitle.wall_of_flesh_summon", "血肉：呕吐");
+
+
+
 
         // 车万女仆
         add("task.terra_entity.boomerang_attack", "回旋镖攻击");
         add("task.terra_entity.boomerang_attack.desc", "女仆会主动用回旋镖攻击周围的敌对生物");
         add("task.terra_entity.boomerang_attack.condition.has_boomerang", "主手持有回旋镖");
 
+        // curios
+        add("curios.identifier." + CuriosHelper.MOUNT_KEY, "坐骑");
+        add("curios.identifier." + CuriosHelper.PET_KEY, "宠物");
+        add("curios.identifier." + CuriosHelper.LIGHT_PET_KEY, "照明宠物");
+
         // 附魔
         add("enchantment.terra_entity.multi_boomerang", "影分身");
         add("enchantment.terra_entity.multi_boomerang.desc", "额外发射一个回旋镖");
         add("enchantment.terra_entity.whip_sweep", "横扫之鞭");
         add("enchantment.terra_entity.whip_sweep.desc", "概率造成大范围伤害");
+        add("enchantment.terra_entity.summoner_pact", "召唤师契约");
+        add("enchantment.terra_entity.summoner_pact.desc", "召唤额外的仆从");
 
         // npc对话
+        add("dialogs.terra_entity.trade", "交易");
+        add("dialogs.terra_entity.summon", "召唤");
+        add("dialogs.terra_entity.dialog", "对话");
+        add("dialogs.terra_entity.quest", "任务");
+
         add("dialogs.terra_entity.guide.0", "我的工作是为你接下来的任务提供建议。建议你遇到任何困难时都来和我谈谈。");
         add("dialogs.terra_entity.guide.1", "他们说，有个人会告诉你如何在这地方上生存……哦等下。那个人就是我。");
         add("dialogs.terra_entity.guide.2", "晚上你应该呆在家里。黑夜在外面转悠非常危险。");
@@ -585,7 +855,7 @@ public class TEChineseProvider extends LanguageProvider {
         add("dialogs.terra_entity.merchant.2", "看看我的土块；它们特别土。");
         add("dialogs.terra_entity.merchant.3", "你是不知道土块能在国外卖多少钱。");
         add("dialogs.terra_entity.merchant.4", "总有一天他们会讲述你的传奇……肯定会是好故事。");
-        add("dialogs.terra_entity.merchant.5", "Kosh, kapleck Mog。哦，对不起，这是克林贡语，意思是“要么买，要么死。");
+        add("dialogs.terra_entity.merchant.5", "Kosh, kapleck Mog。哦，对不起，这是克林贡语，意思是“要么买，要么死。”");
 
         add("dialogs.terra_entity.painter.0", "我知道青绿色和蓝绿色之间的差别。但我不会告诉你。");
         add("dialogs.terra_entity.painter.1", "钛白色用完了，别问了。");
@@ -608,12 +878,63 @@ public class TEChineseProvider extends LanguageProvider {
         add("dialogs.terra_entity.dye_trader.4", "这些染料瓶？抱歉，亲爱的朋友，这些是非卖品。我只接受用最珍稀的植物来交换它们！");
         add("dialogs.terra_entity.dye_trader.5", "你以为可以骗过我的眼睛？我可不这么想！我只接受用最稀有的花来交换这些特别的瓶子。");
 
-        add("dialogs.terra_entity.angler.0", "谢谢，我想，谢谢你救了我之类的。你是个优秀的得力仆从！");
-        add("dialogs.terra_entity.angler.1", "啥？你是哪位？我绝对不是溺水之类的！");
-        add("dialogs.terra_entity.angler.2", "你救了我！你太好了，我可以使唤你……呃，我是说，雇你帮我做些了不起的事！");
+        add("dialogs.terra_entity.angler.0", "太可气了！有些鱼可能在我出生之前就灭绝了，真不公平！");
+        add("dialogs.terra_entity.angler.1", "什……么？！难道你没看见我在收钓鱼线吗？？");
+        add("dialogs.terra_entity.angler.2", "整个%s中都没有厨师，所以我不得不自己烹鱼！");
         add("dialogs.terra_entity.angler.3", "我没有妈妈，也没有爸爸，但我有很多鱼！这就够了！");
-        add("dialogs.terra_entity.angler.4", "嘿！当心！我设了许多陷阱，用来实施史上最大的恶作剧！没人会发觉！你敢告诉别人试试！");
+        add("dialogs.terra_entity.angler.4", "听听小孩的忠告吧，永远不要用舌头碰冰块！等一下，就当我没说，我就想看你这样做！");
         add("dialogs.terra_entity.angler.5", "听说过会叫的鱼吗？！我没听说过，只是想知道你听说过没！");
+        add("dialogs.terra_entity.angler.6", "嘿！当心！我设了许多陷阱，用来实施史上最大的恶作剧！没人会发觉！你敢告诉别人试试！");
+        add("dialogs.terra_entity.angler.7", "%s到处都是各种稀奇古怪的鱼！");
+        add("dialogs.terra_entity.angler.stat.0", "你知道我已经有了%s条超棒的鱼了吗！？那是因为在跑腿这件事上，你还是发挥了作用！");
+        add("dialogs.terra_entity.angler.stat.1", "喂！你打扰我好像有%s次了！如果不是每次都有很酷的鱼，我一定会发飙！");
+        add("dialogs.terra_entity.angler.wakeup.0", "谢谢，我想，谢谢你救了我之类的。你是个优秀的得力仆从！");
+        add("dialogs.terra_entity.angler.wakeup.1", "啥？你是哪位？我绝对不是溺水之类的！");
+        add("dialogs.terra_entity.angler.wakeup.2", "你救了我！你太好了，我可以使唤你……呃，我是说，雇你帮我做些了不起的事！");
+        add("dialogs.terra_entity.angler.task_ready.0", "嘿！我有一个活儿给你。不要以为你能拒绝，怎么都不行！");
+        add("dialogs.terra_entity.angler.task_ready.1", "我想要一条鱼，你去给我弄一条来！快问我细节！");
+        add("dialogs.terra_entity.angler.task_ready.2", "%1$s想让你正式成为%2$s的跑腿官！");
+        add("dialogs.terra_entity.angler.task_ready.3", "嘿！你就是我一直在找的牺……我是说称职的钓鱼大师！");
+        add("dialogs.terra_entity.angler.task_succeed.0", "哦！谢谢你抓来我要的鱼，可以滚了！");
+        add("dialogs.terra_entity.angler.task_succeed.1", "你这跑腿的活干得挺不错嘛！现在走开！");
+        add("dialogs.terra_entity.angler.task_succeed.2", "哈哈哈哈！你做到了！你竟然毫发无伤，真没劲！");
+        add("dialogs.terra_entity.angler.task_succeed.3", "哇！？你竟然完成了任务，还活了下来！不错，把它交上来，再滚远点！");
+        add("dialogs.terra_entity.angler.task_succeed.4", "抓到啦！一切都是按计划进行的！哈哈哈！");
+        add("dialogs.terra_entity.angler.task_finished.0", "我的鱼够了！我现在不需要你的帮助！");
+        add("dialogs.terra_entity.angler.task_finished.1", "你今天已经让我够开心了，可以走了。");
+        add("dialogs.terra_entity.angler.task_finished.2", "现在没有任务要分配给你。");
+        add("dialogs.terra_entity.angler.task_finished.3", "一天就一条鱼，请离开！");
+        add("dialogs.terra_entity.angler.task_finished.4", "你上次给我的鱼还没用呢。我不需要了。");
+        add("dialogs.terra_entity.angler.task_finished.5", "你完蛋了，伟大的%s会解雇你！");
+
+        add("dialogs.terra_entity.female_angler.0", "真可惜呀！有些鱼或许在我出生前就消失了，希望能好好保护剩下的它们～");
+        add("dialogs.terra_entity.female_angler.1", "啊……抱歉！是不是打扰到我收钓线了？实在不好意思呀！");
+        add("dialogs.terra_entity.female_angler.2", "整个%s里虽然没有厨师，但能自己亲手烹鱼，也是一种幸福呢！");
+        add("dialogs.terra_entity.female_angler.3", "我没有爸爸妈妈，但有这么多可爱的鱼儿作伴！我已经很满足啦～");
+        add("dialogs.terra_entity.female_angler.4", "听姐姐一句劝哦，千万别用舌头碰冰块啦！会冻伤的，一定要好好照顾自己呀～");
+        add("dialogs.terra_entity.female_angler.5", "你听说过会叫的鱼吗？我好像见过哦，要不要和我聊聊呀！");
+        add("dialogs.terra_entity.female_angler.6", "哎呀！小心一点～我布置了些小装饰，不是陷阱啦，只是想给大家一点小惊喜，千万别误会哦～");
+        add("dialogs.terra_entity.female_angler.7", "%s里到处都是可爱又特别的鱼儿，真的太美好了！");
+        add("dialogs.terra_entity.female_angler.stat.0", "你知道吗？我已经收集到%s条超美的鱼了！真的太谢谢你了，没有你的帮忙我肯定做不到的！");
+        add("dialogs.terra_entity.female_angler.stat.1", "哎呀！麻烦你%s次了，真的太不好意思啦！不过每次都能见到这么好看的鱼，真的太开心了！");
+        add("dialogs.terra_entity.female_angler.wakeup.0", "太感谢你了！真的不知道该怎么报答你，你真的是个超级好的朋友！");
+        add("dialogs.terra_entity.female_angler.wakeup.1", "呀？是你呀～刚刚只是脚滑了一下，不是溺水啦，谢谢你这么关心我！");
+        add("dialogs.terra_entity.female_angler.wakeup.2", "谢谢你救了我！你真的太好了～如果你不介意的话，我想请你帮我做点小事，当然不愿意也没关系的！");
+        add("dialogs.terra_entity.female_angler.task_ready.0", "你好呀～我有个小小的请求，如果你方便的话能不能帮我一下？不方便也完全没关系的！");
+        add("dialogs.terra_entity.female_angler.task_ready.1", "我想找一条特别的鱼，如果你愿意帮忙找找的话就太好啦！不急的，慢慢说细节～");
+        add("dialogs.terra_entity.female_angler.task_ready.2", "%1$s想正式邀请你成为%2$s的钓鱼小帮手，你愿意吗？");
+        add("dialogs.terra_entity.female_angler.task_ready.3", "你好呀！你就是我一直想找的、超厉害的钓鱼大师吧！能请你帮帮忙吗？");
+        add("dialogs.terra_entity.female_angler.task_succeed.0", "哇！谢谢你帮我抓到想要的鱼，真的太感谢了！辛苦你啦～");
+        add("dialogs.terra_entity.female_angler.task_succeed.1", "你真的做得超棒的！辛苦你了，快歇一歇吧～");
+        add("dialogs.terra_entity.female_angler.task_succeed.2", "太开心啦！你安全完成了，真的太好了！我还一直担心你呢！");
+        add("dialogs.terra_entity.female_angler.task_succeed.3", "天呐！？你不仅完成了任务，还平平安安的，真的太棒了！快把鱼给我，快去休息一下吧～");
+        add("dialogs.terra_entity.female_angler.task_succeed.4", "抓到啦！一切都超顺利的～谢谢你的帮忙，真的太感谢了！");
+        add("dialogs.terra_entity.female_angler.task_finished.0", "我的鱼已经足够啦！真的太谢谢你的帮忙，你真的帮了我太多了～");
+        add("dialogs.terra_entity.female_angler.task_finished.1", "今天真的谢谢你啦，和你相处超开心的！你快去忙自己的事吧～");
+        add("dialogs.terra_entity.female_angler.task_finished.2", "暂时没有需要帮忙的啦，不过还是谢谢你愿意过来～");
+        add("dialogs.terra_entity.female_angler.task_finished.3", "今天的鱼已经够啦，辛苦你啦，慢走哦～");
+        add("dialogs.terra_entity.female_angler.task_finished.4", "上次你给我的鱼我还好好收着呢，暂时不需要啦，不过还是超感谢你的！");
+        add("dialogs.terra_entity.female_angler.task_finished.5", "真的太谢谢你啦！能有你这样的帮手，是%s的幸运呀～");
 
         add("dialogs.terra_entity.old_man.0", "如果你不解除我的诅咒，我是不会让你进的。");
         add("dialogs.terra_entity.old_man.1", "陌生人，你是否拥有能打败我主人的力量？");
@@ -658,6 +979,16 @@ public class TEChineseProvider extends LanguageProvider {
         add("dialogs.terra_entity.party_girl.5", "我叫派对女孩，但人们叫我派对扫把星。我也搞不懂为啥这样叫我，但听起来酷酷的。");
         add("dialogs.terra_entity.party_girl.6", "你开派对吗？有时开？好吧，那我们谈谈……");
 
+        add("dialogs.terra_entity.zoologist.0", "我以前也像你一样养小动物，后来被一只受诅咒的狐狸咬到了膝盖！");
+        add("dialogs.terra_entity.zoologist.1", "我可能学识浅薄……但有关自然、小动物、动物和野生动物之类的话题，我可以给你说上三天三夜……");
+        add("dialogs.terra_entity.zoologist.2", "我老哥叫我兽化人。意思是我有一半像动物什么的。不过他都懂，毕竟他常年在外！");
+        add("dialogs.terra_entity.zoologist.3", "我非常喜欢动物！有一次我试着抚摸这只长相奇特的狐狸，他竟然咬了我一口，现在我变成了一只动物！酷毙了！");
+        add("dialogs.terra_entity.zoologist.4", "别拉扯我的尾巴了，兄弟，是货真价实的……这样拉扯，我很疼的！");
+        add("dialogs.terra_entity.zoologist.5", "噢，这两只大耳朵吗？哈哈，是用来听你的，宝贝！");
+        add("dialogs.terra_entity.zoologist.6", "这次是在小动物营地，有天早上我醒来，发现一切全变样了！发生这么大的事情，我竟然还睡得着？！");
+        add("dialogs.terra_entity.zoologist.7", "哇，我好像从来没见过满月。不知道为什么，一要出现满月我就会昏倒！");
+        add("dialogs.terra_entity.zoologist.8", "我不知道我是怎么来到这里的，但这感觉太棒了。");
+
         add("dialogs.terra_entity.truffle.0", "生活在地下已经够惨的了，像你这样的败类还要趁我睡觉来偷我的孩子。");
         add("dialogs.terra_entity.truffle.1", "有一天，我试着舔了舔自己，看看会发生什么大不了的事，然后全身都开始发蓝光。");
         add("dialogs.terra_entity.truffle.2", "每次看到蓝色，我都感到郁闷和懒散。");
@@ -666,11 +997,21 @@ public class TEChineseProvider extends LanguageProvider {
         add("dialogs.terra_entity.truffle.5", "有个关于我的谣言正在盛传：“如果打不过他，那就吃掉他！");
         add("dialogs.terra_entity.truffle.6", "我感觉这里有更多同类...");
 
+        add("dialogs.terra_entity.wizard.0", "想让我从你耳朵后面掏出一个钱币吗？不想？好吧。");
+        add("dialogs.terra_entity.wizard.1", "想要一些魔法糖果吗？不想？好吧。");
+        add("dialogs.terra_entity.wizard.2", "我做了一杯诱人的热巧克力，你感不感……不感兴趣？好吧。");
+        add("dialogs.terra_entity.wizard.3", "你来这里是不是想看看我的水晶球？");
+        add("dialogs.terra_entity.wizard.4", "想不想要可以把石头变成史莱姆的魔戒？好吧，我也不想要。");
+        add("dialogs.terra_entity.wizard.5", "有人曾告诉我友谊是魔法。太荒谬了。你无法用友谊把人变成青蛙。");
+        add("dialogs.terra_entity.wizard.6", "我现在能看到你的未来……你会从我这里买很多物品！");
+        add("dialogs.terra_entity.wizard.7", "我曾经试过复活一座天使雕像。它啥都不干。");
+
         add("mood.terra_entity.goblin_tinkerer.like.dye_trader", "染料商知道把东西混在一起是多么有趣，我能理解！");
         add("mood.terra_entity.goblin_tinkerer.love.mechanic", "机械师让我像失了魂似的，心神不宁，不过我喜欢这种感觉！");
         add("mood.terra_entity.goblin_tinkerer.dislike.clothier", "我从服装商身上发现了怪异之处，仿佛他们掌握了黑暗秘密。我不喜欢这种感觉。");
         add("mood.terra_entity.guide.hate.painter", "我讨厌油漆工在附近。世界本来挺美好的！");
         add("mood.terra_entity.guide.like.clothier", "我很喜欢服装商，我们有很多共同点。");
+        add("mood.terra_entity.guide.like.zoologist", "我很喜欢动物学家，我们有很多共同点。");
         add("mood.terra_entity.arms_dealer.hate.demolitionist", "爆破专家怎么回事啊？难道他没发现我们卖的东西完全不同？");
         add("mood.terra_entity.arms_dealer.love.nurse", "那啥，你觉得护士对我有意思吗");
         add("mood.terra_entity.angler.like.demolitionist", "爆破专家其实知道他们在做什么，不像某些其他人！我挺喜欢的！");
@@ -695,6 +1036,8 @@ public class TEChineseProvider extends LanguageProvider {
         add("mood.terra_entity.nurse.love.arms_dealer", "什么？军火商？我才没有暗恋他！我没有！闭嘴！");
         add("mood.terra_entity.nurse.dislike.dryad", "我不太喜欢树妖，这个人有点奇怪。");
         add("mood.terra_entity.nurse.dislike.party_girl", "我不太喜欢派对女孩，这个人有点奇怪。");
+        add("mood.terra_entity.nurse.hate.zoologist", "噢，我讨厌治疗动物学家，太难了！");
+        add("mood.terra_entity.nurse.like.wizard", "巫师是一个既聪明又可爱的傻瓜。");
         add("mood.terra_entity.truffle.love.guide", "我非常喜欢向导，因为能好好和我说话，而不会莫名其妙地就想吃我。");
         add("mood.terra_entity.truffle.like.dye_trader", "树妖对我很尊重，把我当作大自然的一部分。除了喜欢，我不知道该如何形容这种感觉。");
         add("mood.terra_entity.truffle.dislike.clothier", "服装商很多次想吃掉我。我发誓，有一次他们甚至毫无人性！很显然，我不喜欢这样。");
@@ -703,6 +1046,8 @@ public class TEChineseProvider extends LanguageProvider {
         add("mood.terra_entity.clothier.dislike.nurse", "不知什么原因，和护士在一起会让我感到不安。");
         add("mood.terra_entity.clothier.hate.mechanic", "我讨厌机械师，我也不知道为什么。");
         add("mood.terra_entity.party_girl.dislike.merchant", "我觉得商人在派对上很扫兴。");
+        add("mood.terra_entity.party_girl.love.zoologist", "我喜欢动物学家在我的派对上总是光彩夺目。");
+        add("mood.terra_entity.party_girl.love.wizard", "我喜欢巫师在我的派对上总是光彩夺目。");
         add("mood.terra_entity.witch_doctor.like.dryad", "树妖是志同道合的大自然精灵，有他们在，我的心灵就能得到安宁。");
         add("mood.terra_entity.witch_doctor.like.guide", "向导是志同道合的大自然精灵，有他们在，我的心灵就能得到安宁。");
         add("mood.terra_entity.witch_doctor.dislike.nurse", "我不喜欢护士的做法。用金属和玻璃是做不到真正地治愈的。");
@@ -710,6 +1055,12 @@ public class TEChineseProvider extends LanguageProvider {
         add("mood.terra_entity.mechanic.love.goblin_tinkerer", "嗯……哥布林工匠让我心跳加速，我要去检查一下！");
         add("mood.terra_entity.mechanic.dislike.arms_dealer", "我真的不喜欢军火商对我的纠缠！");
         add("mood.terra_entity.mechanic.hate.clothier", "我讨厌服装商，他不懂得该如何对待女人！");
+        add("mood.terra_entity.zoologist.love.witch_doctor", "我也说不清，但我就是非常喜欢巫医。是因为它的尾巴吗？");
+        add("mood.terra_entity.zoologist.dislike.angler", "我不喜欢残酷的渔夫！");
+        add("mood.terra_entity.zoologist.like.female_angler", "她并没有真正伤害它们。");
+        add("mood.terra_entity.zoologist.hate.arms_dealer", "我真的非常讨厌军火商对动物所做的事情！");
+        add("mood.terra_entity.wizard.like.merchant", "商人和我相识已久，我喜欢我们共同的智慧。");
+        add("mood.terra_entity.wizard.dislike.witch_doctor", "巫医涉足了不该被打扰的领域，我不喜欢这样。");
 
 
     }

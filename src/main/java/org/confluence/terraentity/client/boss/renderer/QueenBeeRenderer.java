@@ -35,6 +35,7 @@ public class QueenBeeRenderer extends GeoNormalRenderer<QueenBee> {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
+    @Override
     public void reRender(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, QueenBee animatable,
                           RenderType renderType, VertexConsumer buffer, float partialTick,
                           int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {

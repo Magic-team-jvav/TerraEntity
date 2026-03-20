@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,8 +15,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.api.npc.trade.ITrade;
+import org.confluence.terraentity.network.s2c.SetAnglerDialogPacketS2C;
 import org.confluence.terraentity.registries.npc_trade.variant.TradeTask;
 import org.confluence.terraentity.registries.npc_trade_task.variant.DynamicAnglerTradeTask;
+import org.confluence.terraentity.utils.AdapterUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -27,6 +29,7 @@ import java.util.Objects;
  */
 public class AnglerNPC extends AbstractTerraNPC {
 
+    public static final String WAKE_UP_KEY = "WakeUp";
     boolean triggerNight = false;
 
     public AnglerNPC(EntityType<? extends AbstractTerraNPC> entityType, Level level) {
@@ -42,14 +45,14 @@ public class AnglerNPC extends AbstractTerraNPC {
     public void resetFishTask() {
 //        this.entityData.set(DATA_TIME_TO_TRADE_FISH_DATA, true);
         int c = 0;
-        if(trades() == null){
+        if (trades() == null) {
             return;
         }
-        for(ITrade trade: trades()){
-            if(trade instanceof TradeTask task){
-                if(task.task() instanceof DynamicAnglerTradeTask d){
+        for (ITrade trade : trades()) {
+            if (trade instanceof TradeTask task) {
+                if (task.task() instanceof DynamicAnglerTradeTask d) {
                     // 更新参数
-                    if(!Objects.requireNonNull(getTradeParams()).isReady(c)) {
+                    if (!Objects.requireNonNull(getTradeParams()).isReady(c)) {
                         d.setNext(this, c);
 
                         getTradeParams().increaseLevel(c);
@@ -64,11 +67,11 @@ public class AnglerNPC extends AbstractTerraNPC {
     }
 
     // 渔夫初始化时随机设置交易任务
-    protected void onInitTrades(){
+    protected void onInitTrades() {
         int c = 0;
-        for(ITrade trade: trades()){
-            if(trade instanceof TradeTask task){
-                if(task.task() instanceof DynamicAnglerTradeTask d){
+        for (ITrade trade : trades()) {
+            if (trade instanceof TradeTask task) {
+                if (task.task() instanceof DynamicAnglerTradeTask d) {
                     // 更新参数
                     d.setNext(this, c);
                     getTradeParams().increaseLevel(c);
@@ -79,13 +82,24 @@ public class AnglerNPC extends AbstractTerraNPC {
         syncTradeTasksParams();
     }
 
+    public @Nullable DynamicAnglerTradeTask getFirstTask() {
+        for (ITrade trade : trades()) {
+            if (trade instanceof TradeTask task) {
+                if (task.task() instanceof DynamicAnglerTradeTask d) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    }
+
     // 只要经历过晚上，天一亮就会刷新
-    protected boolean timeToTradeFresh(){
-        if(this.isNight()){
+    protected boolean timeToTradeFresh() {
+        if (this.isNight()) {
             triggerNight = true;
         }
-        if(this.triggerNight){
-            if(this.isDay()){
+        if (this.triggerNight) {
+            if (this.isDay()) {
                 this.triggerNight = false;
                 return true;
             }
@@ -108,8 +122,7 @@ public class AnglerNPC extends AbstractTerraNPC {
     @Override
     public void onAddedToWorld() {
         super.onAddedToWorld();
-
-        if(!this.isWakeUp()){
+        if (!this.isWakeUp()) {
             this.brain = this.brain.copyWithoutBehaviors();
         }
     }
@@ -123,7 +136,7 @@ public class AnglerNPC extends AbstractTerraNPC {
     @Override
     public void onSyncedDataUpdated(@NotNull EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
-        if(key == DATA_WAKE_UP){
+        if (key == DATA_WAKE_UP) {
             this.refreshDimensions();
         }
     }
@@ -131,13 +144,13 @@ public class AnglerNPC extends AbstractTerraNPC {
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if(tag.contains("WakeUp")){
-            setWakeUp(tag.getBoolean("WakeUp"));
+        if (tag.contains(WAKE_UP_KEY)) {
+            setWakeUp(tag.getBoolean(WAKE_UP_KEY));
             this.entityData.set(DATA_WAKE_UP, isWakeUp(), true);
-        }else{
+        } else {
             this.entityData.set(DATA_WAKE_UP, false, true);
         }
-        if(tag.contains("TriggerNight")){
+        if (tag.contains("TriggerNight")) {
             triggerNight = tag.getBoolean("TriggerNight");
         }
     }
@@ -145,7 +158,7 @@ public class AnglerNPC extends AbstractTerraNPC {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putBoolean("WakeUp", isWakeUp());
+        tag.putBoolean(WAKE_UP_KEY, isWakeUp());
         tag.putBoolean("TriggerNight", triggerNight);
     }
 
@@ -164,45 +177,46 @@ public class AnglerNPC extends AbstractTerraNPC {
         this.entityData.set(DATA_WAKE_UP, wakeUp, true);
     }
 
-    public boolean isLieDown(){
+    public boolean isLieDown() {
         return !isWakeUp();
     }
 
-    private boolean isNight(){
+    private boolean isNight() {
         return level().dayTime() % 24000 >= 12000 || level().dayTime() < 200;
     }
 
-    private boolean isDay(){
+    private boolean isDay() {
         return !isNight();
     }
 
     Vec3 dir = Vec3.ZERO;
     Vec3 speed = Vec3.ZERO;
-    @Override
-    public void tick(){
-        super.tick();
-        if(!level().isClientSide){
 
-            if(timeToTradeFresh()){
+    @Override
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide) {
+
+            if (timeToTradeFresh()) {
                 this.resetFishTask();
             }
-            if(!this.isWakeUp()){
-                if(this.isInWater() ){
-                    this.setDeltaMovement(0,0.02f,0);
+            if (!this.isWakeUp()) {
+                if (this.isInWater()) {
+                    this.setDeltaMovement(0, 0.02f, 0);
 
                 }
-                if(this.isInWater() || level().getBlockState(this.blockPosition()).is(Blocks.WATER)){
-                    if(this.dir == null){
+                if (this.isInWater() || level().getBlockState(this.blockPosition()).is(Blocks.WATER)) {
+                    if (this.dir == null) {
                         this.dir = Vec3.ZERO;
                     }
-                    if(this.speed == null){
+                    if (this.speed == null) {
                         this.speed = Vec3.ZERO;
                     }
                     float f = 0.001f;
                     float maxSpeed = 0.008f;
                     speed = new Vec3(Math.random() * 2 * f - f, 0, Math.random() * 2 * f - f);
                     this.dir = this.dir.add(speed);
-                    if(dir.length() > maxSpeed * 1.4F){
+                    if (dir.length() > maxSpeed * 1.4F) {
                         dir = dir.scale(0.9F);
                     }
 
@@ -215,22 +229,20 @@ public class AnglerNPC extends AbstractTerraNPC {
 
     @Override
     protected @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
-        if(!isWakeUp() && player.level() instanceof ServerLevel serverLevel){
+        if (!isWakeUp() && player instanceof ServerPlayer serverPlayer) {
             setWakeUp(true);
-            this.refreshBrain(serverLevel);
-            // confluence mixin here
-            return InteractionResult.CONSUME;
+            this.refreshBrain(serverPlayer.serverLevel());
+            AdapterUtils.sendToPlayer(serverPlayer, new SetAnglerDialogPacketS2C(SetAnglerDialogPacketS2C.WAKEUP));
+            return InteractionResult.CONSUME; // confluence mixin here
         }
         return super.mobInteract(player, hand);
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pose) {
+    public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {
         if(!this.isWakeUp()) {
             return super.getDimensions(pose).scale(2F, 0.5f);
         }
         return super.getDimensions(pose);
     }
-
 }
-

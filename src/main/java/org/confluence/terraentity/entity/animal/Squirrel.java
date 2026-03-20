@@ -33,8 +33,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class Squirrel extends Animal implements  GeoEntity,  IVanillaVariant<Integer> {
+public class Squirrel extends Animal implements GeoEntity, IVanillaVariant<Integer> {
 
+    public static final String VARIANT_KEY = "Variant";
     private boolean initializedVariant = false;
 
     private static final EntityDataAccessor<Integer> DATA_VARIANT_ID = SynchedEntityData.defineId(Squirrel.class, EntityDataSerializers.INT);
@@ -98,9 +99,9 @@ public class Squirrel extends Animal implements  GeoEntity,  IVanillaVariant<Int
 
 
     @Override
-    public void onAddedToWorld(){
+    public void onAddedToWorld() {
         super.onAddedToWorld();
-        if(!level().isClientSide && !initializedVariant){
+        if (!level().isClientSide && !initializedVariant) {
             this.setVariant(random.nextInt(getTexturesMap().size()));
         }
     }
@@ -114,6 +115,7 @@ public class Squirrel extends Animal implements  GeoEntity,  IVanillaVariant<Int
     public @NotNull Integer getVariant() {
         return this.entityData.get(DATA_VARIANT_ID);
     }
+
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
@@ -123,21 +125,23 @@ public class Squirrel extends Animal implements  GeoEntity,  IVanillaVariant<Int
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
-        pCompound.putInt("Variant", this.getVariant());
+        pCompound.putInt(VARIANT_KEY, this.getVariant());
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
-        if(pCompound.contains("Variant")) {
-            this.setVariant(pCompound.getInt("Variant"));
+        if (pCompound.contains(VARIANT_KEY)) {
+            this.setVariant(pCompound.getInt(VARIANT_KEY));
             this.initializedVariant = true;
         }
     }
 
+    public static final int COMMON_ID = 0;
+    public static final int RED_ID = 1;
     static Map<Integer, ResourceLocation> textures = new Int2ObjectOpenHashMap<>(ImmutableMap.<Integer, ResourceLocation>builder()
-            .put(0, TerraEntity.space("textures/entity/animal/squirrel/squirrel.png"))
-            .put(1, TerraEntity.space("textures/entity/animal/squirrel/red_squirrel.png"))
+            .put(COMMON_ID, TerraEntity.space("textures/entity/animal/squirrel/squirrel.png"))
+            .put(RED_ID, TerraEntity.space("textures/entity/animal/squirrel/red_squirrel.png"))
             .build()
     );
 

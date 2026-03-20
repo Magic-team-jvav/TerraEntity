@@ -4,7 +4,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import org.confluence.terraentity.data.codec.TECodecs;
 import org.confluence.terraentity.utils.AdapterUtils;
+
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 房子类,未来可能扩展不同的房子类型
@@ -14,9 +18,9 @@ import org.confluence.terraentity.utils.AdapterUtils;
  * @param max    右上角的坐标
  * @param center 房子的中心坐标
  */
-public record House(String uuid, BlockPos min, BlockPos max, BlockPos center) {
+public record House(Optional<UUID> uuid, BlockPos min, BlockPos max, BlockPos center) {
     public static final String KEY = "npc_house";
-    public static final House EMPTY = new House("", BlockPos.ZERO, BlockPos.ZERO, BlockPos.ZERO);
+    public static final House EMPTY = new House(Optional.empty(), BlockPos.ZERO, BlockPos.ZERO, BlockPos.ZERO);
 
     public boolean isEmpty() {
         return uuid.isEmpty();
@@ -27,7 +31,7 @@ public record House(String uuid, BlockPos min, BlockPos max, BlockPos center) {
     }
 
     public static final Codec<House> CODEC = RecordCodecBuilder.create((builder) -> builder.group(
-            Codec.STRING.fieldOf("uuid").forGetter(House::uuid),
+            TECodecs.UUID_CODEC.optionalFieldOf("uuid").forGetter(House::uuid),
             BlockPos.CODEC.fieldOf("min").forGetter(House::min),
             BlockPos.CODEC.fieldOf("max").forGetter(House::max),
             BlockPos.CODEC.fieldOf("center").forGetter(House::center)

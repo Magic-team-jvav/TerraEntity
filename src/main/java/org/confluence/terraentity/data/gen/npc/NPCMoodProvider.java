@@ -36,8 +36,9 @@ public class NPCMoodProvider extends AbstractExistCodecProvider<Map<EntityType<?
         map.put(TENpcEntities.GUIDE.get(), new NPCMood.EntityMood.Builder()
                 .addMoodInfo(TerraEntity.space("guild1"), MoodInfo.of(TENpcEntities.PAINTER.get(), "mood.terra_entity.guide.hate.painter", Mood.HATE))
                 .addMoodInfo(TerraEntity.space("guild2"), MoodInfo.of(TENpcEntities.CLOTHIER.get(), "mood.terra_entity.guide.like.clothier", Mood.LIKE))
+                .addMoodInfo(TerraEntity.space("guild3"), MoodInfo.of(TENpcEntities.ZOOLOGIST.get(), "mood.terra_entity.guide.like.zoologist", Mood.LIKE))
                 .build());
-                // 喜欢公主，动物学家
+                // 喜欢公主
                 // 反感蒸汽朋克人
         // arms_dealer
         map.put(TENpcEntities.ARMS_DEALER.get(), new NPCMood.EntityMood.Builder()
@@ -104,9 +105,10 @@ public class NPCMoodProvider extends AbstractExistCodecProvider<Map<EntityType<?
                 .addMoodInfo(TerraEntity.space("nurse1"), MoodInfo.of(TENpcEntities.ARMS_DEALER.get(), "mood.terra_entity.nurse.love.arms_dealer", Mood.LOVER))
                 .addMoodInfo(TerraEntity.space("nurse2"), MoodInfo.of(TENpcEntities.DRYAD.get(), "mood.terra_entity.nurse.dislike.dryad", Mood.DISLIKE))
                 .addMoodInfo(TerraEntity.space("nurse3"), MoodInfo.of(TENpcEntities.PARTY_GIRL.get(), "mood.terra_entity.nurse.dislike.party_girl", Mood.DISLIKE))
+                .addMoodInfo(TerraEntity.space("nurse4"), MoodInfo.of(TENpcEntities.ZOOLOGIST.get(), "mood.terra_entity.nurse.hate.zoologist", Mood.HATE))
+                .addMoodInfo(TerraEntity.space("nurse5"), MoodInfo.of(TENpcEntities.WIZARD.get(), "mood.terra_entity.nurse.like.wizard", Mood.LIKE))
                 .build());
-                // 喜欢公主,巫师
-                // 反感，讨厌动物学家
+                // 喜欢公主
         // mechanic
         map.put(TENpcEntities.MECHANIC.get(), new NPCMood.EntityMood.Builder()
                 .addMoodInfo(TerraEntity.space("mechanic1"), MoodInfo.of(TENpcEntities.GOBLIN_TINKERER.get(), "mood.terra_entity.mechanic.love.goblin_tinkerer", Mood.LOVER))
@@ -125,8 +127,9 @@ public class NPCMoodProvider extends AbstractExistCodecProvider<Map<EntityType<?
         // party_girl
         map.put(TENpcEntities.PARTY_GIRL.get(), new NPCMood.EntityMood.Builder()
                 .addMoodInfo(TerraEntity.space("party_girl1"), MoodInfo.of(TENpcEntities.MERCHANT.get(), "mood.terra_entity.party_girl.dislike.merchant", Mood.DISLIKE))
+                .addMoodInfo(TerraEntity.space("party_girl2"), MoodInfo.of(TENpcEntities.ZOOLOGIST.get(), "mood.terra_entity.party_girl.love.zoologist", Mood.LOVER))
+                .addMoodInfo(TerraEntity.space("party_girl3"), MoodInfo.of(TENpcEntities.WIZARD.get(), "mood.terra_entity.party_girl.love.wizard", Mood.LOVER))
                 .build());
-                // 爱巫师，动物学家
                 // 讨厌税收官
         // clothier
         map.put(TENpcEntities.CLOTHIER.get(), new NPCMood.EntityMood.Builder()
@@ -135,6 +138,14 @@ public class NPCMoodProvider extends AbstractExistCodecProvider<Map<EntityType<?
                 .addMoodInfo(TerraEntity.space("clothier3"), MoodInfo.of(TENpcEntities.MECHANIC.get(), "mood.terra_entity.clothier.hate.mechanic", Mood.HATE))
                 .build());
                 // 喜欢公主,税收官
+        // clothier
+        map.put(TENpcEntities.ZOOLOGIST.get(), new NPCMood.EntityMood.Builder()
+                .addMoodInfo(TerraEntity.space("zoologist1"), MoodInfo.of(TENpcEntities.WITCH_DOCTOR.get(), "mood.terra_entity.zoologist.love.witch_doctor", Mood.LOVER))
+                .addMoodInfo(TerraEntity.space("zoologist2"), MoodInfo.of(TENpcEntities.ANGLER.get(), "mood.terra_entity.zoologist.dislike.angler", Mood.DISLIKE))
+                .addMoodInfo(TerraEntity.space("zoologist3"), MoodInfo.of(TENpcEntities.FEMALE_ANGLER.get(), "mood.terra_entity.zoologist.like.female_angler", Mood.LIKE))
+                .addMoodInfo(TerraEntity.space("zoologist4"), MoodInfo.of(TENpcEntities.ARMS_DEALER.get(), "mood.terra_entity.zoologist.hate.arms_dealer", Mood.HATE))
+                .build());
+        // 喜欢公主,高尔夫球手
         // truffle
         map.put(TENpcEntities.TRUFFLE.get(), new NPCMood.EntityMood.Builder()
                 .addMoodInfo(TerraEntity.space("truffle1"), MoodInfo.of(TENpcEntities.GUIDE.get(), "mood.terra_entity.truffle.love.guide", Mood.LOVER))
@@ -143,6 +154,14 @@ public class NPCMoodProvider extends AbstractExistCodecProvider<Map<EntityType<?
                 .addMoodInfo(TerraEntity.space("truffle4"), MoodInfo.of(TENpcEntities.WITCH_DOCTOR.get(), "mood.terra_entity.truffle.hate.witch_doctor", Mood.HATE))
                 .build());
                 // 喜欢公主
+        // wizard
+        map.put(TENpcEntities.WIZARD.get(), new NPCMood.EntityMood.Builder()
+                .addMoodInfo(TerraEntity.space("wizard1"), MoodInfo.of(TENpcEntities.MERCHANT.get(), "mood.terra_entity.wizard.like.merchant", Mood.LIKE))
+                .addMoodInfo(TerraEntity.space("wizard2"), MoodInfo.of(TENpcEntities.DYE_TRADER.get(), "mood.terra_entity.wizard.dislike.witch_doctor", Mood.DISLIKE))
+                .build());
+        // 喜欢公主
+        // 爱高尔夫球手
+        // 讨厌机械侠
         gen(TerraEntity.space("npc/moods"), map);
     }
 

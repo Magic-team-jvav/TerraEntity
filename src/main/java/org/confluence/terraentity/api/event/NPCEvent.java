@@ -1,16 +1,18 @@
 package org.confluence.terraentity.api.event;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.confluence.terraentity.api.npc.trade.ITrade;
+import org.confluence.terraentity.api.npc.trade.ITradeHolder;
 import org.confluence.terraentity.entity.npc.AbstractTerraNPC;
 import org.confluence.terraentity.entity.npc.brain.NPCAi;
-import org.confluence.terraentity.api.npc.trade.ITradeHolder;
-import org.confluence.terraentity.api.npc.trade.ITrade;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -23,8 +25,8 @@ import java.util.function.Consumer;
 /**
  * NPC事件基类
  */
-public abstract class NPCEvent  extends Event implements IModBusEvent {
-    AbstractTerraNPC npc;
+public abstract class NPCEvent extends Event implements IModBusEvent {
+    protected AbstractTerraNPC npc;
 
     public NPCEvent(AbstractTerraNPC npc) {
         this.npc = npc;
@@ -34,31 +36,35 @@ public abstract class NPCEvent  extends Event implements IModBusEvent {
         return npc;
     }
 
-
     /**
      * 重定向交互npc事件，用于替换交互时打开的菜单
      */
     public static class InteractNPCEvent extends NPCEvent {
-        private Player player;
-        BiConsumer<AbstractTerraNPC, Player> reDirection;
+        private final ServerPlayer player;
+        private BiConsumer<AbstractTerraNPC, ServerPlayer> reDirection;
+        private InteractionResult result = InteractionResult.PASS;
 
-        public InteractNPCEvent(AbstractTerraNPC npc, Player player) {
+        public InteractNPCEvent(AbstractTerraNPC npc, ServerPlayer player) {
             super(npc);
             this.player = player;
-        }
-
-        public AbstractTerraNPC getNpc() {
-            return npc;
         }
 
         public Player getPlayer() {
             return player;
         }
 
+        public void setResult(InteractionResult result) {
+            this.result = result;
+        }
+
+        public InteractionResult getInteractionResult() {
+            return result;
+        }
+
         /**
          * 设置重定向逻辑，当reDirection不为空时，使用这个逻辑
          */
-        public void setRedirection(@Nonnull BiConsumer<AbstractTerraNPC, Player> reDirection) {
+        public void setRedirection(@Nonnull BiConsumer<AbstractTerraNPC, ServerPlayer> reDirection) {
             this.reDirection = reDirection;
         }
 
@@ -75,18 +81,24 @@ public abstract class NPCEvent  extends Event implements IModBusEvent {
      * 当初始化npc时触发，用于替换NPC交易列表
      */
     public static class InitNPCTradeEvent extends NPCEvent {
-        private ResourceLocation origin;
+        private final ResourceLocation origin;
+        private ResourceLocation redirection;
 
         public InitNPCTradeEvent(AbstractTerraNPC npc, ResourceLocation origin) {
             super(npc);
             this.origin = origin;
+            this.redirection = origin;
         }
 
         /**
          * 设置重定向交易列表，当newResource不为空时，使用这个交易列表
          */
         public void setRedirection(@Nonnull ResourceLocation newResource) {
-            this.origin = newResource;
+            this.redirection = newResource;
+        }
+
+        public ResourceLocation getRedirection() {
+            return redirection;
         }
 
         public ResourceLocation getOrigin() {
@@ -98,28 +110,28 @@ public abstract class NPCEvent  extends Event implements IModBusEvent {
      * 旅商生成时初始化交易项数量
      */
     public static class TravelingMerchantGenerateTradeEvent extends NPCEvent {
+        private int count;
+        private final List<ITrade> append;
 
-        int count;
-        List<ITrade> append;
         public TravelingMerchantGenerateTradeEvent(AbstractTerraNPC npc, int count) {
             super(npc);
             this.count = count;
             this.append = new ArrayList<>();
         }
 
-        public void setGenerateCount(int count){
+        public void setGenerateCount(int count) {
             this.count = count;
         }
 
-        public int getGenerateCount(){
+        public int getGenerateCount() {
             return count;
         }
 
-        public void addTrade(ITrade trade){
+        public void addTrade(ITrade trade) {
             append.add(trade);
         }
 
-        public List<ITrade> getTrades(){
+        public List<ITrade> getTrades() {
             return append;
         }
     }
@@ -127,48 +139,60 @@ public abstract class NPCEvent  extends Event implements IModBusEvent {
     /**
      * 当交易时触发
      */
-    public static class NPCTradeEvent extends NPCEvent implements IModBusEvent {
-        ITrade trade;
-        Player player;
-        boolean alwaysPass = false;
-        BiConsumer<Player, ITrade> reDirection;
+    public static class NPCTradeEvent extends PlayerEvent {
+        private final ITradeHolder holder;
+        private final ITrade trade;
 
-        public NPCTradeEvent(@Nullable AbstractTerraNPC npc, ITrade trade, Player player) {
-            super(npc);
+        public NPCTradeEvent(ITradeHolder holder, ITrade trade, Player player) {
+            super(player);
+            this.holder = holder;
             this.trade = trade;
-            this.player = player;
+        }
+
+        public ITradeHolder getHolder() {
+            return holder;
         }
 
         public ITrade getTrade() {
             return trade;
         }
 
-        public Player getPlayer() {
-            return player;
+        public static class Pre extends NPCTradeEvent {
+            private boolean alwaysPass = false;
+            private BiConsumer<Player, ITrade> reDirection;
+
+            public Pre(ITradeHolder holder, ITrade trade, Player player) {
+                super(holder, trade, player);
+            }
+
+            /**
+             * 强行使交易通过
+             */
+            public void setAlwaysPass() {
+                this.alwaysPass = true;
+            }
+
+            public boolean isAlwaysPass() {
+                return alwaysPass;
+            }
+
+            /**
+             * 当交易触发时，重新设置交易的逻辑，替换{@link ITrade#onTrade(ServerPlayer, ITradeHolder, int)}
+             */
+            public void setRedirection(BiConsumer<Player, ITrade> reDirection) {
+                this.reDirection = reDirection;
+            }
+
+            public BiConsumer<Player, ITrade> getRedirection() {
+                return reDirection;
+            }
         }
 
-        /**
-         * 强行使交易通过
-         */
-        public void setAlwaysPass() {
-            this.alwaysPass = true;
+        public static class Post extends NPCTradeEvent {
+            public Post(ITradeHolder holder, ITrade trade, Player player) {
+                super(holder, trade, player);
+            }
         }
-
-        public boolean isAlwaysPass() {
-            return alwaysPass;
-        }
-
-        /**
-         * 当交易触发时，重新设置交易的逻辑，替换{@link ITrade#onTrade(ServerPlayer, ITradeHolder, int)}
-         */
-        public void setRedirection(BiConsumer<Player, ITrade> reDirection) {
-            this.reDirection = reDirection;
-        }
-
-        public BiConsumer<Player, ITrade> getRedirection() {
-            return reDirection;
-        }
-
     }
 
     /**
@@ -211,13 +235,36 @@ public abstract class NPCEvent  extends Event implements IModBusEvent {
             return consumerMap.get(id);
         }
 
-        public NPCBrainCollectionEvent() {
-
-        }
-
         public void register(EntityType<?> type, Consumer<NPCBrainCollector> consumer) {
             consumerMap.put(type, consumer);
         }
+    }
 
+    public static class NPCDialogEvent extends Event {
+        private final AbstractTerraNPC npc;
+        private final Component original;
+        private Component neoDialog;
+
+        public NPCDialogEvent(AbstractTerraNPC npc, Component original) {
+            this.npc = npc;
+            this.original = original;
+            this.neoDialog = original;
+        }
+
+        public AbstractTerraNPC getNPC() {
+            return npc;
+        }
+
+        public Component getOriginal() {
+            return original;
+        }
+
+        public Component getNeoDialog() {
+            return neoDialog;
+        }
+
+        public void setNeoDialog(Component neoDialog) {
+            this.neoDialog = neoDialog;
+        }
     }
 }

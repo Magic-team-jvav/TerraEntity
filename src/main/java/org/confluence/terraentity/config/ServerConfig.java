@@ -21,6 +21,9 @@ public class ServerConfig {
     public static ForgeConfigSpec.ConfigValue<Double> CHANCE_TO_SPAWN_SLIME_ON_ZOMBIE_HEAD;
     public static ForgeConfigSpec.ConfigValue<Double> ENEMY_SPAWN_CHANCE;
     public static ForgeConfigSpec.ConfigValue<Boolean> ENEMY_SPAWN_CHANCE_APPLY_ALL;
+
+    public static ForgeConfigSpec.ConfigValue<Integer> BEHAVIOR_TREE_WEB_VIEWER_SERVER_PORT;
+
     public static ForgeConfigSpec.Builder init(ForgeConfigSpec.Builder BUILDER){
         BUILDER.push("server");
 
@@ -77,6 +80,11 @@ public class ServerConfig {
         ENEMY_SPAWN_CHANCE_APPLY_ALL = BUILDER
                 .comment("Should the chance to spawn a monster apply to all monsters?")
                 .define("enemy_spawn_chance_apply_all", false);
+
+        BEHAVIOR_TREE_WEB_VIEWER_SERVER_PORT = BUILDER
+                .comment("Port for behavior web viewer.")
+                .defineInRange("behavior_tree_web_viewer_server_port", 59160, 1024, 65535);
+
         BUILDER.pop();
         return BUILDER;
     }

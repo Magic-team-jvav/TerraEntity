@@ -42,7 +42,6 @@ public class LineProj extends BaseProj<LineProj> {
         double offZ = getZ() + vec3.z;
         float accelerate = 1;
 
-
         setDeltaMovement(vec3.scale(accelerate));
         setPos(offX, offY, offZ);
         super.tick();

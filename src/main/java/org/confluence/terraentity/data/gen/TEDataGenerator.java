@@ -9,6 +9,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.confluence.terraentity.TerraEntity;
+import org.confluence.terraentity.data.gen.loot.LinkageTCLootModifyProvider;
 import org.confluence.terraentity.data.gen.loot.TELootModifyProvider;
 import org.confluence.terraentity.data.gen.loot.TELootTableProvider;
 import org.confluence.terraentity.data.gen.npc.NPCChatProvider;
@@ -44,6 +45,7 @@ public class TEDataGenerator {
 
         generator.addProvider(server, provider);
         generator.addProvider(server, new TELootModifyProvider(output, TerraEntity.MODID));
+        generator.addProvider(server, new LinkageTCLootModifyProvider(output));
 
         generator.addProvider(server, new TEEntityTypeTagsProvider(output, lookup, helper));
         generator.addProvider(server, new TEDamageTypeTagsProvider(output, lookup, helper));
@@ -60,6 +62,7 @@ public class TEDataGenerator {
         generator.addProvider(server, new NPCMoodProvider(output, lookup));
         generator.addProvider(server, new NPCChatProvider(output, lookup));
         generator.addProvider(server, new MappedDataProvider(output, lookup));
+
 
 //        generator.addProvider(server, new TENPCShopModifierProvider(output, lookup));  // 用来测试，发布时应该注释掉
 

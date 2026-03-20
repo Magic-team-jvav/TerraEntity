@@ -48,4 +48,5 @@ public abstract class LocalPlayerMixin {
         this.confluence$flag = input.jumping;
 
     }
+
 }

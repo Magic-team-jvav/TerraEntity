@@ -4,17 +4,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeMod;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.constant.DefaultAnimations;
@@ -43,14 +41,14 @@ public class SummonFinch  extends AbstractSummonMob implements FlyingAnimal {
         this.goalSelector.addGoal(9, new FloatGoal(this));
     }
 
-//    @Override
-//    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-//        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
-//        flyingpathnavigation.setCanOpenDoors(false);
-//        flyingpathnavigation.setCanFloat(true);
-//        flyingpathnavigation.setCanPassDoors(true);
-//        return flyingpathnavigation;
-//    }
+    @Override
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
+        flyingpathnavigation.setCanOpenDoors(false);
+        flyingpathnavigation.setCanFloat(true);
+        flyingpathnavigation.setCanPassDoors(true);
+        return flyingpathnavigation;
+    }
 
     @Override
     public boolean isFlying() {
@@ -82,26 +80,24 @@ public class SummonFinch  extends AbstractSummonMob implements FlyingAnimal {
 
         @Override
         public boolean canUse() {
-            return mob.getTarget() != null;
+            return getActualTarget() != null;
         }
 
         @Override
         public void tick() {
             super.tick();
-            LivingEntity target = mob.getTarget();
-
-            if(target == null){
+            Entity actualTarget = getActualTarget();
+            if(actualTarget == null){
                 return;
             }
-            double distance = mob.distanceToSqr(mob.getTarget());
-            if (--this.cooledDown <= 0) {
 
-                mob.lookAt(target, 90, 85);
-                Vec3 dir = target.getEyePosition().subtract(mob.position());
+            double distance = mob.distanceToSqr(actualTarget);
+            if (--this.cooledDown <= 0) {
+                mob.lookAt(actualTarget, 90, 85);
+                Vec3 targetPos = actualTarget instanceof LivingEntity living ? living.getEyePosition() : actualTarget.position();
+                Vec3 dir = targetPos.subtract(mob.position());
                 if(TEUtils.angleBetween(mob.getLookAngle(), dir) < 0.5){
-                    if(mob.getDeltaMovement().length() < 1f) {
-                        mob.addDeltaMovement(dir.normalize().scale(0.1f));
-                    }
+                    mob.setDeltaMovement(dir.normalize().scale(0.5f));
                 }
                 if(distance < 3f && mob.cooledDown < 0){
                     cooledDown = 20;
@@ -110,8 +106,17 @@ public class SummonFinch  extends AbstractSummonMob implements FlyingAnimal {
             else{
                 mob.addDeltaMovement(new Vec3(0,Math.min( 0.02, 1 / distance),0));
                 mob.addDeltaMovement(mob.getForward().normalize().scale(0.03f));
-                mob.lookAt(target, 10, 85);
+                mob.lookAt(actualTarget, 10, 85);
             }
+            mob.setDeltaMovement(mob.getDeltaMovement().scale(0.95f));
+        }
+
+        private Entity getActualTarget() {
+//            if (mob instanceof IPartEntityTargetable targetable) {
+                Entity actualTarget = mob.getActualTargetEntity();
+                if (actualTarget != null) return actualTarget;
+//            }
+            return mob.getTarget();
         }
     }
 

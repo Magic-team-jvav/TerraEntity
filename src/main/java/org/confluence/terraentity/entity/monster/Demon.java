@@ -77,7 +77,8 @@ public class Demon extends Harpy {
         if(proj != null) {
             proj.setPos(this.getEyePosition());
             proj.setOwner(this);
-            proj.shoot(living.getX() - this.getX(), living.getY() - this.getY(), living.getZ() - this.getZ(), 0.5f, 2f);
+            proj.shootFromRotation(this, getXRot(), getYRot(), 0, 0.2F, 2); // fixme 射弹的初始旋转有问题
+            //proj.shoot(living.getX() - this.getX(), living.getY() - this.getY(), living.getZ() - this.getZ(), 0.2f, 2f);
             proj.setDamage((float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
             level().addFreshEntity(proj);
         }

@@ -15,7 +15,7 @@ import java.util.List;
  * @param locks
  *
  */
-public record AndLock(List<ITradeLock> locks) implements ITradeLock  {
+public record AndLock(List<ITradeLock> locks) implements ITradeLock {
 
     public static final MapCodec<AndLock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ITradeLock.TYPED_CODEC.listOf().fieldOf("locks").forGetter(AndLock::locks)

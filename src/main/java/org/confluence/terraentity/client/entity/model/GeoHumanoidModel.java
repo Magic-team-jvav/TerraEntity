@@ -16,7 +16,6 @@ import software.bernie.geckolib.core.animation.AnimationState;
 
 import static org.confluence.terraentity.client.entity.layer.ArmorLayer.*;
 
-
 /**
  * 人形怪的Geo模型
  * @param <T>
@@ -47,10 +46,10 @@ public class GeoHumanoidModel<T extends LivingEntity & GeoEntity & IUseItemAnima
             handleBone(animatable.getLeftArmBoneStateMachine(), animatable, leftArmAnimator, partialTick, context);
         }
         if(animatable.getVehicle() != null) {
-            this.getBone("LeftLeg").ifPresent(bone -> {
+            this.getBone(LEFT_ARMOR_LEG).ifPresent(bone -> {
                 bone.setRotX(1.5707963F);
             });
-            this.getBone("RightLeg").ifPresent(bone -> {
+            this.getBone(RIGHT_ARMOR_LEG).ifPresent(bone -> {
                 bone.setRotX(1.5707963F);
             });
         }

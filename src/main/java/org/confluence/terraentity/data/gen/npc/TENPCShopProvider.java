@@ -23,11 +23,8 @@ import org.confluence.terraentity.data.util.AmountIngredient;
 import org.confluence.terraentity.entity.npc.trade.NPCTradeManager;
 import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.confluence.terraentity.init.entity.TENpcEntities;
-import org.confluence.terraentity.init.item.TEBoomerangItems;
-import org.confluence.terraentity.init.item.TESpawnEggItems;
-import org.confluence.terraentity.init.item.TESummonItems;
+import org.confluence.terraentity.init.item.*;
 import org.confluence.terraentity.api.npc.trade.ITrade;
-import org.confluence.terraentity.init.item.TEYoyosItems;
 import org.confluence.terraentity.registries.npc_trade.TradeProperties;
 import org.confluence.terraentity.registries.npc_trade.variant.*;
 import org.confluence.terraentity.api.npc.trade.ITradeGenerator;
@@ -54,7 +51,7 @@ public class TENPCShopProvider extends AbstractExistCodecProvider<NPCTradeManage
 
     public TENPCShopProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, lookup);
-        this.npcShopPathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, NPCTradeManager.KEY);
+        this.npcShopPathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, NPCTradeManager.Loader.KEY);
 
     }
 
@@ -294,8 +291,8 @@ public class TENPCShopProvider extends AbstractExistCodecProvider<NPCTradeManage
                         .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD).addResult(Items.LAPIS_LAZULI,10).build(), 30)
                         .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD).addResult(Items.AMETHYST_CLUSTER, 4).build(), 30)
                         .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD, 64).addResult(TESummonItems.SUMMON_GOLDEN_SWORD_STAFF).build(), 5)
-                        .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD, 10).addResult(TESummonItems.CHESTER_STAFF).build(), 5)
-                        .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD, 10).addResult(TESummonItems.WALLET).build(), 5)
+                        .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD, 10).addResult(TEPetItems.CHESTER_STAFF).build(), 5)
+                        .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD, 10).addResult(TEPetItems.WALLET).build(), 5)
                         .addTrade(ItemTradeItemList.builder().addCost(Items.EMERALD, 10).addResult(TEYoyosItems.CODE_1).setProperties(TradeProperties.builder().setLock(KillEntityLock.create(TEBossEntities.EYE_OF_CTHULHU.get())).build()).build(), 30)
                         .build()
         ).build());

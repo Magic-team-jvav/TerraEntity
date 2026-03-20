@@ -1,13 +1,9 @@
 package org.confluence.terraentity.api.entity.animation;
 
 
-
 import org.confluence.terraentity.entity.ai.keyframe.Keyframe;
-import org.confluence.terraentity.entity.ai.keyframe.interpolator.KeyframeLinearInterpolator;
-import org.confluence.terraentity.entity.ai.keyframe.interpolator.KeyframeSplineInterpolator;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * <h2>插值器接口</h2>
@@ -29,7 +25,7 @@ public interface IInterpolator {
     /**
      * 线性插值器
      */
-    Supplier<KeyframeLinearInterpolator> linear = KeyframeLinearInterpolator::new;
+//    Supplier<KeyframeLinearInterpolator> linear = KeyframeLinearInterpolator::new;
 
     /**
      * 二次插值器(不保证二阶连续)
@@ -58,7 +54,7 @@ public interface IInterpolator {
     /**
      * 三次样条插值器
      */
-    Supplier<KeyframeSplineInterpolator> spline2 = ()->new KeyframeSplineInterpolator();
+//    Supplier<KeyframeSplineInterpolator> spline2 = ()->new KeyframeSplineInterpolator();
     /**
      * 三次样条插值器
      */

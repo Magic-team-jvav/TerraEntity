@@ -1,11 +1,14 @@
 package org.confluence.terraentity.entity.ai.keyframe.baker;
 
-import org.confluence.terraentity.entity.ai.keyframe.Keyframe;
 import org.confluence.terraentity.api.entity.animation.IInterpolator;
+import org.confluence.terraentity.entity.ai.keyframe.Keyframe;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 分段贝塞尔曲线烘焙器
+ */
 public class PiecewiseBezierBaker extends AbstractKeyframeBaker {
 
     public List<Keyframe> bakedKeyframes = new ArrayList<>();
@@ -68,9 +71,9 @@ public class PiecewiseBezierBaker extends AbstractKeyframeBaker {
     }
 
     @Override
-    public double calculate(double time) {
-        if(interpolator == null) return 0;
-        return interpolator.cal(time);
+    public List<Keyframe> getBakedKeyframes() {
+        return bakedKeyframes;
     }
+
 
 }

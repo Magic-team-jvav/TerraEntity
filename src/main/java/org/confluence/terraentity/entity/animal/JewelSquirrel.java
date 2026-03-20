@@ -40,15 +40,23 @@ public class JewelSquirrel extends Squirrel  {
 
     }
 
-    static Map<Integer, ResourceLocation> textures = new Int2ObjectOpenHashMap<>(ImmutableMap.<Integer, ResourceLocation>builder()
-            .put(0, TerraEntity.space("textures/entity/animal/squirrel/amber_squirrel.png"))
-            .put(1, TerraEntity.space("textures/entity/animal/squirrel/amethyst_squirrel.png"))
-            .put(2, TerraEntity.space("textures/entity/animal/squirrel/diamond_squirrel.png"))
-            .put(3, TerraEntity.space("textures/entity/animal/squirrel/emerald_squirrel.png"))
-            .put(4, TerraEntity.space("textures/entity/animal/squirrel/golden_squirrel.png"))
-            .put(5, TerraEntity.space("textures/entity/animal/squirrel/ruby_squirrel.png"))
-            .put(6, TerraEntity.space("textures/entity/animal/squirrel/sapphire_squirrel.png"))
-            .put(7, TerraEntity.space("textures/entity/animal/squirrel/topaz_squirrel.png"))
+    public static final int AMBER_ID = 0;
+    public static final int GOLDEN_ID = 1;
+    public static final int AMETHYST_ID = 2;
+    public static final int DIAMOND_ID = 3;
+    public static final int EMERALD_ID = 4;
+    public static final int RUBY_ID = 5;
+    public static final int SAPPHIRE_ID = 6;
+    public static final int TOPAZ_ID = 7;
+    static final Map<Integer, ResourceLocation> textures = new Int2ObjectOpenHashMap<>(ImmutableMap.<Integer, ResourceLocation>builder()
+            .put(AMBER_ID, TerraEntity.space("textures/entity/animal/squirrel/amber_squirrel.png"))
+            .put(AMETHYST_ID, TerraEntity.space("textures/entity/animal/squirrel/amethyst_squirrel.png"))
+            .put(DIAMOND_ID, TerraEntity.space("textures/entity/animal/squirrel/diamond_squirrel.png"))
+            .put(EMERALD_ID, TerraEntity.space("textures/entity/animal/squirrel/emerald_squirrel.png"))
+            .put(GOLDEN_ID, TerraEntity.space("textures/entity/animal/squirrel/golden_squirrel.png"))
+            .put(RUBY_ID, TerraEntity.space("textures/entity/animal/squirrel/ruby_squirrel.png"))
+            .put(SAPPHIRE_ID, TerraEntity.space("textures/entity/animal/squirrel/sapphire_squirrel.png"))
+            .put(TOPAZ_ID, TerraEntity.space("textures/entity/animal/squirrel/topaz_squirrel.png"))
             .build()
     );
 

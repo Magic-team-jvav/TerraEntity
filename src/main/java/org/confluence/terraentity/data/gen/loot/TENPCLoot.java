@@ -16,7 +16,6 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.confluence.terraentity.TerraEntity;
 
-
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 

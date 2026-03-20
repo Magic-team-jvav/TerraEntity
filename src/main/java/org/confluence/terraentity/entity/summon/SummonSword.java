@@ -16,6 +16,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.entity.PartEntity;
+import org.confluence.terraentity.api.entity.IMeleeAttackPartGoal;
+import org.confluence.terraentity.api.entity.IPartEntityTargetable;
 import org.confluence.terraentity.attachment.SummonerAttachment;
 import org.confluence.terraentity.api.entity.ai.ISkill;
 import org.confluence.terraentity.entity.ai.goal.skill.SkillCooldownManager;
@@ -169,7 +172,7 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
     /**
      * 普攻ai
      */
-    static class SwordAttackGoal extends Goal{
+    static class SwordAttackGoal extends Goal implements IMeleeAttackPartGoal {
 
         SummonSword sword;
         protected SwordAttackGoal(SummonSword sword) {
@@ -179,7 +182,8 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
         }
         @Override
         public boolean canUse() {
-            return sword.getTarget() != null && !sword.summon_shouldTryTeleportToOwner();
+            Entity actualTarget = getActualTarget(sword);
+            return actualTarget != null && !sword.summon_shouldTryTeleportToOwner();
         }
 
         @Override
@@ -189,26 +193,24 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
 
         @Override
         public void tick(){
-            LivingEntity target = sword.getTarget();
-            if(target == null){
+            Entity actualTarget = getActualTarget(sword);
+            if(actualTarget == null){
                 return;
             }
 
+            // 获取目标位置（支持 PartEntity）
+            Vec3 targetPos = getTargetPosition(sword, actualTarget);
+            if (targetPos == null) {
+                return;
+            }
 
-//            System.out.println("state: attacking: "  + sword.tickCount);
-            sword.lookAt(target, 30, 85);
-            sword.lookControl.setLookAt(target);
-            Vec3 targetPos = target.getEyePosition();
-
-            // 触发技能攻击，应该使用manager实现
-//            double dist = targetPos.distanceTo(sword.position());
-//            if(dist < 2f ){
-//                if(sword.skillCooldown <= 0) {
-//                    sword.timeToSkillAttack = true;
-////                    System.out.println("trigger skill attack");
-//                    return;
-//                }
-//            }
+            // 如果目标是 LivingEntity，使用其眼睛位置；否则使用实际位置
+            if (actualTarget instanceof LivingEntity living) {
+                sword.lookAt(living, 30, 85);
+                sword.lookControl.setLookAt(living);
+            } else {
+                sword.lookControl.setLookAt(targetPos.x, targetPos.y, targetPos.z);
+            }
 
             Vec3 dir = targetPos.subtract(sword.getEyePosition()).normalize();
             double angle = TEUtils.angleBetween(sword.getLookAngle(), dir);
@@ -220,6 +222,21 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
                 sword.setDeltaMovement(sword.getDeltaMovement().scale(0.9f));
             }
 
+        }
+
+        @Override
+        public boolean canMeleeAttackTarget(Entity target) {
+            if (target instanceof PartEntity<?> partEntity) {
+                Entity parent = partEntity.getParent();
+                if (parent instanceof LivingEntity living) {
+                    return sword.canAttack(living);
+                }
+                return false;
+            }
+            if (target instanceof LivingEntity living) {
+                return sword.canAttack(living);
+            }
+            return false;
         }
     }
 
@@ -248,7 +265,17 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
         }
         @Override
         public boolean canUse() {
-            return sword.cooldownManager.canTriggerSkill(this) && sword.getTarget() != null;
+            if (!sword.cooldownManager.canTriggerSkill(this)) {
+                return false;
+            }
+            // 支持 PartEntity 目标
+//            if (sword instanceof IPartEntityTargetable targetable) {
+                Entity actualTarget = sword.getActualTargetEntity();
+                if (actualTarget != null) {
+                    return true;
+                }
+//            }
+            return sword.getTarget() != null;
         }
         @Override
         public boolean requiresUpdateEveryTick() {
@@ -304,14 +331,20 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
         @Override
         public void tick(){
 
-            LivingEntity target = sword.getTarget();
-            if(target == null){
+            Entity actualTarget = sword.getActualTargetEntity();
+            if (actualTarget == null) {
+                actualTarget = sword.getTarget();
+            }
+            if (actualTarget == null) {
                 return;
             }
 
-            Vec3 dist = target.getEyePosition().subtract(sword.position());
+            Vec3 baseTargetPos = actualTarget.getEyePosition();
+
+
+            Vec3 dist = baseTargetPos.subtract(sword.position());
             Vec3 skill = new Vec3(0, 10 - ticks, 0);
-            Vec3 targetPos = target.getEyePosition().add(skill);
+            Vec3 targetPos = baseTargetPos.add(skill);
             Vec3 lookDir = targetPos.subtract(sword.getEyePosition());
 
             if(dist.length() > 3 && !triggered){

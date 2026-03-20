@@ -105,6 +105,13 @@ public class RangeAttackBrain<T extends Mob> extends Behavior<T> {
 //        if(owner.getRandom().nextFloat() < 0.1f){
 //            owner.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
 //        }
+        owner.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+        owner.getNavigation().stop();
+        owner.lookAt(target, 30,30);
+        double angel = TEUtils.angleBetween(owner.getLookAngle(), target.getEyePosition().subtract(owner.getEyePosition()).normalize());
+        if(angel <0.1f){
+            this.prepareTime-= 2;
+        }
     }
 
     @Override

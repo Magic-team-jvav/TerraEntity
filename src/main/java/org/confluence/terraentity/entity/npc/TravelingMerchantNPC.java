@@ -45,10 +45,9 @@ public class TravelingMerchantNPC extends AbstractTerraNPC {
     }
 
     @Override
-    public List<ITrade> generateTrades(ITradeGenerator tradeGenerator){
-        if(tradeGenerator instanceof WeightMapGenerator generator){
-            NPCEvent.TravelingMerchantGenerateTradeEvent event = new NPCEvent.TravelingMerchantGenerateTradeEvent(this, generator.getCount());
-            AdapterUtils.postEvent(event);
+    public List<ITrade> generateTrades(ITradeGenerator tradeGenerator) {
+        if (tradeGenerator instanceof WeightMapGenerator generator) {
+            NPCEvent.TravelingMerchantGenerateTradeEvent event = AdapterUtils.postEvent(new NPCEvent.TravelingMerchantGenerateTradeEvent(this, generator.getCount()));
             int count = event.getGenerateCount();
             return Stream.concat(generator.generateTradesDynamic(count).stream(), event.getTrades().stream()).toList();
         }

@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Entity;
 import org.confluence.terraentity.TerraEntity;
-import org.confluence.terraentity.entity.proj.BaseProj;
 
 
 public class CabbageProjModel<T extends Entity> extends EntityModel<T> {

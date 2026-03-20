@@ -1,13 +1,21 @@
 package org.confluence.terraentity.entity.npc.mood;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.util.StringRepresentable;
 
-public enum Mood {
+import java.util.Locale;
+
+public enum Mood implements StringRepresentable {
     LOVER,
     LIKE,
     NEUTRAL,
     HATE,
     DISLIKE;
 
-    public static Codec<Mood> CODEC = Codec.STRING.xmap(Mood::valueOf, Mood::toString);
+    public static final Codec<Mood> CODEC = StringRepresentable.fromEnum(Mood::values);
+
+    @Override
+    public String getSerializedName() {
+        return name().toLowerCase(Locale.ROOT);
+    }
 }

@@ -9,10 +9,9 @@ import net.minecraft.util.Mth;
 import org.confluence.terraentity.client.boss.model.GeoBossModel;
 import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
 import org.confluence.terraentity.entity.boss.Skeletron;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-
-import javax.annotation.Nullable;
 
 public class SkeletronRenderer extends GeoNormalRenderer<Skeletron> {
 

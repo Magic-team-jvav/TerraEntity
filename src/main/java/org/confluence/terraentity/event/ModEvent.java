@@ -1,17 +1,23 @@
 package org.confluence.terraentity.event;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.*;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.api.event.NPCEvent;
 import org.confluence.terraentity.data.util.AmountIngredient;
@@ -22,8 +28,10 @@ import org.confluence.terraentity.init.TEAttributes;
 import org.confluence.terraentity.init.TEEntities;
 import org.confluence.terraentity.init.entity.TENpcEntities;
 import org.confluence.terraentity.integration.ModChecker;
+import org.confluence.terraentity.integration.curios.CuriosHelper;
 import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.utils.AdapterUtils;
+import top.theillusivec4.curios.Curios;
 
 import java.util.List;
 @SuppressWarnings("all")
@@ -67,34 +75,13 @@ public class ModEvent {
     }
 
 
-    public static void onCollectBrains(NPCEvent.NPCBrainCollectionEvent event) {
-//        if(!ModChecker.confluence) {
-            event.register(TENpcEntities.DEMOLITIONIST.get(), (collector)->{
-                collector.setReplace(new DemolitionistNPCAi(collector.getNPC()));
-            });
-            event.register(TENpcEntities.GUIDE.get(), (collector)->{
-                collector.getNPC().setCanPerformerAttackTest(e->e.getMainHandItem().getItem() instanceof BowItem);
-//                collector.getNPC().getMood().addMoodInfo(MoodInfos.GUILD1.get());
-//                collector.getNPC().getMood().addMoodInfo(MoodInfos.GUILD2.get());
 
-            });
-            event.register(TENpcEntities.ARMS_DEALER.get(), (collector)->{
-                collector.setReplace(new ArmDealerNPCAi(collector.getNPC()));
-                collector.getNPC().setCanPerformerAttackTest(e->e.getMainHandItem().getItem() instanceof CrossbowItem);
-            });
-            event.register(TENpcEntities.NURSE.get(), (collector)->{
-                collector.setReplace(new NurseAi(collector.getNPC()));
-            });
-            event.register(TENpcEntities.GOBLIN_TINKERER.get(), (collector)->{
-                collector.getNPC().setCanPerformerAttackTest(e->e.getMainHandItem().getItem() instanceof BowItem);
-            });
-//        }
+
+    // 这个事件在注册能力之前调用
+    @SubscribeEvent
+    public static void registerCapabilitiesBefore(NewRegistryEvent event) {
+
     }
 
-    private static void checkModLoad(String modId, Runnable runnable) {
-        if (ModList.get().isLoaded(modId)) {
-            runnable.run();
-        }
-    }
 
 }

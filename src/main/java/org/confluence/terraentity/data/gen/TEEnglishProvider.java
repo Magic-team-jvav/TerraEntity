@@ -3,13 +3,18 @@ package org.confluence.terraentity.data.gen;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.confluence.lib.util.LibUtils;
+import org.confluence.terraentity.entity.npc.house.HouseDetectInfo;
 import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.init.TEEntities;
 import org.confluence.terraentity.init.TEItems;
 import org.confluence.terraentity.init.item.*;
+import org.confluence.terraentity.integration.curios.CuriosHelper;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -35,9 +40,25 @@ public class TEEnglishProvider extends LanguageProvider {
         TEWhipItems.ITEMS.getEntries().forEach(itemAction);
         TEBoomerangItems.ITEMS.getEntries().forEach(itemAction);
         TERideableItems.ITEMS.getEntries().forEach(itemAction);
+        TEPetItems.ITEMS.getEntries().forEach(itemAction);
+        TEBossSummonsItems.ITEMS.getEntries().forEach(itemAction);
+        TEYoyosItems.ITEMS.getEntries().forEach(itemAction);
         add(TEItems.HOUSE_DETECTOR.get(), "House Detector");
-        TEEntities.ENTITIES.getEntries().forEach(entity -> add(entity.get(), toTitleCase(entity.getId().getPath())));
-        TEEffects.EFFECTS.getEntries().forEach(effect -> add(effect.get(), toTitleCase(effect.getId().getPath())));
+
+        TEEntities.getEntities().map(DeferredRegister::getEntries).flatMap(Collection::stream).forEach(entity -> add(entity.get(), LibUtils.toTitleCase(entity.getId().getPath())));
+
+        TEEffects.EFFECTS.getEntries().forEach(effect -> add(effect.get(), LibUtils.toTitleCase(effect.getId().getPath())));
+
+        add("terra_entity.trade_lock.drawer.time.title", "Time");
+        add("terra_entity.trade_lock.drawer.time.title.expect", "Except");
+        add("terra_entity.trade_lock.drawer.npc_exist.title", "%s is nearby");
+        add("terra_entity.trade_lock.drawer.mood.title", "Mood");
+        add("terra_entity.trade_lock.drawer.kill_entity.title", "Kill");
+        add("terra_entity.trade_lock.drawer.biome.title", "Any of Biomes");
+        add("terra_entity.trade_lock.drawer.biome.title.tag", "Biome Tag");
+        add("terra_entity.trade_lock.drawer.and.title", "All should be satisfied");
+        add("terra_entity.trade_lock.drawer.not.title", "None should be satisfied");
+        add("terra_entity.trade_lock.drawer.or.title", "Any can be satisfied");
 
         add("itemGroup.terraentity.title", "Terra Entity");
 
@@ -50,6 +71,7 @@ public class TEEnglishProvider extends LanguageProvider {
 
         add("container.terra_entity.chester", "Chester");
 
+        add("key.terra_entity.ride", "Use Ride(need CuriosAPI");
 
 
         add("entity.terra_entity.mother_slime", "Mother Slime");
@@ -71,6 +93,7 @@ public class TEEnglishProvider extends LanguageProvider {
         add("terra_entity.configuration.server.boss_attributes_multiplier_damage", "Boss Attributes Multiplier-Damage");
         add("terra_entity.configuration.server.boss_no_physics", "BOSS have no physics");
         add("terra_entity.configuration.server.boss_leave_on_day", "Specify BOSS Leave on Day");
+        add("terra_entity.configuration.server.boss_keep_wandering", "BOSS keep wandering");
 
 
         add("terra_entity.configuration.server.display_summon_items", "Display Summon Items In Creative Tab");
@@ -83,6 +106,8 @@ public class TEEnglishProvider extends LanguageProvider {
         add("terra_entity.configuration.server.chance_to_spawn_slime_on_zombie_head", "Chance to Spawn Slime on Zombie Head");
         add("terra_entity.configuration.server.enemy_spawn_chance_apply_all", "Enemy Spawn Chance Apply to all monsters");
         add("terra_entity.configuration.server.enemy_spawn_chance", "Enemy of Terra Entity Spawn Chance ");
+        add("terra_entity.configuration.server.enable_entity_motion_blur", "Enable Entity Motion Blur");
+        add("terra_entity.configuration.server.behavior_tree_web_viewer_server_port", "Behavior Tree Web Viewer Server Port");
 
 
 
@@ -99,7 +124,7 @@ public class TEEnglishProvider extends LanguageProvider {
 
 
         // Tooltip
-        add("tooltic.terra_entity.summon_item.desc", "Press for a while to release all summons");
+        add("tooltic.terra_entity.summon_item.desc", "Hold right-click to release all summons");
 
 
         add("tooltip.terra_entity.summon_item_cost", "Summon Cost: %d");
@@ -111,22 +136,24 @@ public class TEEnglishProvider extends LanguageProvider {
         add("tooltip.terra_entity.house_detect.mode.check", "Check");
         add("tooltip.terra_entity.house_detect.mode.check.owner", "Owner");
         add("tooltip.terra_entity.house_detect.mode.add", "Add");
-        add("tooltip.terra_entity.house_detect.mode.add.failed", "Add House failed. House exists.");
-        add("tooltip.terra_entity.house_detect.mode.add.success", "Add House success.");
+        add("tooltip.terra_entity.house_detect.mode.add.failed", "Add House failed. House exists!");
+        add("tooltip.terra_entity.house_detect.mode.add.success", "Add House success!");
         add("tooltip.terra_entity.house_detect.mode.delete", "Delete");
-        add("tooltip.terra_entity.house_detect.mode.delete.success", "Delete House success.");
-        add("tooltip.terra_entity.house_detect.not_npc", "You should point at an NPC.");
-        add("tooltip.terra_entity.house_detect.no_detect", "You should check before that.");
-        add("tooltip.terra_entity.house_detect.message.too_large", "House Too Large");
-        add("tooltip.terra_entity.house_detect.message.too_small", "House Too Small");
-        add("tooltip.terra_entity.house_detect.message.no_dynamic_light", "House No Dynamic Light");
-        add("tooltip.terra_entity.house_detect.message.found_house", "Found House");
+        add("tooltip.terra_entity.house_detect.mode.delete.success", "Delete House success!");
+        add("tooltip.terra_entity.house_detect.not_npc", "You should point at an NPC!");
+        add("tooltip.terra_entity.house_detect.no_detect", "You should check before that!");
+        add(HouseDetectInfo.DetectType.TOO_LARGE.getTranslationKey(), "House Too Large!");
+        add(HouseDetectInfo.DetectType.TOO_SMALL.getTranslationKey(), "House Too Small!");
+        add(HouseDetectInfo.DetectType.NO_DYNAMIC_LIGHT.getTranslationKey(), "House No Dynamic Light!");
+        add(HouseDetectInfo.DetectType.NO_CHAIR.getTranslationKey(), "House No Chair!");
+        add(HouseDetectInfo.DetectType.NO_TABLE.getTranslationKey(), "House No Table!");
+        add(HouseDetectInfo.DetectType.FOUND_HOUSE.getTranslationKey(), "Found House!");
         add("tooltip.terra_entity.house_detect.info", "Press shift and right click to switch mode.");
 
         add("tooltip.terra_entity.chester.desc", "Press shift and right click to switch target container. You can bind a container to it.");
         add("tooltip.terra_entity.chester.current", "Current Container");
 
-            // boomerang
+        // boomerang
         add("tooltip.terra_entity.boomerang.penetration", "Penetrates Count");
         add("tooltip.terra_entity.boomerang.on_hit_effects", "Effects");
         add("tooltip.terra_entity.boomerang.max_count", "Max Count");
@@ -137,7 +164,8 @@ public class TEEnglishProvider extends LanguageProvider {
         add("tooltip.terra_entity.yoyo.exist_time", "Using Time");
         add("tooltip.terra_entity.yoyo.hit_effect", "Hit Effect");
 
-
+        // rideable
+        add("tooltip.terra_entity.rideable_item.desc", "Press hotkey to ride. Default R .");
 
         // attribute
         add("attribute.name.player.summon_damage", "Summon Damage");
@@ -152,17 +180,27 @@ public class TEEnglishProvider extends LanguageProvider {
         add("terra_entity.track_type.basis", "Basis Track");
 
         // hit effect
+
+        add("terra_entity.effect.strategy.set_fire", "Set fire");
+        add("terra_entity.effect.strategy.yoyo_bee", "Summon Bee");
+
+
         add("terra_entity.effect.strategy.mud", "Mud");
         add("terra_entity.effect.strategy.bat", "Blood absorb +1 hp");
         add("terra_entity.effect.strategy.lights_bane", "Summon lights bane");
-        add("terra_entity.effect.strategy.bee_keeper", "Summon bees");
+        add("terra_entity.effect.strategy.bee_keeper", "Summon bees.");
+        add("terra_entity.effect.strategy.bee_keeper_confused", "100% chance to inflict Confusion.");
+        add("terra_entity.effect.strategy.purple_clubberfish", "50% chance to inflict Confusion.");
+        add("terra_entity.effect.strategy.snapthorn", "Poisoned");
+        add("terra_entity.effect.strategy.firecracker", "Hell fire");
 
-
+        add("terra_entity.effect.strategy.frozen_burn_5_sec", "frozen burn 10 seconds");
         add("terra_entity.effect.strategy.frozen_burn_3_sec_50_chance", "50% chance frozen burn 3 seconds");
         add("terra_entity.effect.strategy.tentacle_spikes", "Tentacle spikes");
         add("terra_entity.effect.strategy.hunting_4_sec", "Hunting 4 seconds");
         add("terra_entity.effect.strategy.hell_fire_5_sec", "Hell fire 5 seconds");
         add("terra_entity.effect.strategy.set_fire_5_sec", "Set fire 5 seconds");
+        add("terra_entity.effect.strategy.forzen_burn_5_sec", "Forzen Burn 5 seconds");
         add("terra_entity.effect.strategy.blood_butchered", "Blood Butchered");
         add("terra_entity.effect.strategy.bei_dou", "Random 5 effects:\\nfrozen burn IV 10 seconds\\nhell fire IV 10 seconds\\nwither IV 10 seconds\\npoison ⅳ 10 seconds\\ninstant harm VIII");
 
@@ -174,14 +212,26 @@ public class TEEnglishProvider extends LanguageProvider {
         add("task.terra_entity.boomerang_attack.desc", "Maid attacks enemies with a boomerang.");
         add("task.terra_entity.boomerang_attack.condition.has_boomerang", "Mainhand holds a boomerang");
 
+        // curios
+        add("curios.identifier." + CuriosHelper.MOUNT_KEY, "Mount");
+        add("curios.identifier." + CuriosHelper.PET_KEY, "Pet");
+        add("curios.identifier." + CuriosHelper.LIGHT_PET_KEY, "Light Pet");
+
         // 附魔
         add("enchantment.terra_entity.multi_boomerang", "Multi Shoot Boomerang");
         add("enchantment.terra_entity.multi_boomerang.desc", "Fires an additional boomerang");
+        add("enchantment.terra_entity.summoner_pact", "Summoner Pact");
+        add("enchantment.terra_entity.summoner_pact.desc", "Summons extra minions");
         add("enchantment.terra_entity.whip_sweep", "Whip Sweep");
         add("enchantment.terra_entity.whip_sweep.desc", "Chance to deal a wide area of damage");
 
 
         // npc
+        add("dialogs.terra_entity.trade", "Trade");
+        add("dialogs.terra_entity.summon", "Summon");
+        add("dialogs.terra_entity.dialog", "Dialog");
+        add("dialogs.terra_entity.quest", "Quest");
+
         add("dialogs.terra_entity.guide.0", "My job is to offer suggestions for your upcoming tasks. I recommend that you come and talk to me whenever you encounter any difficulties.");
         add("dialogs.terra_entity.guide.1", "They said there would be someone to tell you how to survive in this place... Oh, wait a moment. That person is me.");
         add("dialogs.terra_entity.guide.2", "You should stay at home at night. It's very dangerous to wander outside in the dark.");
@@ -255,12 +305,63 @@ public class TEEnglishProvider extends LanguageProvider {
         add("dialogs.terra_entity.dye_trader.4", "These dye bottles? Sorry, my dear friend, these are not for sale. I only accept the rarest plants in exchange for them!");
         add("dialogs.terra_entity.dye_trader.5", "You think you can fool my eyes? I don't think so! I only accept the rarest flowers in exchange for these special bottles.");
 
-        add("dialogs.terra_entity.angler.0", "Thanks, I guess, for saving me and all that. You're an excellent lackey!");
-        add("dialogs.terra_entity.angler.1", "What? Who are you? I definitely wasn't drowning or anything!");
-        add("dialogs.terra_entity.angler.2", "You saved me! You're so kind. I can boss you around... Uh, I mean, hire you to do some amazing things for me!");
-        add("dialogs.terra_entity.angler.3", "I don't have a mom or a dad, but I have a lot of fish! That's enough!");
-        add("dialogs.terra_entity.angler.4", "Hey! Watch out! I've set a lot of traps for the greatest prank in history! No one will notice! Try telling anyone and see what happens!");
-        add("dialogs.terra_entity.angler.5", "Have you ever heard of a fish that can make noise?! I haven't. I just want to know if you have!");
+        add("dialogs.terra_entity.angler.0", "I'm bummed out! There's probably been fish that have gone extinct before I even was born, and that's not fair!");
+        add("dialogs.terra_entity.angler.1", "Whaaaat?! Can't you see I'm winding up fishing line??");
+        add("dialogs.terra_entity.angler.2", "There's no chefs in all of %s, so I have to cook all this fish myself! ");
+        add("dialogs.terra_entity.angler.3", "I don't have a mommy or a daddy, but I have a lot of fish! It's close enough!");
+        add("dialogs.terra_entity.angler.4", "Let a kid give you some advice, never touch your tongue to an ice block! Wait, forget what I said, I totally want to see you do it!");
+        add("dialogs.terra_entity.angler.5", "Ever heard of a barking fish?! I haven't, I'm just wondering if you did!");
+        add("dialogs.terra_entity.angler.6", "Hey! Watch it! I'm setting up traps for my biggest prank ever! No one will see it coming! Don't you dare tell anyone!");
+        add("dialogs.terra_entity.angler.7", "%s is filled to the brim with the most outlandish kinds of fish!");
+        add("dialogs.terra_entity.angler.stat.0", "Did you know I have %s amazingly awesome fish now!? That's because as far as errand monkeys go, you're actually a bit useful!");
+        add("dialogs.terra_entity.angler.stat.1", "Wooow! You've bothered me, like, %s times! If I didn't have a cool fish for each time, I would be really mad!");
+        add("dialogs.terra_entity.angler.wakeup.0", "Thanks, I guess, for saving me or whatever. You'd be a great helper minion!");
+        add("dialogs.terra_entity.angler.wakeup.1", "Wha? Who might you be? I totally wasn't just drowning or anything!");
+        add("dialogs.terra_entity.angler.wakeup.2", "You saved me! You're awful nice, I could use you... er, I mean, totally hire you to do some awesome stuff for me!");
+        add("dialogs.terra_entity.angler.task_ready.0", "Psst! I might have a job for you. Don't think you can say no, either!");
+        add("dialogs.terra_entity.angler.task_ready.1", "I want a fish and you're going to find me one! Ask me about it!");
+        add("dialogs.terra_entity.angler.task_ready.2", "%1$s wants YOU as the official %2$s errand monkey!");
+        add("dialogs.terra_entity.angler.task_ready.3", "Hey! Just the sacrifi- I mean competent fishing master that I've been looking for! ");
+        add("dialogs.terra_entity.angler.task_succeed.0", "Oh! Thanks for the fish I asked for, now scram!");
+        add("dialogs.terra_entity.angler.task_succeed.1", "You make a great errand monkey! Now go away!");
+        add("dialogs.terra_entity.angler.task_succeed.2", "Muahahahahaha! You did it! You're still in one piece though, how boring!");
+        add("dialogs.terra_entity.angler.task_succeed.3", "Woah!? You actually did what I asked, and survived! Nice, hand it over and beat it!");
+        add("dialogs.terra_entity.angler.task_succeed.4", "Awesome catch! It's all going according to plan! He he he!");
+        add("dialogs.terra_entity.angler.task_finished.0", "I have enough fish! I don't need your help right now!");
+        add("dialogs.terra_entity.angler.task_finished.1", "You have entertained me enough for today, go.");
+        add("dialogs.terra_entity.angler.task_finished.2", "I don't have anything for you to do right now.");
+        add("dialogs.terra_entity.angler.task_finished.3", "一Only one fish a day, please go away!");
+        add("dialogs.terra_entity.angler.task_finished.4", "I haven't even used the last fish you gave me.  I don't need another.");
+        add("dialogs.terra_entity.angler.task_finished.5", "You are done, the grand %s dismisses you!");
+
+        add("dialogs.terra_entity.female_angler.0", "What a pity! Some fish may have disappeared even before I was born. I hope we can protect the remaining ones well~");
+        add("dialogs.terra_entity.female_angler.1", "Ah... I'm so sorry! Did I disturb you while reeling in my line? I really apologize!");
+        add("dialogs.terra_entity.female_angler.2", "Although there's no chef in the whole %s, being able to cook fish with my own hands is a kind of happiness!");
+        add("dialogs.terra_entity.female_angler.3", "I don't have a mom or dad, but I have so many lovely fish to keep me company! I'm already very content~");
+        add("dialogs.terra_entity.female_angler.4", "Take my advice, sweetie~ Never touch ice cubes with your tongue! You'll get frostbite, so make sure to take good care of yourself!");
+        add("dialogs.terra_entity.female_angler.5", "Have you ever heard of fish that can make sounds? I think I've seen some before! Would you like to talk about it with me?");
+        add("dialogs.terra_entity.female_angler.6", "Oh dear! Be careful~ I set up some little decorations, not traps! I just wanted to give everyone a small surprise, please don't misunderstand~");
+        add("dialogs.terra_entity.female_angler.7", "The %s is full of lovely and unique fish everywhere! It's truly wonderful!");
+        add("dialogs.terra_entity.female_angler.stat.0", "You know what? I've already collected %s beautiful fish! Thank you so much—I could never have done it without your help!");
+        add("dialogs.terra_entity.female_angler.stat.1", "Oh no! I've bothered you %s times already, I'm so terribly sorry! But every time I get to see such beautiful fish, it makes me so happy!");
+        add("dialogs.terra_entity.female_angler.wakeup.0", "Thank you so much! I really don't know how to repay you—you're an amazing friend!");
+        add("dialogs.terra_entity.female_angler.wakeup.1", "Oh! It's you~ I just slipped a moment ago, I wasn't drowning! Thank you for caring so much！");
+        add("dialogs.terra_entity.female_angler.wakeup.2", "Thank you for saving me! You're such a kind person~ If you don't mind, I'd like to ask you to help me with a small errand—but it's totally fine if you don't want to!");
+        add("dialogs.terra_entity.female_angler.task_ready.0", "Hello there~ I have a tiny favor to ask. Could you help me if you're free? It's absolutely fine if you're not!");
+        add("dialogs.terra_entity.female_angler.task_ready.1", "I'm looking for a special kind of fish. It would mean the world to me if you'd help find it! No rush at all—let's take our time to go over the details~");
+        add("dialogs.terra_entity.female_angler.task_ready.2", "%1$s would like to formally invite you to become %2$s's fishing helper! Would you accept?");
+        add("dialogs.terra_entity.female_angler.task_ready.3", "Hello! You must be the amazing fishing master I've been looking for! Could I ask for your help, please?");
+        add("dialogs.terra_entity.female_angler.task_succeed.0", "Wow! Thank you for catching the fish I wanted—thank you so much! You must be tired, take it easy~");
+        add("dialogs.terra_entity.female_angler.task_succeed.1", "You did an absolutely wonderful job! You've worked hard—go rest for a bit~");
+        add("dialogs.terra_entity.female_angler.task_succeed.2", "I'm so happy! You finished safely, that's such a relief! I was worried about you the whole time!");
+        add("dialogs.terra_entity.female_angler.task_succeed.3", "Oh my goodness! You not only completed the task but also came back safe and sound—you're incredible! Please hand me the fish, and go get some rest~");
+        add("dialogs.terra_entity.female_angler.task_succeed.4", "We got it! Everything went perfectly~ Thank you for your help, I really appreciate it!");
+        add("dialogs.terra_entity.female_angler.task_finished.0", "I have enough fish now! Thank you so much for all your help—you've done so much for me~");
+        add("dialogs.terra_entity.female_angler.task_finished.1", "Thank you so much for today! I had such a lovely time with you! Go take care of your own things now~");
+        add("dialogs.terra_entity.female_angler.task_finished.2", "I don't have any errands for you right now, but thank you so much for stopping by anyway~");
+        add("dialogs.terra_entity.female_angler.task_finished.3", "I have enough fish for today—you've worked hard! Take care, and goodbye for now~");
+        add("dialogs.terra_entity.female_angler.task_finished.4", "I still have the fish you gave me last time safely stored away. I don't need more for now, but thank you so much all the same!");
+        add("dialogs.terra_entity.female_angler.task_finished.5", "Thank you so much! Having a helper like you is such a blessing to %s~");
 
         add("dialogs.terra_entity.old_man.0", "I cannot let you enter until you free me of my curse.");
         add("dialogs.terra_entity.old_man.1", "Stranger, do you possess the strength to defeat my master?");
@@ -298,6 +399,16 @@ public class TEEnglishProvider extends LanguageProvider {
         add("dialogs.terra_entity.clothier.5", "Being cursed was lonely, so I once made a friend out of leather. I named him Wilson.");
         add("dialogs.terra_entity.clothier.6", "I keep having vague memories of tying up a woman and throwing her in a dungeon.");
 
+        add("dialogs.terra_entity.zoologist.0", "I collected critters like you once, then I took a cursed fox bite to the knee!");
+        add("dialogs.terra_entity.zoologist.1", "I may not know, like, a whole lot...but I can talk your head off about nature and critters and animals and wildlife and...");
+        add("dialogs.terra_entity.zoologist.2", "My older bro calls me a lycanthrope. It means I'm like, part animal or something. He'd know, though, because he spends all his time outside!");
+        add("dialogs.terra_entity.zoologist.3", "I love animals, like, a lot! I tried to pet this weird looking fox one time, he sooo bit me, and now I became like one! Rad!");
+        add("dialogs.terra_entity.zoologist.4", "Staahp pulling on my tail, bro, it's totally real, and like...totally hurts when you pull on it!");
+        add("dialogs.terra_entity.zoologist.5", "Oh, THESE ears? Haha, totes better to hear you with, my dear!");
+        add("dialogs.terra_entity.zoologist.6", "This one time, at critter camp, I woke up one morning and everything was torn apart! Like, wow, how did I sleep through THAT?!");
+        add("dialogs.terra_entity.zoologist.7", "Wow, like, I've never seen a full moon. For some reason, it's like I pass out every time one's around!");
+        add("dialogs.terra_entity.zoologist.8", "I have noooo idea how I got here, but it's mega rad.");
+
         add("dialogs.terra_entity.party_girl.0", "We have to talk. It's... it's about parties.");
         add("dialogs.terra_entity.party_girl.1", "I can't decide what I like more: parties, or after-parties.");
         add("dialogs.terra_entity.party_girl.2", "We should set up a blinkroot party, and we should also set up an after-party.");
@@ -314,11 +425,21 @@ public class TEEnglishProvider extends LanguageProvider {
         add("dialogs.terra_entity.truffle.5", "There's been such a huge rumor that's being spread about me, 'If you can't beat him, eat him!'");
         add("dialogs.terra_entity.truffle.6", "I feel there are more of my kind here...");
 
+        add("dialogs.terra_entity.wizard.0", "Want me to pull a coin from behind your ear? No? Ok.");
+        add("dialogs.terra_entity.wizard.1", "Do you want some magic candy? No? Ok.");
+        add("dialogs.terra_entity.wizard.2", "I make a rather enchanting hot chocolate if you'd be inter...No? Ok.");
+        add("dialogs.terra_entity.wizard.3", "Are you here for a peek at my crystal ball?");
+        add("dialogs.terra_entity.wizard.4", "Ever wanted an enchanted ring that turns rocks into slimes? Well neither did I.");
+        add("dialogs.terra_entity.wizard.5", "Someone once told me friendship is magic. That's ridiculous. You can't turn people into frogs with friendship.");
+        add("dialogs.terra_entity.wizard.6", "I can see your future now... You will buy a lot of items from me!");
+        add("dialogs.terra_entity.wizard.7", "I once tried to bring an Angel Statue to life. It didn't do anything.");
+
         add("mood.terra_entity.goblin_tinkerer.like.dye_trader", "Dye Trader understands how fun it is to mix things together, I can respect that!");
         add("mood.terra_entity.goblin_tinkerer.love.mechanic", "Mechanic makes my cardiac core function improperly, it appears I love how that feels!");
         add("mood.terra_entity.goblin_tinkerer.dislike.clothier", "I detect eerie vibes from <name of Clothier>, as if they contain dark secrets. I don't like the feeling.");
         add("mood.terra_entity.guide.hate.painter", "I hate that Painter is around. The world is fine the way it was made!");
         add("mood.terra_entity.guide.like.clothier", "I'm quite fond of Clothier, we have a lot in common.");
+        add("mood.terra_entity.guide.like.zoologist", "I'm quite fond of Zoologist, we have a lot in common.");
         add("mood.terra_entity.arms_dealer.hate.demolitionist", "I'd REALLY like to use the Demolitionist as a range target sometime.");
         add("mood.terra_entity.arms_dealer.love.nurse", "Think Nurse the Nurse ever, ya know, checks me out?");
         add("mood.terra_entity.angler.like.demolitionist", "the Demolitionist actually knows what they're doing, unlike some OTHER people! I kinda like that!");
@@ -343,6 +464,8 @@ public class TEEnglishProvider extends LanguageProvider {
         add("mood.terra_entity.nurse.love.arms_dealer", "What? Arms Dealer? I don't have a crush! I don't! Shut up!");
         add("mood.terra_entity.nurse.dislike.dryad", "I don't like Dryad that much, kinda weirds me out.");
         add("mood.terra_entity.nurse.dislike.party_girl", "I don't like Party Girl that much, kinda weirds me out.");
+        add("mood.terra_entity.nurse.hate.zoologist", "Oh, I hate treating Zoologist , so difficult!");
+        add("mood.terra_entity.nurse.like.wizard", "Wizard is a smart and likeable goof.");
         add("mood.terra_entity.truffle.love.guide", "I love Guide for being able to talk to me without mysteriously getting hungry.");
         add("mood.terra_entity.truffle.like.dye_trader", " Dryad treats me with respect, as though I'm a true part of nature. I don't know how to feel about that, except I like it.");
         add("mood.terra_entity.truffle.dislike.clothier", " Clothier has tried to eat me so many times. I swear, one time they weren't even human! I, obviously, dislike it.");
@@ -351,6 +474,8 @@ public class TEEnglishProvider extends LanguageProvider {
         add("mood.terra_entity.clothier.dislike.nurse", "For some reason, being around Nurse makes me feel uneasy.");
         add("mood.terra_entity.clothier.hate.mechanic", "I hate Mechanic and I don't know why.");
         add("mood.terra_entity.party_girl.dislike.merchant", "I think Merchant is a killjoy at parties.");
+        add("mood.terra_entity.party_girl.love.zoologist", "I love that Zoologist always dazzles at my parties.");
+        add("mood.terra_entity.party_girl.love.wizard", "I love that Wizard always dazzles at my parties.");
         add("mood.terra_entity.witch_doctor.like.dryad", "the Dryad is a kindred spirit of nature, my soul is at peace in their presence.");
         add("mood.terra_entity.witch_doctor.like.guide", "the Guide is a kindred spirit of nature, my soul is at peace in their presence.");
         add("mood.terra_entity.witch_doctor.dislike.nurse", "I dislike the practices of the Nurse. True healing cannot come from metal and glass.");
@@ -358,6 +483,12 @@ public class TEEnglishProvider extends LanguageProvider {
         add("mood.terra_entity.mechanic.love.goblin_tinkerer", "Umm...Goblin Tinkerer makes my heart flutter, I need to get that checked!");
         add("mood.terra_entity.mechanic.dislike.arms_dealer", "I don't really like that Arms Dealer won't leave me alone!");
         add("mood.terra_entity.mechanic.hate.clothier", "I hate how Clothier doesn't know how to treat a woman!");
+        add("mood.terra_entity.zoologist.love.witch_doctor", "I can't explain it. I have like, a thing for Witch Doctor. Is it because of the tail?");
+        add("mood.terra_entity.zoologist.dislike.angler", "I don't like how cruel Angler is!");
+        add("mood.terra_entity.zoologist.like.female_angler", "She didn't really hurt them.");
+        add("mood.terra_entity.zoologist.hate.arms_dealer", "I really totally hate what Arms Dealer does to animals!");
+        add("mood.terra_entity.wizard.like.merchant", "Merchant and I share a very long history, I like the mutual wisdom.");
+        add("mood.terra_entity.wizard.dislike.witch_doctor", "Witch Doctor dabbles in things that shouldn't be disturbed, and I don't like that.");
         // sound
         add("terra_entity.subtitle.routine_hurt", "Mob: Hurt");
         add("terra_entity.subtitle.routine_death", "Mob: Death");
@@ -393,5 +524,43 @@ public class TEEnglishProvider extends LanguageProvider {
         add("terra_entity.subtitle.summon_hornet", "Hornet: Summon");
         add("terra_entity.subtitle.summon_eye", "Flying Summon: Summon");
         add("terra_entity.subtitle.summon_imp", "Imp: Summon");
+        add("terra_entity.subtitle.summon_money_trough", "Money Trough: Summon");
+        add("terra_entity.subtitle.antlion_death", "Antlion: Death");
+        add("terra_entity.subtitle.antlion_hurt", "Antlion: Hurt");
+        add("terra_entity.subtitle.antlion_free", "Antlion: Movement");
+        add("terra_entity.subtitle.antlion_swarmer_death", "Antlion Swarmer: Death");
+        add("terra_entity.subtitle.antlion_swarmer_free", "Antlion Swarmer: Movement");
+        add("terra_entity.subtitle.bat_death", "Bat: Death");
+        add("terra_entity.subtitle.beetle_death", "Cochineal Beetle: Death");
+        add("terra_entity.subtitle.blood_jelly_death", "Blood Jelly: Death");
+        add("terra_entity.subtitle.blood_jelly_free", "Blood Jelly: Floating");
+        add("terra_entity.subtitle.bone_serpent_death", "Bone Serpent: Death");
+        add("terra_entity.subtitle.demon_death", "Demon: Death");
+        add("terra_entity.subtitle.demon_free", "Demon: Roar");
+        add("terra_entity.subtitle.demon_hurt", "Demon: Hurt");
+        add("terra_entity.subtitle.dungeon_spirit_death", "Dungeon Spirit: Dissipate");
+        add("terra_entity.subtitle.dungeon_spirit_free", "Dungeon Spirit: Drifting");
+        add("terra_entity.subtitle.dungeon_spirit_hurt", "Dungeon Spirit: Hit");
+        add("terra_entity.subtitle.granite_golem_death", "Granite Golem: Collapse");
+        add("terra_entity.subtitle.granite_golem_hurt", "Granite Golem: Damaged");
+        add("terra_entity.subtitle.granite_golem_free", "Granite Golem: Walking");
+        add("terra_entity.subtitle.jellyfish_death", "Jellyfish: Burst");
+        add("terra_entity.subtitle.jellyfish_free", "Jellyfish: Swimming");
+        add("terra_entity.subtitle.jellyfish_hurt", "Jellyfish: Agitated");
+        add("terra_entity.subtitle.pixie_death", "Pixie: Vanish");
+        add("terra_entity.subtitle.pixie_free", "Pixie: Fluttering");
+        add("terra_entity.subtitle.pixie_hurt", "Pixie: Startled");
+        add("terra_entity.subtitle.sand_shoot", "Sand: Shoot");
+        add("terra_entity.subtitle.soul_death", "Spirit: Annihilate");
+        add("terra_entity.subtitle.tr_zombie_free", "Zombie: Growl");
+        add("terra_entity.subtitle.unicorn_death", "Unicorn: Whimper");
+        add("terra_entity.subtitle.unicorn_hurt", "Unicorn: Cry");
+        add("terra_entity.subtitle.wyvern_death", "Wyvern: Crash");
+        add("terra_entity.subtitle.wyvern_hurt", "Wyvern: Roar");
+        add("terra_entity.subtitle.the_hungry_death", "Hungry Ghost: Perish");
+        add("terra_entity.subtitle.the_hungry_hurt", "Hungry Ghost: Hit");
+        add("terra_entity.subtitle.wall_of_flesh_hurt", "Flesh Wall: Injured");
+        add("terra_entity.subtitle.wall_of_flesh_roar", "Flesh Wall: Roar");
+        add("terra_entity.subtitle.wall_of_flesh_summon", "Flesh Wall: Vomit");
     }
 }

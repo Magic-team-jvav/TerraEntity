@@ -9,17 +9,25 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
-public class GeoNormalModel<T extends GeoEntity> extends DefaultedEntityGeoModel<T> {
+import javax.annotation.Nullable;
 
-    GeoBone head;
-    String headName = "Head";
+public class GeoNormalModel<T extends GeoEntity> extends DefaultedEntityGeoModel<T> {
+    protected GeoBone head;
+    protected final ResourceLocation path;
 
     public GeoNormalModel(ResourceLocation path) {
-        super(path, true);
+        this(path, true);
     }
 
     public GeoNormalModel(ResourceLocation path, boolean turnsHead) {
-        super(path, turnsHead);
+        super(path, turnsHead ? "Head" : null);
+        this.path = path;
+    }
+
+    public GeoNormalModel(GeoNormalModel<T> model) {
+        super(model.path, model.headBone);
+        this.head = model.head;
+        this.path = model.path;
     }
 
     @Override
@@ -28,8 +36,8 @@ public class GeoNormalModel<T extends GeoEntity> extends DefaultedEntityGeoModel
     }
 
     public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
-        if (this.turnsHead) {
-            if (this.head == null){
+        if (this.headBone != null) {
+            if (this.head == null) {
                 this.head = getHead();
             }
             if (this.head != null) {
@@ -40,17 +48,16 @@ public class GeoNormalModel<T extends GeoEntity> extends DefaultedEntityGeoModel
         }
     }
 
-    protected GeoBone getHead(){
-        return (GeoBone) this.getAnimationProcessor().getBone(getHeadName());
+    protected @Nullable GeoBone getHead() {
+        return (GeoBone) getAnimationProcessor().getBone(getHeadName());
     }
 
-    protected String getHeadName(){
-        return headName;
+    protected @Nullable String getHeadName() {
+        return headBone;
     }
 
-    public GeoNormalModel<T> setHeadName(String headName){
-        this.headName = headName;
+    public GeoNormalModel<T> setHeadName(String headName) {
+        this.headBone = headName;
         return this;
     }
-
 }

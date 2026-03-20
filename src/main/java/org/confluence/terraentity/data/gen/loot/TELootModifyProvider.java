@@ -47,7 +47,6 @@ public class TELootModifyProvider extends GlobalLootModifierProvider {
         }else{
             TerraEntity.LOGGER.warn("Loot table id is null for " + name);
         }
-
     }
 
 }

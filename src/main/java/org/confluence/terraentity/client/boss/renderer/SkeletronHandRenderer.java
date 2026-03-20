@@ -75,6 +75,7 @@ public class SkeletronHandRenderer extends GeoNormalRenderer<SkeletronHand> {
 
     }
 
+    @Override
     public void postRender(PoseStack poseStack, SkeletronHand animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
         if(animator != null){

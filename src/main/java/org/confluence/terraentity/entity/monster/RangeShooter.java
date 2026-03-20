@@ -103,7 +103,7 @@ public class RangeShooter extends AbstractMonster {
             return false;
         }
         if(super.hurt(pSource, pAmount)){
-            this.phase = this.lastPhase;
+            this.phase = this.lastPhase-1;
             return true;
         }
         return false;
