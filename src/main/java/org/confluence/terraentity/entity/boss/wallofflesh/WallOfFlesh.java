@@ -46,6 +46,7 @@ import org.confluence.terraentity.init.TESounds;
 import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.confluence.terraentity.init.entity.TEMonsterEntities;
 import org.confluence.terraentity.integration.ModChecker;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SyncWallOfFleshPositionsPacket;
 import org.confluence.terraentity.utils.*;
 import org.jetbrains.annotations.NotNull;
@@ -652,7 +653,7 @@ public class WallOfFlesh extends AbstractTerraBossBase implements Boss, IExtende
                     mouthPositions.get(i - eyePositions.size()).right(part.getId());
                 }
             }
-            AdapterUtils.sendToAllPlayers(
+            NetworkHandler.sendToAllPlayers(
                     new SyncWallOfFleshPositionsPacket(
                             this.getId(), eyePositions, mouthPositions
                     )
@@ -934,7 +935,7 @@ public class WallOfFlesh extends AbstractTerraBossBase implements Boss, IExtende
     @Override
     public void remove(RemovalReason reason) {
         if (!level().isClientSide) {
-            AdapterUtils.sendToAllPlayers(new SyncWallOfFleshPositionsPacket(getId(), List.of(), List.of()));
+            NetworkHandler.sendToAllPlayers(new SyncWallOfFleshPositionsPacket(getId(), List.of(), List.of()));
         }
         super.remove(reason);
     }

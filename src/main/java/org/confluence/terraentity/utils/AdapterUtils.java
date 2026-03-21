@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -20,11 +19,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.confluence.terraentity.mixed.IAttributeInstance;
-import org.confluence.terraentity.network.NetworkHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -32,18 +27,8 @@ import java.util.function.Supplier;
 
 
 public class AdapterUtils {
-    public static <MSG> void  sendToPlayer(ServerPlayer player, MSG payload){
-        NetworkHandler.CHANNEL.sendTo(payload, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-    }
-    public static <MSG> void sendToAllPlayers(MSG payload){
-        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), payload);
-    }
 
-    public static <MSG> void sendToServer(MSG payload){
-        NetworkHandler.CHANNEL.sendToServer(payload);
-    }
-
-//    public static <T extends Event> T postModEvent(T event){
+    //    public static <T extends Event> T postModEvent(T event){
 //        return (event);
 //    }
 

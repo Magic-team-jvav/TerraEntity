@@ -9,7 +9,7 @@ import org.confluence.terraentity.entity.animation.HillOfFleshModelAnimationTabl
 import org.confluence.terraentity.entity.animation.ModelPositionTable;
 import org.confluence.terraentity.entity.npc.misc.NPCDialogs;
 import org.confluence.terraentity.entity.npc.mood.NPCMood;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class SyncDataS2C {
     }
 
     public static <T> void sync(ServerPlayer player, DataType<T> dataId, T value) {
-        AdapterUtils.sendToPlayer(player, new SyncDataS2C(dataId.getId(), value));
+        NetworkHandler.sendToPlayer(player, new SyncDataS2C(dataId.getId(), value));
     }
 
     public static void syncAll(ServerPlayer player){

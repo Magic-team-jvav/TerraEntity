@@ -36,9 +36,9 @@ import org.confluence.terraentity.entity.proj.SporeProjectile;
 import org.confluence.terraentity.init.TESounds;
 import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.confluence.terraentity.init.entity.TEProjectileEntities;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SyncBossEventHealthPacket;
 import org.confluence.terraentity.registries.mappeddata.MappedDataTypes;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaterniond;
@@ -359,7 +359,7 @@ public class Plantera extends AbstractPlanteraTentacleSrc implements GeoEntity, 
 //                }
 //            }
 //        }
-        AdapterUtils.sendToAllPlayers(new SyncBossEventHealthPacket(bossEvent.getId(), value, getMax));
+        NetworkHandler.sendToAllPlayers(new SyncBossEventHealthPacket(bossEvent.getId(), value, getMax));
         return new float[]{value , getMax};
     }
 

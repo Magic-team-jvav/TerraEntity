@@ -15,10 +15,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.api.npc.trade.ITrade;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SetAnglerDialogPacketS2C;
 import org.confluence.terraentity.registries.npc_trade.variant.TradeTask;
 import org.confluence.terraentity.registries.npc_trade_task.variant.DynamicAnglerTradeTask;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -232,7 +232,7 @@ public class AnglerNPC extends AbstractTerraNPC {
         if (!isWakeUp() && player instanceof ServerPlayer serverPlayer) {
             setWakeUp(true);
             this.refreshBrain(serverPlayer.serverLevel());
-            AdapterUtils.sendToPlayer(serverPlayer, new SetAnglerDialogPacketS2C(SetAnglerDialogPacketS2C.WAKEUP));
+            NetworkHandler.sendToPlayer(serverPlayer, new SetAnglerDialogPacketS2C(SetAnglerDialogPacketS2C.WAKEUP));
             return InteractionResult.CONSUME; // confluence mixin here
         }
         return super.mobInteract(player, hand);

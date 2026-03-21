@@ -1,7 +1,10 @@
 package org.confluence.terraentity.network;
 
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.network.c2s.*;
@@ -32,8 +35,21 @@ public final class NetworkHandler {
         CHANNEL.registerMessage(packetId++, NPCShopPacket.class,  NPCShopPacket::encode,  NPCShopPacket::decode,  NPCShopPacket::handle);
         CHANNEL.registerMessage(packetId++, EventPacketC2S.class,  EventPacketC2S::encode,  EventPacketC2S::decode,  EventPacketC2S::handle);
         CHANNEL.registerMessage(packetId++, ServerBoundEventPacket.class,  ServerBoundEventPacket::encode,  ServerBoundEventPacket::decode,  ServerBoundEventPacket::handle);
+        CHANNEL.registerMessage(packetId++, SetDebugModePacket.class,  SetDebugModePacket::encode,  SetDebugModePacket::new,  SetDebugModePacket::handle);
 
 
 
+    }
+
+    public static <MSG> void  sendToPlayer(ServerPlayer player, MSG payload){
+        CHANNEL.sendTo(payload, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    }
+
+    public static <MSG> void sendToAllPlayers(MSG payload){
+        CHANNEL.send(PacketDistributor.ALL.noArg(), payload);
+    }
+
+    public static <MSG> void sendToServer(MSG payload){
+        CHANNEL.sendToServer(payload);
     }
 }

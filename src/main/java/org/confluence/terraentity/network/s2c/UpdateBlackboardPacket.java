@@ -3,16 +3,14 @@ package org.confluence.terraentity.network.s2c;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.entity.ai.goal.behavior.blackboard.IBlackboardHolder;
 import org.confluence.terraentity.entity.ai.goal.behavior.blackboard.KeyType;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /**
  * 更黑板变量
@@ -94,7 +92,7 @@ public class UpdateBlackboardPacket implements CustomPacketPayload {
             TerraEntity.LOGGER.error("Invalid keyType: {}", keyType);
             return;
         }
-        AdapterUtils.sendToPlayer(player, new UpdateBlackboardPacket(operator, uuid, keyType, value));
+        NetworkHandler.sendToPlayer(player, new UpdateBlackboardPacket(operator, uuid, keyType, value));
     }
 
 }

@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import org.confluence.terraentity.api.npc.trade.ITrade;
 import org.confluence.terraentity.api.npc.trade.ITradeHolder;
 import org.confluence.terraentity.mixed.IPlayer;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.c2s.NPCShopPacket;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,7 +143,7 @@ public abstract class TETradesMenu extends AbstractContainerMenu {
         var d = ((IPlayer) player).terra_entity$getTradeHolder();
         if (d != null && selectedMerchantIndex >= 0 && selectedMerchantIndex < d.trades().size()) {
             ITrade trade = d.trades().get(selectedMerchantIndex);
-            AdapterUtils.sendToServer(new NPCShopPacket(selectedMerchantIndex, this.NPCTrades.getTradeParams()));
+            NetworkHandler.sendToServer(new NPCShopPacket(selectedMerchantIndex, this.NPCTrades.getTradeParams()));
             var npc = ((IPlayer) player).terra_entity$getTradeHolder();
             trade.onLocalClickSlot(player, button, clickType, npc, selectedMerchantIndex);
         }

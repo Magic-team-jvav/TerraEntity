@@ -14,7 +14,7 @@ import org.confluence.terraentity.entity.npc.house.House;
 import org.confluence.terraentity.entity.npc.house.HouseManager;
 import org.confluence.terraentity.item.HouseDetectItem;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -111,6 +111,6 @@ public class ServerBoundHousePacket implements CustomPacketPayload {
     }
 
     public static void sendAction(Action action, House house){
-        AdapterUtils.sendToServer(new ServerBoundHousePacket(action, house));
+        NetworkHandler.sendToServer(new ServerBoundHousePacket(action, house));
     }
 }

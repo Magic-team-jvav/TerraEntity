@@ -1,13 +1,11 @@
 package org.confluence.terraentity.network.s2c;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 
 public record SyncLevelNamePacketS2C(String name) implements CustomPacketPayload {
     public static final Type<SyncLevelNamePacketS2C> TYPE = new Type<>(TerraEntity.space("sync_level_name"));
@@ -38,6 +36,6 @@ public record SyncLevelNamePacketS2C(String name) implements CustomPacketPayload
     }
 
     public static void sendToClient(ServerPlayer player) {
-        AdapterUtils.sendToPlayer(player, new SyncLevelNamePacketS2C(player.server.getWorldData().getLevelName()));
+        NetworkHandler.sendToPlayer(player, new SyncLevelNamePacketS2C(player.server.getWorldData().getLevelName()));
     }
 }

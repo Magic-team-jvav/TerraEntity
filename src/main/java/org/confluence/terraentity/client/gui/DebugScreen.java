@@ -5,6 +5,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.confluence.terraentity.item.DebugItem;
+import org.confluence.terraentity.network.c2s.SetDebugModePacket;
 import org.confluence.terraentity.utils.AdapterUtils;
 
 public class DebugScreen extends Screen {
@@ -19,7 +20,7 @@ public class DebugScreen extends Screen {
         super.init();
         behaviorTreeBt = Button.builder(Component.literal("Behavior Tree"), p -> {
             if (Minecraft.getInstance().player != null) {
-                AdapterUtils.sendToServer(DebugItem.DebugMode.BT_WEB_VIEWER);
+                SetDebugModePacket.send(DebugItem.DebugMode.BT_WEB_VIEWER, Minecraft.getInstance().player);
             }
         }).pos(10, 10).size(60, 20).build();
 

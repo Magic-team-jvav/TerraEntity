@@ -6,14 +6,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.storage.loot.LootTable;
 
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,12 +23,12 @@ import org.confluence.terraentity.api.npc.trade.ITradeTask;
 import org.confluence.terraentity.data.codec.TECodecs;
 import org.confluence.terraentity.data.util.AmountIngredient;
 import org.confluence.terraentity.entity.npc.trade.TradeParams;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SetAnglerDialogPacketS2C;
 import org.confluence.terraentity.registries.npc_trade.variant.ItemTradeItemList;
 import org.confluence.terraentity.registries.npc_trade.variant.ItemTradeLootTable;
 import org.confluence.terraentity.registries.npc_trade_task.TradeTaskProvider;
 import org.confluence.terraentity.registries.npc_trade_task.TradeTaskProviderTypes;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -147,7 +144,7 @@ public class DynamicAnglerTradeTask implements ITradeTask {
         // 添加到脏数据
         npc.getTradeManager().addToBeSync(index);
 
-        AdapterUtils.sendToPlayer(player, new SetAnglerDialogPacketS2C(SetAnglerDialogPacketS2C.TASK_SUCCEED));
+        NetworkHandler.sendToPlayer(player, new SetAnglerDialogPacketS2C(SetAnglerDialogPacketS2C.TASK_SUCCEED));
     }
 
     @Override

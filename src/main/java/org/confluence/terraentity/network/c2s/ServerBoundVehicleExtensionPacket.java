@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 import org.confluence.terraentity.api.entity.IFlyRideableMob;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 
 import java.util.function.Supplier;
 
@@ -57,6 +57,6 @@ public class ServerBoundVehicleExtensionPacket{
     }
 
     public static void sendAction(Action action){
-        AdapterUtils.sendToServer(new ServerBoundVehicleExtensionPacket(action));
+        NetworkHandler.sendToServer(new ServerBoundVehicleExtensionPacket(action));
     }
 }

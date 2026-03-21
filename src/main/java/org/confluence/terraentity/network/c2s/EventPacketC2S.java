@@ -17,7 +17,7 @@ import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.integration.curios.CuriosHelper;
 import org.confluence.terraentity.mixed.IPlayer;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.utils.TEUtils;
 
 import java.util.EnumMap;
@@ -106,32 +106,32 @@ public record EventPacketC2S(TypeEnum typeEnum) implements CustomPacketPayload {
     }
 
     public static void summonSkeletron(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.SUMMON_SKELETRON));
+        NetworkHandler.sendToServer(new EventPacketC2S(TypeEnum.SUMMON_SKELETRON));
         work(TypeEnum.SUMMON_SKELETRON, player);
     }
 
     public static void mouseLeftClick(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.MOUSE_LEFT_CLICK));
+        NetworkHandler.sendToServer(new EventPacketC2S(TypeEnum.MOUSE_LEFT_CLICK));
         work(TypeEnum.MOUSE_LEFT_CLICK, player);
     }
 
     public static void mouseRelease(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.MOUSE_RELEASE));
+        NetworkHandler.sendToServer(new EventPacketC2S(TypeEnum.MOUSE_RELEASE));
         work(TypeEnum.MOUSE_RELEASE, player);
     }
 
     public static void wheelUp(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.WHEEL_UP));
+        NetworkHandler.sendToServer(new EventPacketC2S(TypeEnum.WHEEL_UP));
         work(TypeEnum.WHEEL_UP, player);
     }
 
     public static void wheelDown(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.WHEEL_DOWN));
+        NetworkHandler.sendToServer(new EventPacketC2S(TypeEnum.WHEEL_DOWN));
         work(TypeEnum.WHEEL_DOWN, player);
     }
 
     public static void rideOrLeave(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.RIDE_OR_LEAVE));
+        NetworkHandler.sendToServer(new EventPacketC2S(TypeEnum.RIDE_OR_LEAVE));
         work(TypeEnum.RIDE_OR_LEAVE, player);
     }
 

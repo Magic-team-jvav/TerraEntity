@@ -1,9 +1,0 @@
-{
-  "desc" : "Json in this folder can forbidden mob natural spawn by regex supporting full matches when matching both entity type id and biome id. This file is excluded. For example: ",
-  "values" : [
-    {
-      "entityType": "terra_entity.*",
-      "biome": "minecraft.*"
-    }
-  ]
-}

@@ -31,7 +31,10 @@
     "container.ChestMenuMixin",
     "integration.azurelib.AzurelibFileLoaderMixin",
     "integration.azurelibArmor.AzurelibArmorFileLoaderMixin",
-    "level.ModifyBiomeMixin"
+    "level.ModifyBiomeMixin",
+    "server.LootDataManagerMixin",
+    "server.RecipeManagerMixin",
+    "server.ReloadableServerResourcesMixin"
   ],
   "client": [
     "accessor.GameRendererAccessor",

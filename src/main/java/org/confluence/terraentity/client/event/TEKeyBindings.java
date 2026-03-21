@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber(modid = TerraEntity.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = TerraEntity.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class TEKeyBindings {
     @SubscribeEvent
     public static void keyBinding(RegisterKeyMappingsEvent event) {

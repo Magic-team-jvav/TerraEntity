@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.post.BossSpawnCameraManager;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -63,6 +63,6 @@ public class SummonBossPacket implements CustomPacketPayload {
 
 
     public static void sendTo(ServerPlayer player, LivingEntity entity, float distance) {
-        AdapterUtils.sendToPlayer(player, new SummonBossPacket(entity.getId(), distance));
+        NetworkHandler.sendToPlayer(player, new SummonBossPacket(entity.getId(), distance));
     }
 }

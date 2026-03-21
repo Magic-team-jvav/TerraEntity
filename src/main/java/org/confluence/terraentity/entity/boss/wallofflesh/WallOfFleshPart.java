@@ -1,10 +1,8 @@
 package org.confluence.terraentity.entity.boss.wallofflesh;
 
-import com.google.gson.stream.JsonReader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.server.level.ServerEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,8 +19,8 @@ import net.minecraftforge.entity.PartEntity;
 import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.api.entity.ICollisionAttackEntity;
 import org.confluence.terraentity.api.entity.IMovablePartEntity;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SyncWallOfFleshTargetPacket;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -66,7 +64,7 @@ public abstract class WallOfFleshPart extends PartEntity<WallOfFlesh> implements
         if (!this.level().isClientSide()) {
             int partIndex = this.parentMob.subEntities.indexOf(this);
             if (partIndex >= 0) {
-                AdapterUtils.sendToAllPlayers(new SyncWallOfFleshTargetPacket(
+                NetworkHandler.sendToAllPlayers(new SyncWallOfFleshTargetPacket(
                         this.parentMob.getId(),
                         partIndex,
                         target != null ? target.getId() : 0

@@ -4,8 +4,8 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import org.confluence.terraentity.mixed.IBossEvent;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SyncBossEventHealthPacket;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,7 +24,7 @@ public class ServerBossEventMixin {
     @Inject(method = "setProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;broadcast(Ljava/util/function/Function;)V"))
     public void setProgressMixin(float progress, CallbackInfo ci) {
         for (ServerPlayer player : players) {
-            AdapterUtils.sendToPlayer(player, new SyncBossEventHealthPacket(
+            NetworkHandler.sendToPlayer(player, new SyncBossEventHealthPacket(
                     ((BossEvent) (Object) this).getId(),
                     ((IBossEvent) this).terra_enity$getBossHealth(),
                     ((IBossEvent) this).terra_enity$getBossMaxHealth()

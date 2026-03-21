@@ -1,16 +1,14 @@
 package org.confluence.terraentity.network.s2c;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
-import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.attachment.SummonerAttachment;
 import org.confluence.terraentity.init.TEAttachments;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.registries.chester.ChesterConditionalType;
-import org.confluence.terraentity.utils.AdapterUtils;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -61,7 +59,7 @@ public class ChesterAttachmentPacketS2C {
 
 
     public static void syncChesterOpenType(int chestType,int additionalType, ServerPlayer player){
-        AdapterUtils.sendToPlayer(player,new ChesterAttachmentPacketS2C(chestType + additionalType * 1000,
+        NetworkHandler.sendToPlayer(player,new ChesterAttachmentPacketS2C(chestType + additionalType * 1000,
                 player.getCapability(TEAttachments.SUMMONER_STORAGE).orElseGet(SummonerAttachment::new).boundBlocks));
     }
 }

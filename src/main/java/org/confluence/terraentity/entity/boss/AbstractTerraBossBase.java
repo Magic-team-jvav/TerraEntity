@@ -43,8 +43,8 @@ import org.confluence.terraentity.entity.ai.goal.LookForwardWanderFlyGoal;
 import org.confluence.terraentity.entity.util.DifficultSelector;
 import org.confluence.terraentity.init.TESounds;
 import org.confluence.terraentity.mixed.IBossEvent;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SyncBossEventHealthPacket;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -438,7 +438,7 @@ public abstract class AbstractTerraBossBase extends Monster implements GeoEntity
         float[] datas = getBossEventProgress();
         ((IBossEvent) this.bossEvent).terra_enity$setBossHealth(datas[0]);
         ((IBossEvent) this.bossEvent).terra_enity$setBossMaxHealth(datas[1]);
-        AdapterUtils.sendToPlayer(player, new SyncBossEventHealthPacket(bossEvent.getId(), datas[0], datas[1]));
+        NetworkHandler.sendToPlayer(player, new SyncBossEventHealthPacket(bossEvent.getId(), datas[0], datas[1]));
     }
 
     @Override // boss条消失

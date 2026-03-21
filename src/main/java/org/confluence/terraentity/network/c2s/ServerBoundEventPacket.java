@@ -16,7 +16,7 @@ import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.confluence.terraentity.init.entity.TENpcEntities;
 import org.confluence.terraentity.mixed.IPlayer;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.utils.TEUtils;
 
 import java.util.EnumMap;
@@ -109,22 +109,22 @@ public class ServerBoundEventPacket {
     }
 
     public static void summonSkeletron(){
-        AdapterUtils.sendToServer(new ServerBoundEventPacket(TypeEnum.SUMMON_SKELETRON));
+        NetworkHandler.sendToServer(new ServerBoundEventPacket(TypeEnum.SUMMON_SKELETRON));
     }
 
     public static void mouseLeftClick(){
-        AdapterUtils.sendToServer(new ServerBoundEventPacket(TypeEnum.MOUSE_LEFT_CLICK));
+        NetworkHandler.sendToServer(new ServerBoundEventPacket(TypeEnum.MOUSE_LEFT_CLICK));
     }
 
     public static void mouseRelease(){
-        AdapterUtils.sendToServer(new ServerBoundEventPacket(TypeEnum.MOUSE_RELEASE));
+        NetworkHandler.sendToServer(new ServerBoundEventPacket(TypeEnum.MOUSE_RELEASE));
     }
 
     public static void wheelUp(){
-        AdapterUtils.sendToServer(new ServerBoundEventPacket(TypeEnum.WHEEL_UP));
+        NetworkHandler.sendToServer(new ServerBoundEventPacket(TypeEnum.WHEEL_UP));
     }
 
     public static void wheelDown(){
-        AdapterUtils.sendToServer(new ServerBoundEventPacket(TypeEnum.WHEEL_DOWN));
+        NetworkHandler.sendToServer(new ServerBoundEventPacket(TypeEnum.WHEEL_DOWN));
     }
 }

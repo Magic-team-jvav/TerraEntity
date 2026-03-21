@@ -43,9 +43,9 @@ import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.confluence.terraentity.init.entity.TEMonsterEntities;
 import org.confluence.terraentity.mixin.accessor.SlimeAccessor;
 import org.confluence.terraentity.mixed.IBossEvent;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.network.s2c.SyncBossEventHealthPacket;
 import org.confluence.terraentity.registries.mappeddata.MappedDataTypes;
-import org.confluence.terraentity.utils.AdapterUtils;
 import org.confluence.terraentity.utils.Easing;
 import org.confluence.terraentity.utils.FloatRGB;
 import org.confluence.terraentity.utils.TEUtils;
@@ -399,7 +399,7 @@ public class KingSlime extends Slime implements DeathAnimOptions, IBossFSM, Boss
         float[] datas = getBossEventProgress();
         ((IBossEvent) this.bossEvent).terra_enity$setBossHealth(datas[0]);
         ((IBossEvent) this.bossEvent).terra_enity$setBossMaxHealth(datas[1]);
-        AdapterUtils.sendToPlayer(player, new SyncBossEventHealthPacket(bossEvent.getId(), datas[0], datas[1]));
+        NetworkHandler.sendToPlayer(player, new SyncBossEventHealthPacket(bossEvent.getId(), datas[0], datas[1]));
     }
 
     @Override

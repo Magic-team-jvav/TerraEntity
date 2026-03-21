@@ -5,7 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import org.confluence.terraentity.api.npc.trade.ITradeHolder;
 import org.confluence.terraentity.api.npc.trade.ITrade;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -69,10 +69,10 @@ public class UpdateNPCTradePacket {
 
 
     public static <T extends Entity & ITradeHolder> void syncNpcTrade(int index, T npc){
-        AdapterUtils.sendToAllPlayers(new UpdateNPCTradePacket(index, npc.getUUID(), npc.getTradeManager().trades().get(index)));
+        NetworkHandler.sendToAllPlayers(new UpdateNPCTradePacket(index, npc.getUUID(), npc.getTradeManager().trades().get(index)));
     }
 
     public static <T extends ITradeHolder> void syncNpcTrade(int index, UUID npcId, T npc){
-        AdapterUtils.sendToAllPlayers(new UpdateNPCTradePacket(index, npcId, npc.getTradeManager().trades().get(index)));
+        NetworkHandler.sendToAllPlayers(new UpdateNPCTradePacket(index, npcId, npc.getTradeManager().trades().get(index)));
     }
 }

@@ -9,7 +9,7 @@ import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.attachment.UnSyncableAttachment;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -57,7 +57,7 @@ public record EventPacketS2C(TypeEnum typeEnum) implements CustomPacketPayload {
     }
 
     public static void resetCrimsonStorm(ServerPlayer player) {
-        AdapterUtils.sendToPlayer(player, new EventPacketS2C(TypeEnum.RESET_CRIMSON_STORM));
+        NetworkHandler.sendToPlayer(player, new EventPacketS2C(TypeEnum.RESET_CRIMSON_STORM));
         work(TypeEnum.RESET_CRIMSON_STORM, player);
     }
 

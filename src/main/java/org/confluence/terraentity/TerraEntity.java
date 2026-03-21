@@ -4,6 +4,7 @@ package org.confluence.terraentity;
 import com.github.tartaricacid.touhoulittlemaid.api.event.MaidAttackEvent;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -54,6 +55,7 @@ public class TerraEntity {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigRegistry.register());
 //        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC);
+
     }
 
 

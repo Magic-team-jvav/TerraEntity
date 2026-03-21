@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.entity.npc.trade.NPCTradeManager;
 import org.confluence.terraentity.network.CustomPacketPayload;
-import org.confluence.terraentity.utils.AdapterUtils;
+import org.confluence.terraentity.network.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -49,6 +49,6 @@ public record SyncNPCTradesPacketS2C(Map<ResourceLocation, Tag> tradesMap) imple
     }
 
     public static void sync(ServerPlayer player) {
-        AdapterUtils.sendToPlayer(player, new SyncNPCTradesPacketS2C(NPCTradeManager.Loader.getInstance().getTagMap()));
+        NetworkHandler.sendToPlayer(player, new SyncNPCTradesPacketS2C(NPCTradeManager.Loader.getInstance().getTagMap()));
     }
 }

@@ -199,9 +199,9 @@ dependencies {
 
 
     // mc lib 要用lib:
-    implementation fg.deobf("libs:cafelib:1.0.1+1201forge-all")
-    jarJar("com.github.edg_thexu:cafelib:1.0.1+1201forge-all") {
-        jarJar.ranged(it, "[1.0.1,)")
+    implementation fg.deobf("libs:cafelib:1.2.0+1.20.1-forge")
+    jarJar("com.github.edg_thexu:cafelib:1.2.0+1.20.1-forge") {
+        jarJar.ranged(it, "[1.2.0,)")
     }
 
     // 密码库
