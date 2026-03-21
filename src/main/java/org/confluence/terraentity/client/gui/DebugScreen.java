@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.confluence.terraentity.item.DebugItem;
 import org.confluence.terraentity.network.c2s.SetDebugModePacket;
-import org.confluence.terraentity.utils.AdapterUtils;
 
 public class DebugScreen extends Screen {
     protected Button behaviorTreeBt;

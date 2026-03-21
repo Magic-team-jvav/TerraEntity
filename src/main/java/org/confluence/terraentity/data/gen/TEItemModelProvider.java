@@ -56,6 +56,7 @@ public class TEItemModelProvider extends ItemModelProvider {
         // handed items
         genModels(List.of(
                 createDir(TESummonItems.ITEMS,"summon/"),
+                createDir(TEPetItems.ITEMS,"pet/"),
                 createDir(TEWhipItems.ITEMS,"whip/"),
                 createDir(TEBoomerangItems.ITEMS,"boomerang/"),
                 createDir(TEYoyosItems.ITEMS,"yoyo/")

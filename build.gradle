@@ -140,6 +140,31 @@ repositories {
         url = uri("https://maven.theillusivec4.top/")
     }
 }
+//configurations {
+//    // 自定义一个 minecraftLibrary，方便引入需要 Shadow 的库
+//    mcLib
+//    minecraftLibrary {
+//        extendsFrom mcLib
+//    }
+//}
+//
+//shadowJar {
+//    configurations = [project.configurations.mcLib]
+//
+//    relocate('org.apache.commons.math3', 'org.confluence.terraentity.math3')
+//
+//    // 排除不需要的依赖项和资源
+//    exclude 'META-INF/maven/**/*'
+//    exclude 'META-INF/versions/**/*'
+//    // 这个版权许可都已经手动添加进 licenses 里了
+//    exclude 'META-INF/LICENSE'
+//    exclude 'org/apache/commons/math3/**'
+//    mergeServiceFiles()
+//    minimize()
+//}
+//reobf {
+//    shadowJar {}
+//}
 
 boolean dev = project.hasProperty('dev')
         ? project.property('dev').toBoolean()
@@ -177,6 +202,7 @@ dependencies {
     jarJar(implementation("org.apache.commons:commons-math3:3.6.1")){
         jarJar.ranged(it, "[3.6.1,)")
     }
+//    compileOnly ("org.apache.commons:commons-math3:3.6.1")
 
     // 车万女仆
     compileOnly fg.deobf("curse.maven:touhou-little-maid-355044:6302618")
@@ -199,10 +225,16 @@ dependencies {
 
 
     // mc lib 要用lib:
-    implementation fg.deobf("libs:cafelib:1.2.0+1.20.1-forge")
-    jarJar("com.github.edg_thexu:cafelib:1.2.0+1.20.1-forge") {
+    implementation fg.deobf("libs:cafelib:${cafelib_version}")
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    jarJar("com.github.edg_thexu:cafelib:${cafelib_version}") {
         jarJar.ranged(it, "[1.2.0,)")
     }
+
+    // tacz, 多引入了math3，需要注释掉math3的mclib
+//    implementation fg.deobf("curse.maven:timeless-and-classics-zero-1028108:7745481") {
+//        exclude group: 'org.apache.commons', module: 'commons-math3'
+//    }
 
     // 密码库
 //    minecraftLibrary 'com.github.edg_thexu:vigsecurity:1.0.0.20'

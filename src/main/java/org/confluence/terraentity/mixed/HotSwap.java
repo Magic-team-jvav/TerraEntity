@@ -12,18 +12,19 @@ public class HotSwap {
     public static int consume = 2;
     public static void doSomething(float partialTicks, TextureTarget target, PoseStack poseStack){
 
-        target.setClearColor(0, 0, 0, 0);
-        target.clear(true);
-        target.bindWrite(true);
-        GameRenderer gr = Minecraft.getInstance().gameRenderer;
-        Camera camera = gr.getMainCamera();
-        consume = 2;
-        ((GameRendererAccessor)gr).callRenderItemInHand(poseStack, camera, partialTicks);
-
-        Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        target.blitToScreen(Minecraft.getInstance().getMainRenderTarget().width,Minecraft.getInstance().getMainRenderTarget().height,false);
+        // 这里导致tacz渲染问题
+//        target.setClearColor(0, 0, 0, 0);
+//        target.clear(true);
+//        target.bindWrite(true);
+//        GameRenderer gr = Minecraft.getInstance().gameRenderer;
+//        Camera camera = gr.getMainCamera();
+//        consume = 2;
+//        ((GameRendererAccessor)gr).callRenderItemInHand(poseStack, camera, partialTicks);
+//
+//        Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
+//        RenderSystem.enableBlend();
+//        RenderSystem.defaultBlendFunc();
+//        target.blitToScreen(Minecraft.getInstance().getMainRenderTarget().width,Minecraft.getInstance().getMainRenderTarget().height,false);
 
     }
 }

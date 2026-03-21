@@ -13,10 +13,13 @@ import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.data.enchantment.TEEnchantments;
 import org.confluence.terraentity.init.item.*;
+import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.item.DebugItem;
 import org.confluence.terraentity.item.HouseDetectItem;
+import org.confluence.terraentity.runtime.TERuntime;
 import org.confluence.terraentity.utils.TEUtils;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static org.confluence.terraentity.TerraEntity.MODID;
@@ -39,14 +42,21 @@ public class TEItems {
                     .title(Component.translatable("itemGroup.terraentity.title"))
                     .icon(()-> TESpawnEggItems.KING_SLIME_SPAWN_EGG.get().getDefaultInstance())
                     .displayItems((itemDisplayParameters, output) -> {
-                        TESpawnEggItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
-                        TERideableItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
-                        TESummonItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
-                        TEWhipItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
-                        TEBoomerangItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
-                        TEYoyosItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
-                        TEItems.TOOLS.getEntries().forEach(item -> output.accept(item.get()));
-                        TEBlocks.BLOCKITEMS.getEntries().forEach(item -> output.accept(item.get()));
+//                        WipNotDisplayOutput wrappedOutput = new WipNotDisplayOutput(output);
+                        Consumer<RegistryObject<? extends Item>> action = item -> output.accept(item.get());
+                        TESpawnEggItems.ITEMS.getEntries().forEach(action);
+                        if(!ModChecker.confluence.isLoaded() || TERuntime.isDevMode()) {
+                            TEBossSummonsItems.ITEMS.getEntries().forEach(action);
+                        }
+                        TERideableItems.ITEMS.getEntries().forEach(action);
+                        TEPetItems.ITEMS.getEntries().forEach(action);
+                        TESummonItems.ITEMS.getEntries().forEach(action);
+                        TEWhipItems.ITEMS.getEntries().forEach(action);
+                        TEBoomerangItems.ITEMS.getEntries().forEach(action);
+                        TEYoyosItems.ITEMS.getEntries().forEach(action);
+
+                        TEItems.TOOLS.getEntries().forEach(action);
+                        TEBlocks.BLOCKITEMS.getEntries().forEach(action);
                         HolderLookup.RegistryLookup<Enchantment> registryLookup = itemDisplayParameters.holders().lookupOrThrow(Registries.ENCHANTMENT);
                         output.accept(TEUtils.enchantedBook(registryLookup, TEEnchantments.MULTI_BOOMERANG.getKey(), 3));
                         output.accept(TEUtils.enchantedBook(registryLookup, TEEnchantments.WHIP_SWEEP.getKey(), 1));

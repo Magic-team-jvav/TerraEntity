@@ -39,6 +39,7 @@ import org.confluence.terraentity.client.buffer.DebugEntityHelper;
 import org.confluence.terraentity.client.buffer.NPCChatBubbleBuffer;
 import org.confluence.terraentity.client.gui.CustomizeBossHealthBar;
 import org.confluence.terraentity.client.init.model.EntityBlockModelRegister;
+import org.confluence.terraentity.client.post.BossSpawnCameraManager;
 import org.confluence.terraentity.client.post.BrainTranslucent;
 import org.confluence.terraentity.client.post.TongueRenderer;
 import org.confluence.terraentity.config.ClientConfig;
@@ -85,7 +86,7 @@ public class RenderEvent {
 
     @SubscribeEvent
     public static void renderLevelStage(RenderLevelStageEvent event) {
-        if(event.getStage()== RenderLevelStageEvent.Stage.AFTER_LEVEL){
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL){
             isIrisShader = ModChecker.iris.isLoaded() && !(RenderSystem.getShader() instanceof ShaderInstance);
 
             BrainTranslucent.render(event);
@@ -185,6 +186,10 @@ public class RenderEvent {
 
     @SubscribeEvent
     public static void renderHand(RenderHandEvent event) {
+        if(BossSpawnCameraManager.INSTANCE.isAnimating()){
+            event.setCanceled(true);
+        }
+
         ItemStack stack = event.getItemStack();
         LocalPlayer player = Minecraft.getInstance().player;
         if(player == null){

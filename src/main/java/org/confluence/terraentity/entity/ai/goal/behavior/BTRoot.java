@@ -2,7 +2,6 @@ package org.confluence.terraentity.entity.ai.goal.behavior;
 
 import com.github.edg_thexu.cafelib.utils.CafeAdapterUtils;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.crafting.RecipeManager;
 import org.confluence.terraentity.api.event.RedirectBTEvent;
 import org.confluence.terraentity.entity.ai.goal.behavior.webviewer.BTServer;
 import org.jetbrains.annotations.NotNull;

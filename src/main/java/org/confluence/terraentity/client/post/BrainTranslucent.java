@@ -1,6 +1,7 @@
 package org.confluence.terraentity.client.post;
 
 import com.mojang.blaze3d.pipeline.TextureTarget;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.confluence.terraentity.TerraEntity;
@@ -13,6 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.glIsEnabled;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
 public class BrainTranslucent {
     public static class tuple{
@@ -31,6 +36,10 @@ public class BrainTranslucent {
     public static void render(RenderLevelStageEvent event){
 
         if(entityMap.isEmpty()) return;
+        // 保存当前渲染状态
+        int lastFbo = GlStateManager.getBoundFramebuffer();
+        boolean blendEnabled = glIsEnabled(GL_BLEND);
+        boolean depthEnabled = glIsEnabled(GL_DEPTH_TEST);
 
         Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
         List<BrainOfCthulhu> shouldBeRemoved = new ArrayList<>();
@@ -55,15 +64,15 @@ public class BrainTranslucent {
         TextureTarget in;
         int c = 0;
         for(BrainOfCthulhu brain : entityMap.keySet()){
-            if(brain!= null && brain.isAlive()){
+            if (Minecraft.getInstance().level != null && brain != null && brain.isAlive() && Minecraft.getInstance().level.getEntity(brain.getId()) == brain) {
                 // 对每个BOSS本体虚影渲染
                 c++;
-                out = c % 2 == 0? temp: temp2;
-                in = c % 2 == 0? temp2: temp;
+                out = c % 2 == 0 ? temp : temp2;
+                in = c % 2 == 0 ? temp2 : temp;
                 out.bindWrite(true);
                 tuple tuple = entityMap.get(brain);
                 float alpha = org.joml.Math.clamp(brain.getFadeProgress(), 0, 1);
-                if(alpha < 0.99f){
+                if (alpha < 0.99f) {
                     TextureTarget target = tuple.target;
                     TextureTarget finalIn = in;
 
@@ -74,19 +83,17 @@ public class BrainTranslucent {
 //                    });
 
                     float p = org.joml.Math.clamp(brain.getDissolveProgress(), 0, 1);
-                    ((IShaderInstance)ModRenderTypes.Shaders.dissolveBlitShader).getTerra_entity$Progress().set(1-p);
-                    ((IShaderInstance)ModRenderTypes.Shaders.dissolveBlitShader).getTerra_entity$Distance().set(Minecraft.getInstance().player.distanceTo(brain));
-                    ShaderUtil.blitScreen(ModRenderTypes.Shaders.dissolveBlitShader, shader->{
+                    ((IShaderInstance) ModRenderTypes.Shaders.dissolveBlitShader).getTerra_entity$Progress().set(1 - p);
+                    ((IShaderInstance) ModRenderTypes.Shaders.dissolveBlitShader).getTerra_entity$Distance().set(Minecraft.getInstance().player.distanceTo(brain));
+                    ShaderUtil.blitScreen(ModRenderTypes.Shaders.dissolveBlitShader, shader -> {
                         shader.COLOR_MODULATOR.set(1f, 0f, 1f, alpha);
                         shader.setSampler("Sampler0", finalIn);
                         shader.setSampler("Sampler1", target);
-                        shader.setSampler("Sampler2",Minecraft.getInstance().getTextureManager().getTexture(TerraEntity.space("textures/gui/noise.png")) );
+                        shader.setSampler("Sampler2", Minecraft.getInstance().getTextureManager().getTexture(TerraEntity.space("textures/gui/noise.png")));
                     });
-                }else{
+                } else {
                     shouldBeRemoved.add(brain);
                 }
-            }else{
-                shouldBeRemoved.add(brain);
             }
         }
         for(BrainOfCthulhu brain : shouldBeRemoved){
@@ -102,5 +109,20 @@ public class BrainTranslucent {
         for(tuple t : entityMap.values()){
             t.target.clear(true);
         }
+
+        // 恢复状态
+        if (blendEnabled) {
+            glEnable(GL_BLEND);
+        } else {
+            glDisable(GL_BLEND);
+        }
+
+        if (depthEnabled) {
+            glEnable(GL_DEPTH_TEST);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
+
+        GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, lastFbo);
     }
 }

@@ -1,0 +1,1 @@
+git -c http.proxy=http://127.0.0.1:7890 -c https.proxy=http://127.0.0.1:7890 push origin forge/1.20.1

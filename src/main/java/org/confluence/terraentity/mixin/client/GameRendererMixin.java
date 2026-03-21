@@ -4,6 +4,7 @@ import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import org.confluence.terraentity.client.post.BossSpawnCameraManager;
 import org.confluence.terraentity.mixed.HotSwap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,5 +26,10 @@ public abstract class GameRendererMixin {
 
         HotSwap.doSomething(pPartialTicks , confluence$handTarget, pPoseStack);
 
+    }
+
+    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setup(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V", shift = At.Shift.AFTER))
+    public void setupCamera(float pPartialTicks, long pFinishTimeNano, PoseStack pPoseStack, CallbackInfo ci) {
+        BossSpawnCameraManager.INSTANCE.update(pPartialTicks);
     }
 }
