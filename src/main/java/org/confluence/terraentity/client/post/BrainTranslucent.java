@@ -94,6 +94,8 @@ public class BrainTranslucent {
                 } else {
                     shouldBeRemoved.add(brain);
                 }
+            }else{
+                shouldBeRemoved.add(brain);
             }
         }
         for(BrainOfCthulhu brain : shouldBeRemoved){
