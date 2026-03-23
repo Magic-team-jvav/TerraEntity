@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
+import org.confluence.terraentity.api.event.InitItemEvent;
 import org.confluence.terraentity.data.component.EffectStrategyComponent;
 
 import org.confluence.terraentity.data.enchantment.TEEnchantmentHelper;
@@ -31,6 +32,7 @@ import org.confluence.terraentity.api.entity.IGeneration;
 import org.confluence.terraentity.registries.generation.variant.ForwardGeneration;
 import org.confluence.terraentity.registries.hit_effect.EffectStrategy;
 import org.confluence.terraentity.registries.hit_effect.IEffectStrategy;
+import org.confluence.terraentity.utils.AdapterUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +69,6 @@ public class Boomerang extends Item {
         if(data != null)
             data.writeToNBT(stack.getOrCreateTag());
     }
-
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
@@ -139,7 +140,6 @@ public class Boomerang extends Item {
         }
     }
 
-
 //    @Override
 //    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
 //        return enchantment.is(Enchantments.LOOTING) || super.supportsEnchantment(stack, enchantment);
@@ -155,6 +155,7 @@ public class Boomerang extends Item {
         public int forwardTick = 15;                //前进时间
         public int maxCount = 1;                    //最大射击次数
         public int maxPenetration = 1;              //最大穿透次数
+        public int luminance = 0;                   //实体亮度
         public boolean canPenetrate = false;        //是否可穿透，否则命中生物返回
         public boolean shouldWaitForBack = true;    //是否等待返回
         public boolean shouldApplyCd = false;       //是否应用冷却
@@ -270,21 +271,21 @@ public class Boomerang extends Item {
 
         /**
          * 设置粒子效果
-         * @param particle
-         * @return
          */
         public BoomerangModifier setParticle(Supplier<ParticleOptions> particle) {
             return setParticle(particle, 1);
         }
         /**
          * 设置粒子效果
-         * @param particle
-         * @param particleCount
-         * @return
          */
         public BoomerangModifier setParticle(Supplier<ParticleOptions> particle, int particleCount) {
             this.particle = particle;
             this.particleCount = particleCount;
+            return this;
+        }
+
+        public BoomerangModifier setLuminance(int luminance) {
+            this.luminance = luminance;
             return this;
         }
 
@@ -300,6 +301,7 @@ public class Boomerang extends Item {
                 properties.component(CafeDataComponentTypes.UNBREAKABLE_COMPONENT, new Unbreakable(true));
             }
             this.properties = modifierFunctions.stream().reduce(properties, (p, f) -> f.apply(p), (p1, p2) -> p1);
+            AdapterUtils.postEvent(new InitItemEvent.InitBoomerang(properties, this));
             return this.properties;
         }
 

@@ -24,6 +24,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 import net.minecraft.world.level.block.state.BlockState;
+import org.confluence.terraentity.api.event.InitItemEvent;
 import org.confluence.terraentity.init.TEDataComponentTypes;
 import org.confluence.terraentity.entity.proj.WhipEntity;
 import org.confluence.terraentity.init.TEAttributes;
@@ -61,6 +62,7 @@ public class BaseWhipItem extends Item {
      * @param markDamage - 标记伤害
      * @param attackSpeed - 攻击速度
      * @param hitCooldown - 击中同一目标的间隔
+     * @param rangeFactor - 攻击范围
      */
     public BaseWhipItem(CafeItemProperties properties,
                         float damage,
@@ -69,11 +71,12 @@ public class BaseWhipItem extends Item {
                         int hitCooldown,
                         float rangeFactor) {
         super(properties);
-        this.hitCooldown = hitCooldown;
-        this.markDamage = markDamage;
-        this.attackSpeed = attackSpeed;
-        this.rangeFactor = rangeFactor;
-        this.damage = damage * 0.5f; //对于原版的适配
+        InitItemEvent.InitWhip event = new InitItemEvent.InitWhip(properties, damage, markDamage, attackSpeed, hitCooldown, rangeFactor);
+        this.hitCooldown = event.hitCooldown;
+        this.markDamage = event.markDamage;
+        this.attackSpeed = event.attackSpeed;
+        this.rangeFactor = event.rangeFactor;
+        this.damage = event.damage * 0.5f; //对于原版的适配
         this.properties = properties;
         if(properties instanceof WhipProperties whipProperties) {
             this.particleOptions = whipProperties.particleOptions;

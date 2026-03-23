@@ -31,22 +31,23 @@ public class TEBoomerangItems {
             new Boomerang.BoomerangModifier().setDurability(100)
     );
     public static final RegistryObject<Boomerang> ENCHANTED_BOOMERANG = register("enchanted_boomerang",2.2F,
-            NORMAL_BOOMERANG_MODIFIER.apply(15,1.55f,1.55f).setDurability(300)
+            NORMAL_BOOMERANG_MODIFIER.apply(15,1.55f,1.55f).setDurability(300).setLuminance(5)
     );
     public static final RegistryObject<Boomerang> SHROOMERANG = register("shroomerang",2.2F,
-            NORMAL_BOOMERANG_MODIFIER.apply(15,1.55f,1.55f).setDurability(500)
+            NORMAL_BOOMERANG_MODIFIER.apply(15,1.55f,1.55f).setDurability(500).setLuminance(5)
     );
     public static final RegistryObject<Boomerang> ICE_BOOMERANG = register("ice_boomerang",2.75F,
             NORMAL_BOOMERANG_MODIFIER.apply(16,1.6f,1.6f)
                     .setOnHitEffect(TEEffectStrategies.Components.FROST_BURN_BOOMERANG_EFFECT.get())
                     .setDurability(500)
                     .setTrail(()->new BoomerangTrail(20, 0x2553be, 0x255385))
+                    .setLuminance(5)
                     .setParticle(()->ParticleTypes.SNOWFLAKE)
     );   //50% 的几率造成 3 秒的霜冻。
 
     public static final RegistryObject<Boomerang> TRIMARANG = register("trimarang",2.75F,
             MULTI_BOOMERANG_MODIFIER.apply(10,3,
-                    NORMAL_BOOMERANG_MODIFIER.apply(17,1.85f,1.85f)).setDurability(1000)
+                    NORMAL_BOOMERANG_MODIFIER.apply(17,1.85f,1.85f)).setDurability(1000).setLuminance(6)
     );   // 使用三次
 
     public static final RegistryObject<Boomerang> COMBAT_WRENCH = register("combat_wrench",3.1F,
@@ -57,6 +58,7 @@ public class TEBoomerangItems {
             NORMAL_BOOMERANG_MODIFIER.apply(18,1.85f,1.85f)
                     .setOnHitEffect(TEEffectStrategies.Components.HELL_FIRE_EFFECT.get())
                     .setDurability(1500)
+                    .setLuminance(7)
                     .setTrail(()->new BoomerangTrail(200, 0xFB6464, 0xbc2525))
                     .setParticle(()->ParticleTypes.LAVA)
     );   //狱炎效果。
@@ -68,6 +70,7 @@ public class TEBoomerangItems {
                     .setFlySpeedFactor(2) // 设置向前飞行速度
                     .setBackSpeedFactor(2f) // 设置后退速度
                     .setCanPenetrate()
+                    .setLuminance(6)
                     .setMaxCount(10)
     );
 

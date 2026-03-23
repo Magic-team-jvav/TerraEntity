@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.confluence.terraentity.TerraEntity;
+import org.confluence.terraentity.api.event.InitItemEvent;
 import org.confluence.terraentity.api.event.YoyosThrowingEvent;
 import org.confluence.terraentity.api.item.ILeftClickStateItem;
 import org.confluence.terraentity.api.item.IProjectileModifier;
@@ -32,11 +33,12 @@ public class YoyosItem<T extends BaseProj<?>> extends Item implements ILeftClick
 
     public YoyosItem(Properties properties, float attackDamage, int maxRange, int stringColor, float existTime, String suffix) {
         super(properties);
-        this.attackDamage = attackDamage;
-        this.stringColor = stringColor;
+        InitItemEvent.InitYoyos event = AdapterUtils.postEvent(new InitItemEvent.InitYoyos(properties, attackDamage, maxRange, stringColor, existTime));
+        this.attackDamage = event.attackDamage;
+        this.stringColor = event.stringColor;
         this.texture = TerraEntity.space("textures/entity/yoyos/" + suffix + ".png");
-        this.maxRange = maxRange;
-        this.existTime = existTime;
+        this.maxRange = event.maxRange;
+        this.existTime = event.existTime;
     }
 
     public float getAttackDamage() {

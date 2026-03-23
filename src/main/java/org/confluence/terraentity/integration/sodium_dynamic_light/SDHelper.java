@@ -33,6 +33,7 @@ public class SDHelper {
         DynamicLightHandlers.registerDynamicLightHandler(TEProjectileEntities.FIRE_IMP_PROJ.get(), o -> 10);
         DynamicLightHandlers.registerDynamicLightHandler(TEProjectileEntities.DARK_CASTER_PROJ.get(), o -> 6);
         DynamicLightHandlers.registerDynamicLightHandler(TEProjectileEntities.VILE_SPIT_PROJ.get(), o -> 6);
+        DynamicLightHandlers.registerDynamicLightHandler(TEProjectileEntities.BOOMERANG_PROJECTILE.get(), entity -> entity.getModifier().luminance);
 
     }
 }

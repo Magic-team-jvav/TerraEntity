@@ -313,4 +313,8 @@ public class BoomerangProjectile extends Projectile {
     public boolean ignoreExplosion() {
         return true;
     }
+
+    public BoomerangModifier getModifier() {
+        return modifier;
+    }
 }

@@ -24,12 +24,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.registries.RegistryObject;
+import org.confluence.terraentity.api.event.InitItemEvent;
 import org.confluence.terraentity.api.event.SummonEvent;
 import org.confluence.terraentity.attachment.SummonerAttachment;
 import org.confluence.terraentity.api.entity.ISummonMob;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.init.TEAttributes;
 import org.confluence.terraentity.init.TESounds;
+import org.confluence.terraentity.utils.AdapterUtils;
 import org.confluence.terraentity.utils.TEUtils;
 
 import java.util.List;
@@ -52,8 +54,9 @@ public class SummonItem<T extends Mob & ISummonMob> extends Item {
     public SummonItem(Properties properties, RegistryObject<EntityType<T>> entityType, int consume, float baseAttackDamage, List<Component> tooltips) {
         super(properties.stacksTo(1));
         this.entityType = entityType;
-        this.consume = consume;
-        this.baseAttackDamage = baseAttackDamage;
+        InitItemEvent.InitSummonItem event = AdapterUtils.postEvent(new InitItemEvent.InitSummonItem(properties, consume, baseAttackDamage));
+        this.consume = event.consume;
+        this.baseAttackDamage = event.baseAttackDamage;
         this.tooltips = tooltips;
         this.sound = TESounds.ROUTINE_SUMMON;
     }
