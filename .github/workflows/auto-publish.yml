@@ -52,7 +52,7 @@ jobs:
 #          curseforge-name: "terra_entity"
           modrinth-id: BZKgbCzw
           curseforge-id: 1173196
-          github-tag: 1.1.17-forge
+          github-tag: 1.2.3-forge
           files: |
             build/libs/!(*-@(dev|sources|javadoc))-all.jar
             build/libs/*-@(dev|sources|javadocs).jar

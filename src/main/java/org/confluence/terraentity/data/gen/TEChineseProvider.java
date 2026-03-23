@@ -379,6 +379,7 @@ public class TEChineseProvider extends LanguageProvider {
         add(TEBossSummonsItems.EATER_OF_WORLDS_SUMMONS.get(), "蠕虫诱饵");
         add(TEBossSummonsItems.BRAIN_OF_CTHULHU_SUMMONS.get(), "血腥脊椎");
         add(TEBossSummonsItems.QUEEN_BEE_SUMMONS.get(), "憎恶之蜂");
+        add(TEBossSummonsItems.DEER_THING.get(), "鹿华");
         add(TEBossSummonsItems.SKELETRON_SUMMONS.get(), "服装商巫毒娃娃");
         add(TEBossSummonsItems.WALL_OF_FLESH_SUMMONS.get(), "向导巫毒娃娃(墙)");
         add(TEBossSummonsItems.HILL_OF_FLESH_SUMMONS.get(), "向导巫毒娃娃(山)");

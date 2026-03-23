@@ -26,6 +26,9 @@ public class TEBossSummonsItems {
     public static RegistryObject<BossSummonsItem<?>> QUEEN_BEE_SUMMONS = ITEMS.register("abeemination",
             () -> new BossSummonsItem<>(new Item.Properties(), TEBossEntities.QUEEN_BEE));
 
+    public static RegistryObject<BossSummonsItem<?>> DEER_THING = ITEMS.register("deer_thing",
+            () -> new BossSummonsItem<>(new Item.Properties(), TEBossEntities.DEERCLOPS));
+
     public static RegistryObject<BossSummonsItem<?>> SKELETRON_SUMMONS = ITEMS.register("clothier_voodoo_doll",
             () -> new BossSummonsItem<>(new Item.Properties(), TEBossEntities.SKELETRON));
 
