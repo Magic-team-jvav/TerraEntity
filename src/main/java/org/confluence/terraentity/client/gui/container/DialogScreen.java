@@ -29,7 +29,6 @@ import java.util.Objects;
 public class DialogScreen extends Screen {
     Button tradeButton;
     Button summonButton; // 仅老人有效
-    Button dialogButton;
     @Nullable Screen parent;
     private final boolean trade;
     ITradeHolder holder;
@@ -45,8 +44,8 @@ public class DialogScreen extends Screen {
     protected void init() {
         super.init();
 
-        LocalPlayer player = Minecraft.getInstance().player;
-        this.holder = Objects.requireNonNull(IPlayer.of(player)).terra_entity$getTradeHolder();
+        LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
+        this.holder = IPlayer.of(player).terra_entity$getTradeHolder();
 
         if (trade) {
             initTradeButton();
@@ -54,15 +53,16 @@ public class DialogScreen extends Screen {
 
         if (holder instanceof AbstractTerraNPC npc) {
             initDialog(npc);
-            addRenderableWidget(dialogButton = Button.builder(Component.translatable("dialogs.terra_entity.dialog"), b -> initDialog(npc)
-            ).width(50).pos(width / 2, height / 2 + 25).build());
+            addRenderableWidget(Button.builder(Component.translatable("dialogs.terra_entity.dialog"), b -> initDialog(npc))
+                    .width(50)
+                    .pos(width / 2, height / 2 + 25)
+                    .build());
 
             if (LibDateUtils.isNight(npc.level()) && npc.getType() == TENpcEntities.OLD_MAN.get()) {
-                summonButton = Button.builder(Component.translatable("dialogs.terra_entity.summon"), p -> {
+                addRenderableWidget(this.summonButton = Button.builder(Component.translatable("dialogs.terra_entity.summon"), p -> {
                     EventPacketC2S.summonSkeletron(player);
                     Minecraft.getInstance().setScreen(null); // 关闭对话框
-                }).width(50).pos(width / 2 - 160, height / 2 + 25).build();
-                addRenderableWidget(summonButton);
+                }).width(50).pos(width / 3, height / 2 + 25).build());
             }
         }
     }
@@ -70,7 +70,7 @@ public class DialogScreen extends Screen {
     protected void initDialog(AbstractTerraNPC npc) {
         Component dialog = getRandomDialog(npc);
         if (dialog != null) {
-            dialogText = AdapterUtils.postGameEvent(new NPCEvent.NPCDialogEvent(npc, dialog)).getNeoDialog();
+            this.dialogText = AdapterUtils.postGameEvent(new NPCEvent.NPCDialogEvent(npc, dialog)).getNeoDialog();
         }
     }
 
@@ -83,7 +83,7 @@ public class DialogScreen extends Screen {
     }
 
     protected Component getRandomDialog(AbstractTerraNPC npc) {
-        String dialog = NPCDialogs.Loader.getInstance().getRandomDialog(npc.getRandom(), npc.getType());
+        @Nullable String dialog = NPCDialogs.Loader.getInstance().getRandomDialog(npc.getRandom(), npc.getType());
         return dialog == null ? null : Component.translatable(dialog);
     }
 

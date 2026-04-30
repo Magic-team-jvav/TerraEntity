@@ -87,6 +87,9 @@ public record EventPacketC2S(TypeEnum typeEnum) implements IPacketC2S {
     }
 
     private static void work(TypeEnum type, Player player) {
+        if (player.isLocalPlayer()) {
+            AdapterUtils.sendToServer(new EventPacketC2S(type));
+        }
         Consumer<Player> consumer = handlers.get(type);
         if (consumer == null) {
             TerraEntity.LOGGER.warn("Unknown server-bound event packet type: {}", type);
@@ -100,32 +103,26 @@ public record EventPacketC2S(TypeEnum typeEnum) implements IPacketC2S {
     }
 
     public static void summonSkeletron(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.SUMMON_SKELETRON));
         work(TypeEnum.SUMMON_SKELETRON, player);
     }
 
     public static void mouseLeftClick(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.MOUSE_LEFT_CLICK));
         work(TypeEnum.MOUSE_LEFT_CLICK, player);
     }
 
     public static void mouseRelease(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.MOUSE_RELEASE));
         work(TypeEnum.MOUSE_RELEASE, player);
     }
 
     public static void wheelUp(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.WHEEL_UP));
         work(TypeEnum.WHEEL_UP, player);
     }
 
     public static void wheelDown(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.WHEEL_DOWN));
         work(TypeEnum.WHEEL_DOWN, player);
     }
 
     public static void rideOrLeave(Player player) {
-        AdapterUtils.sendToServer(new EventPacketC2S(TypeEnum.RIDE_OR_LEAVE));
         work(TypeEnum.RIDE_OR_LEAVE, player);
     }
 
