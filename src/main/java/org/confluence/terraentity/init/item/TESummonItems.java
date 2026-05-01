@@ -30,5 +30,8 @@ public class TESummonItems {
     public static final DeferredItem<Item> SUMMON_NETHERITE_SWORD_STAFF = ITEMS.register("summon_netherite_sword_staff", () -> new SummonItem<>(new Item.Properties(), TESummonEntities.SUMMON_NETHERITE_SWORD, 1, 7));
     public static final DeferredItem<Item> TERRAPRISMA = ITEMS.register("terraprisma", () -> new SummonItem<>(new Item.Properties(), TESummonEntities.TERRAPRISMA, 1, 18));
 
+    public static final DeferredItem<Item> STARDUST_DRAGON_STAFF = ITEMS.register("stardust_dragon_staff", () -> new SummonItem<>(new Item.Properties(), TESummonEntities.STARDUST_DRAGON, 1, 1));
+
+
 
 }

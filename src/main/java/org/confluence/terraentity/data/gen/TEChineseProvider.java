@@ -196,6 +196,8 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESummonEntities.SUMMON_DIAMOND_SWORD.get(), "龙渊");
         add(TESummonEntities.SUMMON_NETHERITE_SWORD.get(), "赤霄");
         add(TESummonEntities.TERRAPRISMA.get(), "泰拉棱镜");
+        add(TESummonEntities.STARDUST_DRAGON.get(), "星尘龙");
+
 
         // 坐骑
         add(TERideableEntities.RIDEABLE_SLIME.get(), "史莱姆坐骑");
@@ -497,6 +499,7 @@ public class TEChineseProvider extends LanguageProvider {
         add(TESummonItems.SUMMON_NETHERITE_SWORD_STAFF.get(), "赤霄");
         add(TESummonItems.TERRAPRISMA.get(), "泰拉棱镜");
 
+        add(TESummonItems.STARDUST_DRAGON_STAFF.get(), "星尘龙法杖");
 
         // 鞭子
         add(TEWhipItems.LEATHER_WHIP.get(), "皮鞭");

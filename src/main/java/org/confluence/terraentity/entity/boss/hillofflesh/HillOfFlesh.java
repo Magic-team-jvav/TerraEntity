@@ -243,7 +243,7 @@ public class HillOfFlesh extends AbstractTerraBossBase implements Boss {
         protected BaseWorm createMinion(LivingEntity target, ServerLevel serverLevel) {
             return TEUtils.spawnEntity(() -> new BaseWorm(TEMonsterEntities.LEECH.get(), this.mob.level(), AbstractPrefab.WARM_BUILDER.get()) {
                 @Override
-                protected BaseWormPart createPart(int index) {
+                public BaseWormPart createPart(int index) {
                     return new BaseWormPart(this, index);
                 }
 

@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -155,7 +156,7 @@ public class Chester extends AbstractSummonMob implements IPetMob {
 
     }
 
-    public void summon(Player player, ItemStack stack) {
+    public SummonResult summon(ServerPlayer player, ItemStack stack) {
         super.summon(player, stack);
         // 只能同时存在一个
         SummonerAttachment data = player.getData(TEAttachments.SUMMONER_STORAGE);
@@ -166,6 +167,7 @@ public class Chester extends AbstractSummonMob implements IPetMob {
                 e.discard();
             }
         }
+        return SummonResult.NEW_SPAWN;
     }
 
 

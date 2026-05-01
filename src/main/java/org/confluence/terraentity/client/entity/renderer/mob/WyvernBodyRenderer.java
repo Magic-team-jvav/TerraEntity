@@ -21,14 +21,14 @@ public class WyvernBodyRenderer<S extends BaseWormPart> extends GeoWormSegmentRe
     @Override
     public void preRender(PoseStack poseStack, S animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
 
-        if(animatable.isTail){
+        if(animatable.isTail()){
             this.parent.bone.setHidden(true);
             this.parent.bone2.setHidden(true);
             this.parent.bone3.setHidden(true);
             this.parent.bone4.setHidden(false);
             poseStack.translate(0, 0, 3.5f);
         }else {
-            switch (animatable.index) {
+            switch (animatable.getIndex()) {
                 case 3, 9 -> {
                     this.parent.bone.setHidden(true);
                     this.parent.bone2.setHidden(true);

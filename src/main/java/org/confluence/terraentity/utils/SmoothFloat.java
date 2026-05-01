@@ -7,7 +7,8 @@ import java.util.function.DoubleFunction;
 /**
  * 随时间平滑移动的数值
  */
-public class SmoothFloat {
+public class
+SmoothFloat {
     public float tick;
     private final float maxTick;
     private final float scale;

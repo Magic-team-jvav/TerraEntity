@@ -220,7 +220,7 @@ public class Wyvern<S extends BaseWormPart> extends BaseWorm<S> implements IDisc
     }
 
     @Override
-    protected S createPart(int index) {
+    public S createPart(int index) {
         return (S) createSimplePart(this, index);
     }
 

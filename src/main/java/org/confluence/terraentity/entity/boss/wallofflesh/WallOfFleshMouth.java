@@ -71,12 +71,12 @@ public class WallOfFleshMouth extends WallOfFleshPart {
             ServerLevel serverLevel = (ServerLevel) level();
             BaseWorm warm = new BaseWorm(TEMonsterEntities.LEECH.get(), this.level(), AbstractPrefab.WARM_BUILDER.get()){
                 @Override
-                protected BaseWormPart createPart(int index) {
+                public BaseWormPart createPart(int index) {
                     return new BaseWormPart(this, index);
                 }
 
                 @Override
-                protected int getSegmentCount() {
+                public int getSegmentCount() {
                     return 6;
                 }
 

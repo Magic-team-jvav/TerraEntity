@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 import org.confluence.terraentity.api.entity.ICollisionAttackEntity;
+import org.confluence.terraentity.api.entity.IWormSegment;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -19,13 +20,13 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 /**
  * 蠕虫体节
  */
-public class BaseWormPart extends PartEntity<BaseWorm> implements GeoEntity, ICollisionAttackEntity {
+public class BaseWormPart extends PartEntity<BaseWorm> implements GeoEntity, ICollisionAttackEntity, IWormSegment {
 
     private final EntityDimensions size;
     CollisionProperties collisionProperties = new CollisionProperties(10,20,0);
 
-    public boolean isTail = false;
-    public int index;
+    protected boolean isTail = false;
+    protected int index;
 
     public int deathTime;
     public int hurtTime;
@@ -141,8 +142,8 @@ public class BaseWormPart extends PartEntity<BaseWorm> implements GeoEntity, ICo
 //        if(this.getParent().getHealth() <= 0) {
 //            return false;
 //        }
+        this.hurtTime = 10;
         if (getParent().hurt(source, amount)) {
-            this.hurtTime = 10;
             return true;
         }
         return false;
@@ -203,5 +204,25 @@ public class BaseWormPart extends PartEntity<BaseWorm> implements GeoEntity, ICo
     @Override
     public boolean isSprinting() {
         return getParent().isSprinting();
+    }
+
+    @Override
+    public boolean isTail() {
+        return this.isTail;
+    }
+
+    @Override
+    public void setTail(boolean tail) {
+        this.isTail = tail;
+    }
+
+    @Override
+    public int getIndex() {
+        return this.index;
+    }
+
+    @Override
+    public boolean isHurtOverlay() {
+        return this.hurtTime > 0 || this.deathTime > 0;
     }
 }

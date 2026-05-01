@@ -42,6 +42,7 @@ public class PrimeEnderDragonRenderer extends GeoNormalRenderer<PrimeEnderDragon
 
     }
 
+    @Override
     protected void adjustPose(PoseStack poseStack, PrimeEnderDragon animatable, BakedGeoModel model, float partialTick){
         this.rotateFromX(poseStack, animatable, partialTick);
     }

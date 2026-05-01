@@ -1,5 +1,6 @@
 package org.confluence.terraentity.integration.curios;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +28,7 @@ public class CuriosEvents {
                     }
                 }
             }
-            if(!to.isEmpty() && to.getItem() instanceof PetItem<?> item && event.getEntity() instanceof Player player){
+            if(!to.isEmpty() && to.getItem() instanceof PetItem<?> item && event.getEntity() instanceof ServerPlayer player){
                 item.summon(player, to);
 
             }

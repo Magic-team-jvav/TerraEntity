@@ -91,7 +91,7 @@ public class SummonItem<T extends Mob & ISummonMob> extends Item {
     }
 
 
-    public void summon(Player player, ItemStack stack) {
+    public void summon(ServerPlayer player, ItemStack stack) {
         Level level = player.level();
         if (AdapterUtils.postGameEvent(new SummonEvent.Pre<>(player, stack, entityType.get())).isCanceled())
             return;
@@ -100,14 +100,17 @@ public class SummonItem<T extends Mob & ISummonMob> extends Item {
         if (entity != null) {
             BlockPos pos = TEUtils.getEyeBlockHitResult(player).above();
             entity.setPos(pos.getX(), pos.getY(), pos.getZ());
-            entity.summon(player, stack);
             entity.setCost(consume);
-            level.addFreshEntity(entity);
-            entity.playSound(this.sound.get(), 1.0F, 1.0F);
             var data = player.getData(summonType.get());
-            data.summon(consume, entity.getId());
-            if (player instanceof ServerPlayer serverPlayer)
-                data.sync(serverPlayer);
+            ISummonMob.SummonResult result = entity.summon(player, stack);
+            if(result == ISummonMob.SummonResult.NEW_SPAWN) {
+                level.addFreshEntity(entity);
+                data.summon(consume, entity.getId());
+                data.sync(player);
+            }else if(result == ISummonMob.SummonResult.MERGE) {
+                entity.playSound(this.sound.get(), 1.0F, 1.0F);
+                data.sync(player);
+            }
         }
     }
 

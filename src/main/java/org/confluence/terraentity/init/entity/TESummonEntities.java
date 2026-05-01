@@ -19,10 +19,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.GeoNormalModel;
 import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
-import org.confluence.terraentity.client.entity.renderer.mob.SculkWispRenderer;
-import org.confluence.terraentity.client.entity.renderer.mob.SlimeBabyRenderer;
-import org.confluence.terraentity.client.entity.renderer.mob.SummonSwordRenderer;
-import org.confluence.terraentity.client.entity.renderer.mob.TerraprismaRenderer;
+import org.confluence.terraentity.client.entity.renderer.mob.*;
 import org.confluence.terraentity.entity.summon.*;
 import org.confluence.terraentity.init.TEEffectStrategies;
 import org.confluence.terraentity.init.TEEntities;
@@ -49,6 +46,7 @@ public class TESummonEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_NETHERITE_SWORD = TEEntities.registerCreature(ENTITIES, "summon_netherite_sword", (e, l) -> new SummonSword(e, l, () -> Items.NETHERITE_SWORD, 0x8136D2, TEEffectStrategies.HELL_FIRE_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
     public static final DeferredHolder<EntityType<?>, EntityType<Terraprisma>> TERRAPRISMA = TEEntities.registerCreature(ENTITIES, "terraprisma", (e, l) -> new Terraprisma(e, l), 1F, 1F);
 
+    public static final DeferredHolder<EntityType<?>, EntityType<StardustDragon>> STARDUST_DRAGON = TEEntities.registerCreature(ENTITIES, "stardust_dragon", (e, l) -> new StardustDragon(e, l), 0.5F, 0.5F);
 
     public static final DeferredHolder<EntityType<?>, EntityType<Chester>> CHESTER = TEEntities.registerCreature(ENTITIES, "chester", (e, l) -> new Chester(e, l), 1F, 1F);
     public static final DeferredHolder<EntityType<?>, EntityType<PiggyBank>> PIGGY_BANK = TEEntities.registerCreature(ENTITIES, "piggy_bank", (e, l) -> new PiggyBank(e, l), 1F, 1F);
@@ -82,6 +80,8 @@ public class TESummonEntities {
         event.registerEntityRenderer(SUMMON_DIAMOND_SWORD.get(), c -> new SummonSwordRenderer<>(c));
         event.registerEntityRenderer(SUMMON_NETHERITE_SWORD.get(), c -> new SummonSwordRenderer<>(c));
         event.registerEntityRenderer(TERRAPRISMA.get(), c -> new TerraprismaRenderer(c));
+
+        event.registerEntityRenderer(STARDUST_DRAGON.get(), c -> new GeoWormRenderer<>(c, TEMonsterEntities.GIANT_WORM.getId(), 0.5f, 0f));
     }
 
     public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
@@ -105,6 +105,8 @@ public class TESummonEntities {
         event.put(SUMMON_DIAMOND_SWORD.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 40).add(Attributes.MOVEMENT_SPEED, 1.5f).build());
         event.put(SUMMON_NETHERITE_SWORD.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 40).add(Attributes.MOVEMENT_SPEED, 1.5f).build());
         event.put(TERRAPRISMA.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 40).add(Attributes.MOVEMENT_SPEED, 1.5f).build());
+
+        event.put(STARDUST_DRAGON.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 40).add(Attributes.MOVEMENT_SPEED, 1.5f).build());
     }
 
     public static void register(IEventBus bus) {

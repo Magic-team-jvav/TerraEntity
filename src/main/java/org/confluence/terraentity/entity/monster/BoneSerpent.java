@@ -21,7 +21,7 @@ public class BoneSerpent<S extends BaseWormPart> extends BaseWorm<S> implements 
         this.segInternal = 2.5f;
     }
     @Override
-    protected int getSegmentCount() {
+    public int getSegmentCount() {
         return 18;
     }
     @Override
@@ -37,7 +37,7 @@ public class BoneSerpent<S extends BaseWormPart> extends BaseWorm<S> implements 
 
 
     @Override
-    protected S createPart(int index) {
+    public S createPart(int index) {
         return (S) createSimplePart(this, index);
     }
 

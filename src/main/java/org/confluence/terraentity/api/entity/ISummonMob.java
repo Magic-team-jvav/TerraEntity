@@ -35,6 +35,7 @@ import org.confluence.terraentity.item.SummonItem;
 import org.confluence.terraentity.utils.AdapterUtils;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -182,12 +183,35 @@ public interface ISummonMob extends OwnableEntity {
 
     /* Summoning API */
 
-    default void summon(Player player, ItemStack stack) {
+    /**
+     * 当使用召唤物品时的结果
+     */
+    enum SummonResult {
+        /**
+         * 生成新的召唤物
+         */
+        NEW_SPAWN,
+        /**
+         * 合并到现有的召唤物，如星尘龙
+         */
+        MERGE,
+        /**
+         * 召唤失败
+         */
+        FAIL,
+    }
+
+    /**
+     * 如果不需要合并，则正常召唤
+     * @return true: 正常召唤，添加实体到level; false: 中断召唤，重写此方法并处理player的SummonAttachment
+     */
+    default SummonResult summon(ServerPlayer player, ItemStack stack) {
         summon_setOwnerUUID(player.getUUID());
         summon_setTame(true, true);
         if (stack.getItem() instanceof SummonItem<?> summonItem)
             asEntity().getAttribute(LibAttributes.getAttackDamage()).setBaseValue(summonItem.baseAttackDamage);
         AdapterUtils.postGameEvent(new SummonEvent(player, stack, this));
+        return SummonResult.NEW_SPAWN;
     }
 
     /* Attack API */

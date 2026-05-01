@@ -133,6 +133,7 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
 
     @Override
     public void onRemovedFromLevel() {
+        super.onRemovedFromLevel();
         summon_onRemovedFromLevel();
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.neoforged.neoforge.entity.PartEntity;
 import org.confluence.terraentity.api.entity.IHeightControlMob;
+import org.confluence.terraentity.api.entity.IWorm;
 import org.confluence.terraentity.entity.ai.goal.AccelerateOnSeeingGoal;
 import org.confluence.terraentity.entity.ai.goal.ComeAndBackDashAttackGoal;
 import org.confluence.terraentity.entity.ai.goal.WormRandomWanderGoal;
@@ -30,27 +31,21 @@ import java.util.List;
 /**
  * 不可分裂的蠕虫类
  */
-public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster implements IHeightControlMob {
+public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster implements IHeightControlMob, IWorm<T> {
 
     protected float segInternal = 1.6f;
-    public List<T> bodySegments;
+    protected List<T> bodySegments;
     int timeToDive = 0;
 
     public BaseWorm(EntityType<? extends BaseWorm> type, Level level, AttributeBuilder builder) {
         super(type, level, builder);
         this.collisionProperties = new CollisionProperties(3,3,0);
-        int currentSegmentCount = getSegmentCount();
-//        bodySegments = new BaseWormPart[currentSegmentCount];
-        bodySegments = new ArrayList<>(currentSegmentCount);
-        for (int i = 0; i < currentSegmentCount; i++) {
-            bodySegments.add(createPart(i+1));
-        }
-        bodySegments.get(currentSegmentCount - 1).isTail = true;
+        this.bodySegments = this.initParts();
         this.noPhysics = true;
         this.noCulling = true;
     }
 
-    protected abstract T createPart(int index);
+    public abstract T createPart(int index);
 
     public static BaseWormPart createSimplePart(BaseWorm worm, int index){
         return new BaseWormPart(worm, index);
@@ -63,7 +58,7 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
         return new BaseWorm<>(type, level, builder) {
 
             @Override
-            protected BaseWormPart createPart(int index) {
+            public BaseWormPart createPart(int index) {
                 return createSimplePart(this, index);
             }
 
@@ -117,7 +112,7 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
         return true;
     }
 
-    protected int getSegmentCount() {
+    public int getSegmentCount() {
         return 12;
     }
 
@@ -134,6 +129,13 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
             addDeltaMovement(new Vec3(0,-0.05f,0));
 //            return;
         }
+
+        this.tickWormMove();
+
+    }
+
+    @Override
+    public void tickWormMove() {
         for (int i = 0; i < this.bodySegments.size(); i++) {
 
             Entity leader = i == 0 ? this : this.bodySegments.get(i - 1);
@@ -164,7 +166,8 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
 
     @Override
     public @Nullable PartEntity<?>[] getParts() {
-        return bodySegments.toArray(new PartEntity[0]);
+        return IWorm.super.getWormParts();
+//        return bodySegments.toArray(new PartEntity[0]);
     }
 
     @Override
@@ -177,9 +180,7 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
-        for (int i = 0; i < this.bodySegments.size(); i++) {
-            this.bodySegments.get(i).setId(this.getId() + i + 1);
-        }
+        this.recreateWormFromPacket();
     }
 
     @Override
@@ -206,11 +207,7 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
     @Override
     public void onRemovedFromLevel() {
         super.onRemovedFromLevel();
-        for (T bodySegment : this.bodySegments) {
-            if (bodySegment != null && !bodySegment.isRemoved()) {
-                bodySegment.onRemovedFromLevel();
-            }
-        }
+        this.onWormRemovedFromLevel();
     }
 
     @Override
@@ -221,6 +218,11 @@ public abstract class BaseWorm<T extends BaseWormPart> extends AbstractMonster i
     @Override
     public boolean isAttackableHeight(float originalHeight){
         return true;
+    }
+
+    @Override
+    public List<T> getBodySegments() {
+        return this.bodySegments;
     }
 
 }

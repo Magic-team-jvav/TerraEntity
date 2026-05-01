@@ -7,19 +7,27 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.TerraEntity;
+import org.confluence.terraentity.api.entity.IWorm;
+import org.confluence.terraentity.api.entity.IWormSegment;
 import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
-import org.confluence.terraentity.entity.monster.BaseWorm;
-import org.confluence.terraentity.entity.monster.BaseWormPart;
+import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import software.bernie.geckolib.animatable.GeoEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class GeoWormRenderer<T extends BaseWorm<S>, S extends BaseWormPart> extends GeoNormalRenderer<T> {
+public class GeoWormRenderer<T extends Mob & IWorm<S> & GeoEntity, S extends IWormSegment> extends GeoNormalRenderer<T> {
     GeoWormSegmentRenderer partRenderer;
-    public double lerpx;
-    public double lerpy;
-    public double lerpz;
+    double lerpx;
+    double lerpy;
+    double lerpz;
 
     /**
      * 文件命名：
@@ -58,7 +66,7 @@ public class GeoWormRenderer<T extends BaseWorm<S>, S extends BaseWormPart> exte
     @Override
     public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
-        S part1 = entity.bodySegments.getFirst();
+        Entity part1 = (Entity) entity.getBodySegments().getFirst();
 
         lerpx = Mth.lerp(partialTick, entity.xo, entity.getX());
         lerpy = Mth.lerp(partialTick, entity.yo, entity.getY());
@@ -79,11 +87,40 @@ public class GeoWormRenderer<T extends BaseWorm<S>, S extends BaseWormPart> exte
     }
 
     protected void renderPart(T entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) {
-        for (S part : entity.bodySegments) {
+        Vec3 prePos = new Vec3(lerpx, lerpy, lerpz);
+        List<Vec3> lerpPoss = new ArrayList<>();
+        for (S part : entity.getBodySegments()) {
+            Entity part1 = (Entity) part;
+            double lerpx = Mth.lerp(partialTick, part1.xo, part1.getX());
+            double lerpy = Mth.lerp(partialTick, part1.yo, part1.getY());
+            double lerpz = Mth.lerp(partialTick, part1.zo, part1.getZ());
+            lerpPoss.add(new Vec3(lerpx, lerpy, lerpz));
+        }
+        int i = 0;
+        for (S part : entity.getBodySegments()) {
+            Entity part1 = (Entity) part;
             poseStack.pushPose();
-            float lerpYRot = Mth.lerp(partialTick, part.yRotO, part.getYRot());
-            partRenderer.render(part, lerpYRot, partialTick, poseStack, bufferSource, entityRenderDispatcher.getPackedLightCoords(part, partialTick));
+
+            // 下一段体节位置
+            Vec3 nextPos = i < lerpPoss.size() - 1 ? lerpPoss.get(i + 1) : lerpPoss.get(i);
+
+            // 当前体节位置
+            Vec3 curPos = lerpPoss.get(i);
+            poseStack.translate(curPos.x - lerpx, curPos.y - lerpy, curPos.z - lerpz);
+
+            // 前后两体节的方向
+            Vec3 midDir = prePos.subtract(nextPos);
+            var rots = TEUtils.dirToRot(midDir);
+            float pitch = -rots[1];
+            float lerpYRot = rots[0];
+
+            poseStack.mulPose(Axis.YN.rotationDegrees(lerpYRot));
+            poseStack.mulPose(Axis.XN.rotationDegrees(pitch));
+            partRenderer.render(part1, lerpYRot, partialTick, poseStack, bufferSource, entityRenderDispatcher.getPackedLightCoords(part1, partialTick));
+            prePos = lerpPoss.get(i);
+
             poseStack.popPose();
+            i++;
         }
     }
 
