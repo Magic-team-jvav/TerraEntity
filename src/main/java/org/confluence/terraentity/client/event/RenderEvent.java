@@ -10,7 +10,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,7 +26,6 @@ import org.confluence.terraentity.client.post.BrainTranslucent;
 import org.confluence.terraentity.client.post.TongueRenderer;
 import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.item.BaseWhipItem;
-import org.confluence.terraentity.item.YoyosItem;
 
 import static org.confluence.terraentity.TerraEntity.MODID;
 import static org.confluence.terraentity.config.ClientConfig.bossBarStyle;
@@ -108,9 +106,8 @@ public class RenderEvent {
 //        Minecraft.getInstance().getBlockRenderer().renderBatched();
         if (event.getHand() == InteractionHand.MAIN_HAND) {
 
-            Item item = player.getMainHandItem().getItem();
             // 使用有悠悠球时渲染手臂
-            if (item instanceof YoyosItem && WeaponStorage.of(player).yoyosEntity != null) {
+            if (WeaponStorage.of(player).yoyosItem == player.getMainHandItem().getItem()) {
 
                 PlayerRenderer playerrenderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
                 PoseStack poseStack = event.getPoseStack();

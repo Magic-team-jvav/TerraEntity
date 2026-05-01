@@ -1,7 +1,6 @@
 package org.confluence.terraentity.mixin.client;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.ItemModelShaper;
@@ -19,7 +18,7 @@ import org.confluence.terraentity.client.init.model.AdditionalItemRegister;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.init.item.TESummonItems;
 import org.confluence.terraentity.item.BaseWhipItem;
-import org.confluence.terraentity.item.YoyosItem;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,21 +32,19 @@ public class ItemRendererMixin {
     @Final
     private ItemModelShaper itemModelShaper;
 
-    @WrapOperation(method = "renderStatic(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/level/Level;III)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V"))
-    private void renderStatic(ItemRenderer instance, ItemStack itemStack, ItemDisplayContext context, boolean posestack$pose, PoseStack poseStack, MultiBufferSource vertexconsumer, int light, int combinedOverlay, BakedModel model, Operation<Void> original, @Local(argsOnly = true) LivingEntity entity, @Local(argsOnly = true) boolean leftHand) {
+    @WrapWithCondition(method = "renderStatic(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/level/Level;III)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V"))
+    private boolean renderStatic(ItemRenderer instance, ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, BakedModel p_model, @Local(argsOnly = true) @Nullable LivingEntity entity) {
         Item item = itemStack.getItem();
         if (entity instanceof Player player && !leftHand) {
             // 右手使用鞭子时取消渲染
-            if(item instanceof BaseWhipItem && player.getCooldowns().isOnCooldown(item)){
-                return;
+            if (item instanceof BaseWhipItem && player.getCooldowns().isOnCooldown(item)) {
+                return false;
             }
-            if (item instanceof YoyosItem && WeaponStorage.of(player).yoyosEntity != null) {
-                return;
+            if (WeaponStorage.of(player).yoyosItem == item) {
+                return false;
             }
-
-
         }
-        original.call(instance, itemStack, context, posestack$pose, poseStack, vertexconsumer, light, combinedOverlay, model);
+        return true;
     }
 
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)

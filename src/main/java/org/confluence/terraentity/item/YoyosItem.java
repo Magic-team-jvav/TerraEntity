@@ -68,23 +68,24 @@ public class YoyosItem<T extends BaseProj<?>> extends CustomRarityItem implement
 
     @Override
     public void onLeftClick(Player player, ItemStack itemStack) {
-        if (player.level().isClientSide) return;
+        Level level = player.level();
         WeaponStorage weaponStorage = WeaponStorage.of(player);
+        if (level.isClientSide) {
+            weaponStorage.yoyosItem = this;
+            return;
+        }
         if (weaponStorage.yoyosEntity != null && weaponStorage.yoyosEntity.isAlive()) {
             weaponStorage.yoyosEntity.onReceiveLeftClick(player, itemStack);
             return;
         }
-        Level level = player.level();
-        YoyosEntity proj = TEProjectileEntities.YOYO_PROJ.get().create(level);
-        if (proj != null) {
-            player.getCooldowns().addCooldown(itemStack.getItem(), (int) (this.existTime * 20));
-            weaponStorage.yoyosEntity = proj;
-            proj.setPos(player.getX(), player.getY(0.5f), player.getZ());
-            proj.setOwner(player);
-            proj.setWeaponItem(itemStack);
-            AdapterUtils.postGameEvent(new YoyosThrowingEvent(player, itemStack, proj));
-            level.addFreshEntity(proj);
-        }
+        YoyosEntity proj = new YoyosEntity(TEProjectileEntities.YOYO_PROJ.get(), level);
+        player.getCooldowns().addCooldown(itemStack.getItem(), (int) (this.existTime * 20));
+        weaponStorage.yoyosEntity = proj;
+        proj.setPos(player.getX(), player.getY(0.5f), player.getZ());
+        proj.setOwner(player);
+        proj.setWeaponItem(itemStack);
+        AdapterUtils.postGameEvent(new YoyosThrowingEvent(player, itemStack, proj));
+        level.addFreshEntity(proj);
     }
 
     @Override

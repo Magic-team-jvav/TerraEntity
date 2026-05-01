@@ -7,6 +7,8 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.confluence.terraentity.entity.proj.YoyosEntity;
 import org.confluence.terraentity.init.TEAttachments;
+import org.confluence.terraentity.item.YoyosItem;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.HashMap;
@@ -16,8 +18,10 @@ public class WeaponStorage implements INBTSerializable<CompoundTag> {
     private final Map<Item , Integer> boomerangCounter = new HashMap<>();
     public boolean bowFullPull = false;
     public boolean leftClicking = false;
-    public YoyosEntity yoyosEntity = null;
-
+    /// Server Only
+    public @Nullable YoyosEntity yoyosEntity = null;
+    /// Client Only
+    public @Nullable YoyosItem<?> yoyosItem;
 
     public int tryReduce(Item item){
         return boomerangCounter.compute(item, (k, c) -> c != null && c > 0? c - 1 : 0);

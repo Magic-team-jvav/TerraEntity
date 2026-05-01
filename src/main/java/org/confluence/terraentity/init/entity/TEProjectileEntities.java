@@ -114,15 +114,15 @@ public class TEProjectileEntities {
         event.registerEntityRenderer(ICE_SPIKE.get(), c -> new ProjRenderer<>(c, new IceSpikeProjectileModel<>(c.bakeLayer(IceSpikeProjectileModel.LAYER_LOCATION))));
 
         //悠悠球
-        event.registerEntityRenderer(YOYO_PROJ.get(), (c) -> new YoyosRenderer(c));
+        event.registerEntityRenderer(YOYO_PROJ.get(), YoyosRenderer::new);
 
-        event.registerEntityRenderer(THROWN_ICE_PROJECTILE.get(), (c) -> new ThrownIceProjectileRenderer(c));
-        event.registerEntityRenderer(ICE_PILLAR.get(), (c) -> new IcePillarRenderer(c));
+        event.registerEntityRenderer(THROWN_ICE_PROJECTILE.get(), ThrownIceProjectileRenderer::new);
+        event.registerEntityRenderer(ICE_PILLAR.get(), IcePillarRenderer::new);
         event.registerEntityRenderer(SHADOW_HAND.get(), (c) -> new GeoNegativeVolumeRenderer<>(c, SHADOW_HAND.getId().withPrefix("proj/")));
     }
 
     public static <T extends Projectile> DeferredHolder<EntityType<?>, EntityType<T>> registerProj(String name, EntityType.EntityFactory<T> entityFactory, float w, float h) {
-        return ENTITIES.register(name, () -> EntityType.Builder.of(entityFactory, MobCategory.MISC).clientTrackingRange(10).sized(w, h).build(TEEntities.Key(name)));
+        return ENTITIES.register(name, id -> EntityType.Builder.of(entityFactory, MobCategory.MISC).clientTrackingRange(10).sized(w, h).build(id.toString()));
     }
 
     public static <T extends Projectile> DeferredHolder<EntityType<?>, EntityType<T>> registerProj(String name, EntityType.EntityFactory<T> entityFactory) {

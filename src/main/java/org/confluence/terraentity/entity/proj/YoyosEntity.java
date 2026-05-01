@@ -219,6 +219,7 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
         if (owner != null && item != null) {
             WeaponStorage data = WeaponStorage.of(owner);
             data.yoyosEntity = null;
+            data.yoyosItem = null;
             if (owner instanceof Player player) {
                 player.getCooldowns().removeCooldown(item);
 
