@@ -86,8 +86,7 @@ public class EaterOfWorldsSegment extends AbstractTerraBossBase implements Boss.
     public Vec3 getNextPos(){
         if(distanceToSqr(lastSegment)<1f) return position();
         this.lookAt(lastSegment,500,500);
-        Vec3 newPos = lastSegment.position().add(position().subtract(lastSegment.position()).normalize().scale(segmentInternal));
-        return newPos;
+        return lastSegment.position().add(position().subtract(lastSegment.position()).normalize().scale(segmentInternal));
     }
 
     @Override
