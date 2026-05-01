@@ -231,12 +231,12 @@ public class SummonSword extends AbstractSummonMob implements IOriented, FlyingA
             if (target instanceof PartEntity<?> partEntity) {
                 Entity parent = partEntity.getParent();
                 if (parent instanceof LivingEntity living) {
-                    return sword.canAttack(living);
+                    return sword.canAttackTarget(living);
                 }
                 return false;
             }
             if (target instanceof LivingEntity living) {
-                return sword.canAttack(living);
+                return sword.canAttackTarget(living);
             }
             return false;
         }

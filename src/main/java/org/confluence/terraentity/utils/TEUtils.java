@@ -802,7 +802,7 @@ public final class TEUtils {
      * 测试攻击驯养动物
      */
     public static BiPredicate<Entity, Entity> attackTamableTest = (owner, target) -> {
-        Entity actualTarget = target instanceof PartEntity<?> part ? part.getParent() : target;
+        Entity actualTarget = LibUtils.tryFindBeImpacted(target);
         if (actualTarget == null) return false;
 
         if (

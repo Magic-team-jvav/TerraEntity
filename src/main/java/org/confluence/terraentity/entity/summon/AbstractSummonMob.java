@@ -101,12 +101,15 @@ public abstract class AbstractSummonMob extends TamableAnimal implements GeoEnti
         summon_registerCommonGoals();
     }
 
-    @Deprecated
+    /// @deprecated
+    ///
+    /// @see AbstractSummonMob#canAttackTarget(Entity)
     @Override
     public final boolean canAttack(LivingEntity living) {
         return super.canAttack(living);
     }
 
+    @Override
     public boolean canAttackTarget(Entity target) {
         // 如果目标是 PartEntity，检查父实体是否可以攻击
         if (target instanceof PartEntity<?> partEntity) {

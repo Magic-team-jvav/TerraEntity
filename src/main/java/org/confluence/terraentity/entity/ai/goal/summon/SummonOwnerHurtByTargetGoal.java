@@ -9,6 +9,7 @@ import org.confluence.terraentity.api.entity.ISummonMob;
 import java.util.EnumSet;
 
 public class SummonOwnerHurtByTargetGoal<T extends Mob & ISummonMob> extends TargetGoal {
+    private static final TargetingConditions FOR_COMBAT = TargetingConditions.forCombat(); // 只有可被攻击的实体才会被设置为目标
     private final T tameAnimal;
     private LivingEntity ownerLastHurtBy;
     private int timestamp;
@@ -19,6 +20,7 @@ public class SummonOwnerHurtByTargetGoal<T extends Mob & ISummonMob> extends Tar
         this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
+    @Override
     public boolean canUse() {
         if (this.tameAnimal.summon_isTame()) {
             LivingEntity livingentity = this.tameAnimal.summon_getOwner();
@@ -27,13 +29,14 @@ public class SummonOwnerHurtByTargetGoal<T extends Mob & ISummonMob> extends Tar
             } else {
                 this.ownerLastHurtBy = livingentity.getLastHurtByMob();
                 int i = livingentity.getLastHurtByMobTimestamp();
-                return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT) && this.tameAnimal.summon_wantsToAttack(this.ownerLastHurtBy, livingentity);
+                return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, FOR_COMBAT) && this.tameAnimal.summon_wantsToAttack(this.ownerLastHurtBy, livingentity);
             }
         } else {
             return false;
         }
     }
 
+    @Override
     public void start() {
         this.mob.setTarget(this.ownerLastHurtBy);
         LivingEntity livingentity = this.tameAnimal.summon_getOwner();

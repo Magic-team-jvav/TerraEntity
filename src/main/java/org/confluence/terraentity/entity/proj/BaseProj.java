@@ -289,7 +289,7 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         Entity victim = result.getEntity();
         if (victim instanceof LivingEntity living && canHitEntity(living)) {
             doHurt(living);
-        } else if (LibUtils.getOwner(victim) instanceof LivingEntity living && canHitEntity(living)) {
+        } else if (LibUtils.tryFindBeImpacted(victim) instanceof LivingEntity living && canHitEntity(living)) {
             doHurt(living);
         }
     }
@@ -323,7 +323,7 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         if (hitSound != null) {
             level().playSound(this, this.blockPosition(), hitSound.get(), SoundSource.AMBIENT, 1.0f, 1.0f);
         }
-        victim = LibUtils.getOwner(victim);
+        victim = LibUtils.tryFindBeImpacted(victim);
         if (victim instanceof LivingEntity living && victim.hurt(getDamageSource(living), damage)) {
             if (this.getOwner() instanceof LivingEntity owner) {
                 owner.setLastHurtMob(victim);
@@ -352,7 +352,7 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     @Override
     protected boolean canHitEntity(Entity target) {
         // 如果目标是 PartEntity，使用父实体进行检查
-        target = LibUtils.getOwner(target);
+        target = LibUtils.tryFindBeImpacted(target);
         if (target == null) return false;
 
         // 不能攻击自己和不能被弹幕攻击的实体

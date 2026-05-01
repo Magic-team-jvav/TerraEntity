@@ -38,11 +38,13 @@ public class SummonPriorAttackGoal <T extends Mob & ISummonMob> extends TargetGo
         return target != mob.getTarget() && target != null;
     }
 
+    @Override
     public void start() {
         if (target != null)
             mob.setTarget(target);
     }
 
+    @Override
     public boolean canContinueToUse() {
         if (target != null)
             mob.setTarget(target);

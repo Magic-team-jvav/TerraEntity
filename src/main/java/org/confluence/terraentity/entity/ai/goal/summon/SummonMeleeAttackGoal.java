@@ -16,10 +16,10 @@ import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
+import org.confluence.terraentity.api.entity.IMeleeAttackPartGoal;
 import org.confluence.terraentity.api.entity.IMovablePartEntity;
 import org.confluence.terraentity.api.entity.IPartEntityTargetable;
 import org.confluence.terraentity.api.entity.ISummonMob;
-import org.confluence.terraentity.api.entity.IMeleeAttackPartGoal;
 
 import java.util.EnumSet;
 
@@ -46,6 +46,7 @@ public class SummonMeleeAttackGoal<T extends Mob & ISummonMob> extends Goal impl
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
+    @Override
     public boolean canUse() {
         long i = this.mob.level().getGameTime();
         if (i - this.lastCanUseCheck < 20L) {
@@ -98,6 +99,7 @@ public class SummonMeleeAttackGoal<T extends Mob & ISummonMob> extends Goal impl
         }
     }
 
+    @Override
     public boolean canContinueToUse() {
         // 检查是否有 PartEntity 实际目标
         Entity actualTarget = null;
@@ -129,6 +131,7 @@ public class SummonMeleeAttackGoal<T extends Mob & ISummonMob> extends Goal impl
         }
     }
 
+    @Override
     public void start() {
         this.mob.getNavigation().moveTo(this.path, this.speedModifier);
         this.mob.setAggressive(true);
@@ -136,20 +139,23 @@ public class SummonMeleeAttackGoal<T extends Mob & ISummonMob> extends Goal impl
         this.ticksUntilNextAttack = 0;
     }
 
+    @Override
     public void stop() {
         LivingEntity livingentity = this.mob.getTarget();
         if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
-            this.mob.setTarget((LivingEntity)null);
+            this.mob.setTarget(null);
         }
 
         this.mob.setAggressive(false);
         this.mob.getNavigation().stop();
     }
 
+    @Override
     public boolean requiresUpdateEveryTick() {
         return true;
     }
 
+    @Override
     public void tick() {
         // 检查是否有 PartEntity 实际目标
         Entity actualTargetEntity = null;

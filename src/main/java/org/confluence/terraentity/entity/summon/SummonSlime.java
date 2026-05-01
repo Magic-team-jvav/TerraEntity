@@ -1,7 +1,10 @@
 package org.confluence.terraentity.entity.summon;
 
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -225,10 +228,10 @@ public class SummonSlime extends AbstractSummonMob {
         @Override
         public boolean canMeleeAttackTarget(Entity target) {
             if(target instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity living) {
-                return this.slime.canAttack(living);
+                return this.slime.canAttackTarget(living);
             }
             if(target instanceof LivingEntity living) {
-                return this.slime.canAttack(living);
+                return this.slime.canAttackTarget(living);
             }
             return false;
         }

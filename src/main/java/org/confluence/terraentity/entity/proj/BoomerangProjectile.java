@@ -25,9 +25,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.event.EventHooks;
 import org.confluence.lib.common.LibAttributes;
+import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.api.entity.IAttackableProjectile;
 import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.config.ClientConfig;
@@ -112,28 +112,26 @@ public class BoomerangProjectile extends Projectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (level().isClientSide) return;
-        Entity hurter = result.getEntity();
-        Entity actualHurter = hurter;
-        if (hurter instanceof PartEntity<?> part) {
-            hurter = part.getParent();
-        }
-        if (this.getOwner() instanceof LivingEntity owner && this.getOwner() != actualHurter) {
+        Entity victim = result.getEntity();
+        Entity directVictim = victim;
+        victim = LibUtils.tryFindBeImpacted(victim);
+        if (this.getOwner() instanceof LivingEntity owner && this.getOwner() != directVictim) {
             DamageSource source = this.damageSources().mobAttack(owner); // 回旋镖是近战伤害
-            if (hurter instanceof LivingEntity living && actualHurter.isAlive() && TEUtils.projectileCanHurtEntityTest.test(this, living)) {
+            if (victim instanceof LivingEntity living && directVictim.isAlive() && TEUtils.projectileCanHurtEntityTest.test(this, living)) {
                 penetrationCount--;
                 float damage = (float) owner.getAttributeValue(LibAttributes.getAttackDamage()) + modifier.damage - 1;
-                if (actualHurter.hurt(source, damage)) {
+                if (directVictim.hurt(source, damage)) {
                     EffectStrategyComponent data = weapon.get(TEDataComponentTypes.EFFECT_STRATEGY);
                     if (data != null) {
                         data.applyAll((LivingEntity) this.getOwner(), living);
                     }
-                    owner.setLastHurtMob(actualHurter);
+                    owner.setLastHurtMob(directVictim);
                     //击退
                     doKnockback(living);
                 }
             }
 
-            IAttackableProjectile.tryHit(hurter, source);
+            IAttackableProjectile.tryHit(victim, source);
 
             if (!modifier.canPenetrate && penetrationCount <= 0 && modifier.forwardTick - tickCount > 10) {
                 if (!isBacking) {

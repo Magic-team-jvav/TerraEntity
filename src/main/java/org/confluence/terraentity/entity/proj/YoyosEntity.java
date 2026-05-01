@@ -36,7 +36,6 @@ import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.item.YoyosItem;
 import org.confluence.terraentity.registries.hit_effect.IEffectStrategy;
 import org.confluence.terraentity.utils.TEUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -52,7 +51,7 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     int maxRetrieveTicks = 40;
     int retrieveTicks = 0;
     float maxRange = 10;
-    @Nullable YoyosItem item;
+    @Nullable YoyosItem<?> item;
     public ResourceLocation texture;
 
     protected static final EntityDataAccessor<ItemStack> DATA_WEAPON_ITEM = SynchedEntityData.defineId(YoyosEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -196,7 +195,7 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (DATA_WEAPON_ITEM.equals(key)) {
-            if (getWeaponItem().getItem() instanceof YoyosItem yoyo) {
+            if (getWeaponItem().getItem() instanceof YoyosItem<?> yoyo) {
                 this.item = yoyo;
                 this.texture = item.getTexture();
                 this.maxRange = item.getMaxRange();
@@ -205,19 +204,19 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     }
 
     public void setWeaponItem(ItemStack itemStack) {
-        this.entityData.set(DATA_WEAPON_ITEM, itemStack);
+        entityData.set(DATA_WEAPON_ITEM, itemStack);
     }
 
     @Override
-    public @NotNull ItemStack getWeaponItem() {
-        return this.entityData.get(DATA_WEAPON_ITEM);
+    public ItemStack getWeaponItem() {
+        return entityData.get(DATA_WEAPON_ITEM);
     }
 
     @Override
     public void onRemovedFromLevel() {
         super.onRemovedFromLevel();
         Entity owner = getOwner();
-        if (owner != null) {
+        if (owner != null && item != null) {
             WeaponStorage data = WeaponStorage.of(owner);
             data.yoyosEntity = null;
             if (owner instanceof Player player) {
@@ -262,7 +261,7 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
 
     @Override
     public void onReceiveWhellScroll(Player player, ItemStack itemStack, int scrollAmount) {
-        this.maxRange = Mth.clamp(this.maxRange + scrollAmount, 1, ((YoyosItem) itemStack.getItem()).getMaxRange());
+        this.maxRange = Mth.clamp(this.maxRange + scrollAmount, 1, ((YoyosItem<?>) itemStack.getItem()).getMaxRange());
     }
 
     /* Collision Attack API */
@@ -279,12 +278,12 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     }
 
     public void doCollisionAttack(Predicate<Entity> filter, Consumer<Entity> attackCallback) {
-        if (!this.shouldDoCollision() || this.collision$getSelf().level().isClientSide) return;
-        CollisionProperties properties = this.getCollisionProperties();
+        if (!shouldDoCollision() || level().isClientSide) return;
+        CollisionProperties properties = getCollisionProperties();
         properties.reduceAttackInterval();
-        if (this.canCollisionHurt() && !this.collision$getSelf().level().isClientSide && properties.canAttack()) {
+        if (canCollisionHurt() && !level().isClientSide && properties.canAttack()) {
             // 包围盒检测造成伤害
-            List<Entity> entities = this.collision$getSelf().level().getEntities(this.collision$getSelf(), this.collision$getSelf().getBoundingBox().inflate(properties.attackRangeExtent), e -> e != this.collision$getSelf());
+            List<Entity> entities = level().getEntities(this, getBoundingBox().inflate(properties.attackRangeExtent), e -> e != this);
             if (!entities.isEmpty()) {
                 for (var e : entities) {
                     if (filter.test(e)) {
@@ -306,13 +305,13 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
             } else if (entity instanceof PartEntity<?> partEntity && partEntity.getParent() instanceof LivingEntity living) {
                 target = living;
             }
-            if (target != null) {
+            if (target != null && item != null) {
                 IEffectStrategy effectStrategy = this.item.getEffectStrategy();
                 if (effectStrategy != null) {
                     effectStrategy.getEffect().accept((LivingEntity) this.getOwner(), target);
                 }
                 ItemStack stack = getWeaponItem();
-                if (getOwner() != null && getOwner() instanceof LivingEntity owner && stack != null) {
+                if (getOwner() != null && getOwner() instanceof LivingEntity owner) {
                     stack.hurtAndBreak(1, owner, EquipmentSlot.MAINHAND);
                 }
                 return true;
@@ -323,11 +322,9 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
 
     public boolean summon_doHurtTarget(Entity entity) {
         if (getOwner() instanceof LivingEntity owner) {
-
             float f = 0;
             DamageSource damagesource = getDamageSource(owner);
-            Level var5 = this.level();
-            if (var5 instanceof ServerLevel) {
+            if (level() instanceof ServerLevel && item != null) {
                 f = item.getAttackDamage();
             }
             // 事件统一处理
