@@ -328,6 +328,10 @@ public class KingSlime extends Slime implements DeathAnimOptions, IBossFSM, Boss
         this(TEBossEntities.KING_SLIME.get(), level);
     }
 
+    @Override
+    protected void dropExperience(@org.jetbrains.annotations.Nullable Entity entity) {
+        super.dropExperience(entity);
+    }
 
     @Override
     public void toState(State newState) {
@@ -539,7 +543,6 @@ public class KingSlime extends Slime implements DeathAnimOptions, IBossFSM, Boss
 
         refreshDimensions();
         getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.1F * i);
-        this.xpReward = i;
     }
 
     @Override
