@@ -269,7 +269,7 @@ public class TEItems {
                         misc.accept(TESpawnEggItems.GHOST_SPAWN_EGG.get());
                         misc.accept(TESpawnEggItems.WANDERING_EYE_FISH_SPAWN_EGG.get());
                         misc.accept(TESpawnEggItems.METEOR_HEAD_SPAWN_EGG.get());
-                        if(!ConfluenceMagicLib.IS_CONFLUENCE_LOAD || TERuntime.isDevMode()) {
+                        if (!ConfluenceMagicLib.IS_CONFLUENCE_LOAD || TERuntime.isDevMode()) {
                             TEBossSummonsItems.ITEMS.getEntries().forEach(action);
                         }
                         TERideableItems.ITEMS.getEntries().forEach(action);
