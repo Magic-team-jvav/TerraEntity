@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.apache.commons.lang3.function.TriConsumer;
+import org.confluence.lib.util.consumer.Consumer3;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.init.TEItems;
 import org.confluence.terraentity.init.item.*;
@@ -27,7 +27,7 @@ public class TEItemModelProvider extends ItemModelProvider {
     private Map<DeferredRegister.Items,List<String>> createDir(DeferredRegister.Items reg, String... packPaths) {
         return Map.of(reg, Arrays.stream(packPaths).toList());
     }
-    private void genModels(List<Map<DeferredRegister.Items,List<String>>> list, String parent, TriConsumer<String,String, String> appender){
+    private void genModels(List<Map<DeferredRegister.Items,List<String>>> list, String parent, Consumer3<String,String, String> appender){
         list.forEach(mp-> mp.forEach((items, packPaths) -> {
             items.getEntries().forEach(item -> {
                 String path = item.getId().getPath().toLowerCase();

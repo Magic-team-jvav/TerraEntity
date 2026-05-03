@@ -7,7 +7,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.commons.lang3.function.TriConsumer;
+import org.confluence.lib.util.consumer.Consumer3;
 import org.confluence.terraentity.TerraEntity;
 
 import java.util.*;
@@ -124,7 +124,7 @@ public class EfficientCylinderDestruction {
      */
     private class EdgeExpansionTask implements Runnable {
         private final int yLevel;
-        TriConsumer<Integer, Integer, Integer> blockOperator;
+        Consumer3<Integer, Integer, Integer> blockOperator;
 
         private int targetRadius;
         private Iterator<BlockPos2D> edgeIterator;
@@ -132,7 +132,7 @@ public class EfficientCylinderDestruction {
 
         private int blocksProcessedThisFrame = 0;
 
-        public EdgeExpansionTask(int yLevel, int targetRadius, TriConsumer<Integer, Integer, Integer> blockOperator) {
+        public EdgeExpansionTask(int yLevel, int targetRadius, Consumer3<Integer, Integer, Integer> blockOperator) {
             this.yLevel = yLevel;
             this.blockOperator = blockOperator;
 

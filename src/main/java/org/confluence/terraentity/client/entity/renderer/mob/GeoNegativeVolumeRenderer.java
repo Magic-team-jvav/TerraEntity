@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import org.apache.logging.log4j.util.TriConsumer;
+import org.confluence.lib.util.consumer.Consumer3;
 import org.confluence.terraentity.client.entity.model.GeoNormalModel;
 import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
 import org.jetbrains.annotations.Nullable;
@@ -66,7 +66,7 @@ public class GeoNegativeVolumeRenderer<T extends Entity & GeoEntity> extends Geo
             }
         },
         COMPLEX {
-            final TriConsumer<BakedGeoModel, List<GeoBone>, List<String>> process = (model, addTo, groupNames) -> {
+            final Consumer3<BakedGeoModel, List<GeoBone>, List<String>> process = (model, addTo, groupNames) -> {
                 groupNames.stream()
                         .map(s -> model.getBone(s).orElse(null))
                         .filter(Objects::nonNull)
