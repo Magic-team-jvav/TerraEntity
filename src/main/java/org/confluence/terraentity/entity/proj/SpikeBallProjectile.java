@@ -6,6 +6,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import org.confluence.lib.common.entitiy.IBouncy;
+import org.jetbrains.annotations.Nullable;
 
 public class SpikeBallProjectile extends BaseProj<SpikeBallProjectile> implements IBouncy {
     public Entity target;
@@ -13,7 +14,8 @@ public class SpikeBallProjectile extends BaseProj<SpikeBallProjectile> implement
     public SpikeBallProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {
         this(pEntityType, pLevel, null);
     }
-    public SpikeBallProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel, Entity target) {
+
+    public SpikeBallProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel, @Nullable Entity target) {
         super(pEntityType, pLevel, (MobEffectInstance) null);
         this.target = target;
         // 不然碰到方块没反弹就有1.4了
