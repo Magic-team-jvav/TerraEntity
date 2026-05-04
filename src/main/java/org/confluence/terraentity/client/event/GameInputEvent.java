@@ -48,6 +48,8 @@ public class GameInputEvent {
 
             if (!item1.canSwitchWithoutRelease(player, stack) && WeaponStorage.of(player).leftClicking) {
                 event.setCanceled(true);
+            } else {
+                item1.onLeftRelease(player, stack);
             }
         }
     }

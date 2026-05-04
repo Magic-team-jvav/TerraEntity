@@ -268,7 +268,7 @@ dependencies {
 
     // 联动泰拉饰品
     compileOnly "curse.maven:terra-curio-1027625:6881159"
-    runtimeOnly "curse.maven:terra-curio-1027625:6881159"
+//    runtimeOnly "curse.maven:terra-curio-1027625:6881159"
 
     // 彩色光源
     compileOnly("foundry.veil:veil-neoforge-${project.minecraft_version}:${project.veil_version}") {
