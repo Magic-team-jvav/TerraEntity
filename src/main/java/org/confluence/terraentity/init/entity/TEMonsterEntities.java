@@ -179,7 +179,7 @@ public class TEMonsterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<Pixie>> PIXIE = TEEntities.registerMonster(ENTITIES, "pixie", (e, l) -> new Pixie(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
     public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> POSSESS_ARMOR = TEEntities.registerMonster(ENTITIES, "possess_armor", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().getPrefab().setDeathSound(TESounds.SOUL_DEATH).setHurtSound(TESounds.METAL_HURT)), 1F, 2F);
     public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> POSSESS_ARMOR_VOID_VESSEL = TEEntities.registerMonster(ENTITIES, "possess_armor_void_vessel", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().getPrefab().setDeathSound(TESounds.SOUL_DEATH).setHurtSound(TESounds.METAL_HURT)), 1F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Wraith>> WRAITH = TEEntities.registerMonster(ENTITIES, "wraith", (e, l) -> new Wraith(e, l), 1F, 2F);
+    public static final DeferredHolder<EntityType<?>, EntityType<Wraith>> WRAITH = TEEntities.registerMonster(ENTITIES, "wraith", Wraith::new, 1F, 2F);
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> WOODEN_MIMIC = TEEntities.registerMonster(ENTITIES, "wooden_mimic", WoodenMimic::new, 0.8f, 0.8f);
@@ -203,8 +203,8 @@ public class TEMonsterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> DREAMER_GHOUL = registerSimpleMonster("dreamer_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
     public static final DeferredHolder<EntityType<?>, EntityType<SandPoacher>> SAND_POACHER = TEEntities.registerMonster(ENTITIES, "sand_poacher", SandPoacher::new, 1.8F, 1.2F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Piranha>> ARAPAIMA = TEEntities.registerMonster(ENTITIES, "arapaima", (e, l) -> new Piranha(e, l), 2.2F, 0.7F);
-    public static final DeferredHolder<EntityType<?>, EntityType<JellyFish>> GREEN_JELLYFISH = TEEntities.registerMonster(ENTITIES, "green_jellyfish", (e, l) -> new JellyFish(e, l), 0.5F, 0.5F);
+    public static final DeferredHolder<EntityType<?>, EntityType<Piranha>> ARAPAIMA = TEEntities.registerMonster(ENTITIES, "arapaima", Piranha::new, 2.2F, 0.7F);
+    public static final DeferredHolder<EntityType<?>, EntityType<JellyFish>> GREEN_JELLYFISH = TEEntities.registerMonster(ENTITIES, "green_jellyfish", JellyFish::new, 0.5F, 0.5F);
 
     public static final DeferredHolder<EntityType<?>, EntityType<JumpAttackMonster>> DERPLING = TEEntities.registerMonster(ENTITIES, "derpling", (e, l) -> new JumpAttackMonster(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 2F, 2F);
     public static final DeferredHolder<EntityType<?>, EntityType<JumpAttackMonster>> HERPLING = TEEntities.registerMonster(ENTITIES, "herpling", (e, l) -> new JumpAttackMonster(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
