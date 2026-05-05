@@ -33,16 +33,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BaseWhipItem extends Item implements ILeftClickStateItem {
+    // region client
+    public static int clickTime;
+    public static int cooldownTime;
+    // endregion
 
     public final int hitCooldown;
-    //    public final float markDamage;
-//    public final float attackSpeed;
     public final Supplier<? extends ParticleOptions> particleOptions;
     public final float chance;
     public boolean canPenetrate;
-    public static int clickTime;
-    public static int cooldownTime;
-
 
     public Supplier<BlockState> blockStateSupplier;
 
@@ -52,12 +51,14 @@ public class BaseWhipItem extends Item implements ILeftClickStateItem {
     /// @param markDamage  - 标记伤害
     /// @param attackSpeed - 攻击速度
     /// @param hitCooldown - 击中同一目标的间隔
-    public BaseWhipItem(Properties properties,
-                        float damage,
-                        float markDamage,
-                        float attackSpeed,
-                        int hitCooldown,
-                        float rangeFactor) {
+    public BaseWhipItem(
+            Properties properties,
+            float damage,
+            float markDamage,
+            float attackSpeed,
+            int hitCooldown,
+            float rangeFactor
+    ) {
         super(properties.stacksTo(1)
                 .attributes(ItemAttributeModifiers.builder()
                         .add(
@@ -83,8 +84,6 @@ public class BaseWhipItem extends Item implements ILeftClickStateItem {
                         .build())
         );
         this.hitCooldown = hitCooldown;
-//        this.markDamage = markDamage;
-//        this.attackSpeed = attackSpeed;
         if (properties instanceof WhipProperties whipProperties) {
             this.particleOptions = whipProperties.particleOptions;
             this.chance = whipProperties.chance;
@@ -122,6 +121,9 @@ public class BaseWhipItem extends Item implements ILeftClickStateItem {
 
     @Override
     public void onLeftClick(Player player, ItemStack itemStack) {
+        if (player.getCooldowns().cooldowns.keySet().stream().anyMatch(item -> item instanceof BaseWhipItem)) {
+            return;
+        }
         if (player.isLocalPlayer()) {
             clickTime = player.tickCount;
             cooldownTime = (int) (20 * getCdReduction(player));

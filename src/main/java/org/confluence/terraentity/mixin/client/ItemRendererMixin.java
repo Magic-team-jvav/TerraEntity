@@ -35,7 +35,7 @@ public class ItemRendererMixin {
     @WrapWithCondition(method = "renderStatic(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/level/Level;III)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V"))
     private boolean renderStatic(ItemRenderer instance, ItemStack itemStack, ItemDisplayContext displayContext, boolean leftHand, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay, BakedModel p_model, @Local(argsOnly = true) @Nullable LivingEntity entity) {
         Item item = itemStack.getItem();
-        if (entity instanceof Player player && !leftHand) {
+        if (!leftHand && entity instanceof Player player) {
             // 右手使用鞭子时取消渲染
             if (item instanceof BaseWhipItem && player.getCooldowns().isOnCooldown(item)) {
                 return false;
@@ -49,11 +49,9 @@ public class ItemRendererMixin {
 
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
     public void getModel(ItemStack stack, Level level, LivingEntity entity, int seed, CallbackInfoReturnable<BakedModel> cir) {
-        if (entity instanceof Player player) {
-            if (!player.getData(TEAttachments.SUMMONER_STORAGE).canSummon(1)) {
-                if (stack.getItem() == TESummonItems.FINCH_STAFF.get()) {
-                    cir.setReturnValue(itemModelShaper.getModelManager().getModel(AdditionalItemRegister.FINCH_STAFF_MODEL));
-                }
+        if (entity instanceof Player player && !player.getData(TEAttachments.SUMMONER_STORAGE).canSummon(1)) {
+            if (stack.getItem() == TESummonItems.FINCH_STAFF.get()) {
+                cir.setReturnValue(itemModelShaper.getModelManager().getModel(AdditionalItemRegister.FINCH_STAFF_MODEL));
             }
         }
     }

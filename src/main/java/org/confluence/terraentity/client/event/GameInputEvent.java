@@ -14,7 +14,6 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import org.confluence.terraentity.api.item.ILeftClickStateItem;
 import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.integration.ModChecker;
-import org.confluence.terraentity.item.BaseWhipItem;
 import org.confluence.terraentity.network.c2s.EventPacketC2S;
 import org.lwjgl.glfw.GLFW;
 
@@ -31,11 +30,6 @@ public class GameInputEvent {
 
         ItemStack stack = player.getMainHandItem();
         Item item = stack.getItem();
-
-        if (item instanceof BaseWhipItem whipItem && player.getCooldowns().isOnCooldown(whipItem)) {
-            event.setCanceled(true);
-            return;
-        }
 
         if (!player.isSpectator() && item instanceof ILeftClickStateItem item1) {
             if (Minecraft.getInstance().mouseHandler.isLeftPressed()) { // 暂时可以这样写省性能，如果后面有新需求，需要注释掉
