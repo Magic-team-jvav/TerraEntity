@@ -19,4 +19,8 @@ public class TEEffects {
     public static final DeferredHolder<MobEffect, TheTongueEffect> THE_TONGUE = EFFECTS.register("the_tongue", TheTongueEffect::new);
     public static final DeferredHolder<MobEffect, CrimsonStorm> CRIMSON_STORM = EFFECTS.register("crimson_storm", CrimsonStorm::new);
 
+    //惊吓/威慑效果（SCARED）- 对飞行单位造成驱离
+    public static final DeferredHolder<MobEffect, DriveAwayEffect> SCARED = EFFECTS.register("scared",
+            () -> new DriveAwayEffect(0.3, 200.0, 0.8, 1.2, 1.5, 0.0));
+
 }

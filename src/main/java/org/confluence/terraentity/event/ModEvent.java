@@ -1,10 +1,13 @@
 package org.confluence.terraentity.event;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.fluids.RegisterCauldronFluidContentEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.confluence.lib.api.event.NameFixRegisterEvent;
@@ -14,6 +17,10 @@ import org.confluence.terraentity.integration.ItemComponentModify;
 import org.confluence.terraentity.integration.ModChecker;
 import org.confluence.terraentity.integration.curios.CuriosHelper;
 import org.confluence.terraentity.network.NetworkHandler;
+import org.confluence.terraentity.utils.DriveAwaySystem.DriveAwayExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @EventBusSubscriber(modid = TerraEntity.MODID)
 public class ModEvent {
@@ -54,5 +61,18 @@ public class ModEvent {
         }
     }
 
+    // 服务器tick事件：更新被驱离实体的位置
+    @SubscribeEvent
+    public static void serverTick(ServerTickEvent.Post event) {
+        MinecraftServer server = event.getServer();
+        if (server == null) {
+            return;
+        }
+        
+        // 遍历所有维度（ServerLevel）并更新被驱离的实体
+        for (ServerLevel level : server.getAllLevels()) {
+            DriveAwayExecutor.tickAllDriveAwayEntities(level);
+        }
+    }
 
 }

@@ -9,6 +9,8 @@ import org.confluence.terraentity.attachment.ItemInHandTrailAttachment;
 import org.confluence.terraentity.attachment.SummonerAttachment;
 import org.confluence.terraentity.attachment.UnSyncableAttachment;
 import org.confluence.terraentity.attachment.WeaponStorage;
+import org.confluence.terraentity.utils.DriveAwaySystem.DriveAwayAttachment;
+import org.confluence.terraentity.utils.DriveAwaySystem.DriveAwayAttachment.DriveAwayData;
 
 import java.util.function.Supplier;
 
@@ -22,5 +24,8 @@ public final class TEAttachments {
     public static final Supplier<AttachmentType<ItemInHandTrailAttachment>> TRAIL_STORAGE = TYPES.register("trail_storage", () -> AttachmentType.serializable(ItemInHandTrailAttachment::new).build());
     public static final Supplier<AttachmentType<PlayerContainer>> CHESTER = TYPES.register("chester", () -> AttachmentType.serializable(()->new PlayerContainer(6)).copyOnDeath().build());
     public static final Supplier<AttachmentType<UnSyncableAttachment>> UNSYNC = TYPES.register("unsync", () -> AttachmentType.serializable(()->new UnSyncableAttachment()).build());
-
+    public static final Supplier<AttachmentType<DriveAwayAttachment.DriveAwayData>> DRIVE_AWAY_DATA = 
+        TYPES.register("drive_away_data", () -> AttachmentType.builder(
+            () -> new DriveAwayAttachment.DriveAwayData()  // 默认工厂
+        ).serialize(DriveAwayAttachment.DriveAwayData.CODEC).build());
 }
