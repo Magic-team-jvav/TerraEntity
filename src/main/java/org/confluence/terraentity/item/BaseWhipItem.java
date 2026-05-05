@@ -5,7 +5,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,11 +16,11 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.confluence.lib.ConfluenceMagicLib;
 import org.confluence.lib.common.LibAttributes;
 import org.confluence.terraentity.TerraEntity;
+import org.confluence.terraentity.api.item.ILeftClickStateItem;
 import org.confluence.terraentity.entity.proj.WhipEntity;
 import org.confluence.terraentity.init.TEDataComponentTypes;
 import org.confluence.terraentity.init.entity.TEProjectileEntities;
@@ -33,7 +32,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class BaseWhipItem extends Item {
+public class BaseWhipItem extends Item implements ILeftClickStateItem {
 
     public final int hitCooldown;
     //    public final float markDamage;
@@ -47,14 +46,12 @@ public class BaseWhipItem extends Item {
 
     public Supplier<BlockState> blockStateSupplier;
 
-    /**
-     * <h1>鞭子
-     *
-     * @param damage      - 召唤伤害
-     * @param markDamage  - 标记伤害
-     * @param attackSpeed - 攻击速度
-     * @param hitCooldown - 击中同一目标的间隔
-     */
+    /// # 鞭子
+    ///
+    /// @param damage      - 召唤伤害
+    /// @param markDamage  - 标记伤害
+    /// @param attackSpeed - 攻击速度
+    /// @param hitCooldown - 击中同一目标的间隔
     public BaseWhipItem(Properties properties,
                         float damage,
                         float markDamage,
@@ -105,37 +102,6 @@ public class BaseWhipItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        ItemStack stack = player.getItemInHand(usedHand);
-        if (usedHand == InteractionHand.OFF_HAND) return InteractionResultHolder.success(stack);
-        if (!level.isClientSide) {
-
-            if (stack.getItem() instanceof BaseWhipItem self) {
-                int cooldown = (int) (20 * getCdReduction(player));
-                player.getCooldowns().addCooldown(this, cooldown);
-                if (player.getOffhandItem().getItem() instanceof BaseWhipItem other) {
-                    player.getCooldowns().addCooldown(other, cooldown);
-                }
-                WhipEntity whipEntity = TEProjectileEntities.WHIP_PROJECTILE.get().create(level);
-                whipEntity.setWeapon(stack);
-                whipEntity.setExistTick(cooldown);
-                whipEntity.setOwner(player);
-                whipEntity.setPos(player.position().add(0, player.getBbHeight() * 0.5f, 0).add(TEUtils.getPlayerHandPos(player)));
-                whipEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 0.05f, 0F);
-                whipEntity.hitCooldown = hitCooldown;
-//                stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                level.addFreshEntity(whipEntity);
-//                stack.hurtAndBreak(1, player, (Consumer<LivingEntity>) (e -> e.playSound(SoundEvents.)));
-            }
-        } else {
-            clickTime = player.tickCount;
-            cooldownTime = (int) (20 * getCdReduction(player));
-        }
-        player.swing(usedHand);
-        return InteractionResultHolder.success(stack);
-    }
-
-    @Override
     public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
         return enchantment.is(Enchantments.LOOTING) || super.supportsEnchantment(stack, enchantment);
     }
@@ -154,6 +120,41 @@ public class BaseWhipItem extends Item {
         }
     }
 
+    @Override
+    public void onLeftClick(Player player, ItemStack itemStack) {
+        if (player.isLocalPlayer()) {
+            clickTime = player.tickCount;
+            cooldownTime = (int) (20 * getCdReduction(player));
+        } else if (itemStack.is(this)) {
+            int cooldown = (int) (20 * getCdReduction(player));
+            player.getCooldowns().addCooldown(this, cooldown);
+            if (player.getOffhandItem().getItem() instanceof BaseWhipItem other) {
+                player.getCooldowns().addCooldown(other, cooldown);
+            }
+            WhipEntity whipEntity = TEProjectileEntities.WHIP_PROJECTILE.get().create(player.level());
+            if (whipEntity != null) {
+                whipEntity.setWeapon(itemStack);
+                whipEntity.setExistTick(cooldown);
+                whipEntity.setOwner(player);
+                whipEntity.setPos(player.position().add(0, player.getBbHeight() * 0.5f, 0).add(TEUtils.getPlayerHandPos(player)));
+                whipEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 0.05f, 0F);
+                whipEntity.hitCooldown = hitCooldown;
+//                stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+                player.level().addFreshEntity(whipEntity);
+//                stack.hurtAndBreak(1, player, (Consumer<LivingEntity>) (e -> e.playSound(SoundEvents.)));}
+            }
+        }
+        player.swing(InteractionHand.MAIN_HAND);
+    }
+
+    @Override
+    public void onLeftRelease(Player player, ItemStack itemStack) {}
+
+    @Override
+    public boolean canSwitchWithoutRelease(Player player, ItemStack itemStack) {
+        return false;
+    }
+
     public static class WhipProperties extends Properties {
         Supplier<? extends ParticleOptions> particleOptions;
         float chance;
@@ -163,20 +164,16 @@ public class BaseWhipItem extends Item {
         boolean hasDamage = false;
         boolean canPenetrate = false;
 
-        /**
-         * 当没有注册模型时，使用方块状态代替模型渲染
-         */
+        /// 当没有注册模型时，使用方块状态代替模型渲染
         public WhipProperties setBlock(Supplier<BlockState> blockStateSupplier) {
             this.blockStateSupplier = blockStateSupplier;
             return this;
         }
 
-        /**
-         * 设置粒子效果
-         *
-         * @param particleOptions 粒子效果
-         * @param chance          粒子效果出现的几率
-         */
+        /// 设置粒子效果
+        ///
+        /// @param particleOptions 粒子效果
+        /// @param chance          粒子效果出现的几率
         public WhipProperties setParticle(Supplier<? extends ParticleOptions> particleOptions, float chance) {
             this.particleOptions = particleOptions;
             this.chance = chance;
@@ -188,11 +185,9 @@ public class BaseWhipItem extends Item {
             return this;
         }
 
-        /**
-         * 设置耐久度，默认为无限耐久
-         *
-         * @param durability 耐久度
-         */
+        /// 设置耐久度，默认为无限耐久
+        ///
+        /// @param durability 耐久度
         public WhipProperties setDurability(int durability) {
             modifiers.add(p -> p.durability(durability));
             hasDamage = true;
@@ -204,14 +199,11 @@ public class BaseWhipItem extends Item {
             return this;
         }
 
-        /**
-         * 生成Properties
-         */
+        /// 生成Properties
         public Properties buildProperties() {
 
             if (!hasDamage) this.component(DataComponents.UNBREAKABLE, new Unbreakable(true));
             return modifiers.stream().reduce(this, (p, m) -> (WhipProperties) m.apply(p), (p1, p2) -> p1);
         }
     }
-
 }
