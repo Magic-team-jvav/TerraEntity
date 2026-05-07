@@ -29,7 +29,7 @@ public class DriveAwayAttachment {
         public boolean completed;
         //当前帧的驱离方向（用于连续性）
         public Vec3 currentFleeDirection;
-
+        Vec3.CODEC
         // Vec3 的 Codec
         public static final Codec<Vec3> VEC3_CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.DOUBLE.fieldOf("x").forGetter(Vec3::x),
@@ -52,7 +52,7 @@ public class DriveAwayAttachment {
 
         public DriveAwayData() {
             this.elapsedTicks = 0;
-            this.lastPosition = null;
+            this.lastPosition = Vec3.ZERO;
             this.stuckTicks = 0;
             this.center = Vec3.ZERO;
             this.totalDistance = 0.0;
