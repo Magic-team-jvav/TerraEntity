@@ -48,9 +48,9 @@ public class DriveAwayAttachment {
             this.lastPosition = Vec3.ZERO;
             this.stuckTicks = 0;
             this.center = Vec3.ZERO;
-            this.totalDistance = 0.0F;
-            this.speed = 0.0F;
-            this.time = 0.0F;
+            this.totalDistance = 0.0;
+            this.speed = 0.0;
+            this.time = 0.0;
             this.completed = false;
             this.currentFleeDirection = Vec3.ZERO;
         }
