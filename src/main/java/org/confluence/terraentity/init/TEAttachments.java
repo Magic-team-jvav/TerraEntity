@@ -24,8 +24,5 @@ public final class TEAttachments {
     public static final Supplier<AttachmentType<ItemInHandTrailAttachment>> TRAIL_STORAGE = TYPES.register("trail_storage", () -> AttachmentType.serializable(ItemInHandTrailAttachment::new).build());
     public static final Supplier<AttachmentType<PlayerContainer>> CHESTER = TYPES.register("chester", () -> AttachmentType.serializable(()->new PlayerContainer(6)).copyOnDeath().build());
     public static final Supplier<AttachmentType<UnSyncableAttachment>> UNSYNC = TYPES.register("unsync", () -> AttachmentType.serializable(()->new UnSyncableAttachment()).build());
-    public static final Supplier<AttachmentType<DriveAwayAttachment.DriveAwayData>> DRIVE_AWAY_DATA = 
-        TYPES.register("drive_away_data", () -> AttachmentType.builder(
-            () -> new DriveAwayAttachment.DriveAwayData()  // 默认工厂
-        ).serialize(DriveAwayAttachment.DriveAwayData.CODEC).build());
+    public static final Supplier<AttachmentType<DriveAwayData>> DRIVE_AWAY_DATA = TYPES.register("drive_away_data", () -> AttachmentType.builder(DriveAwayData::new).serialize(DriveAwayAttachment.DriveAwayData.CODEC).build());
 }
