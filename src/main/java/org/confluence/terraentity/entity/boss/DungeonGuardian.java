@@ -4,6 +4,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -31,9 +32,12 @@ public class DungeonGuardian extends Skeletron {
 
             @Override
             public void tick() {
-                Vec3 vec = getTarget().position().subtract(position());
-                setDeltaMovement(vec.normalize().scale(0.8));
-                lookAt(90);
+                LivingEntity target1 = getTarget();
+                if (target1 != null) {
+                    Vec3 vec = target1.position().subtract(position());
+                    setDeltaMovement(vec.normalize().scale(0.8));
+                    lookAt(90);
+                }
             }
 
         });
