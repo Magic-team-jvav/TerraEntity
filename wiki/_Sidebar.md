@@ -2,7 +2,7 @@
 - **Creatures**
     - Monsters
     - Animals
-    - [Bosses](https://github.com/EDGtheXu/TerraEntity/wiki/BOSS)
+    - [Bosses](https://github.com/Magic-team-jvav/TerraEntity/wiki/BOSS)
     - NPCs
     - Summonings
 
