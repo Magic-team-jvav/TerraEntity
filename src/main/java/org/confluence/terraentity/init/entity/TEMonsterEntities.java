@@ -27,6 +27,7 @@ import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
 import org.confluence.terraentity.client.entity.renderer.TheHungryRenderer;
 import org.confluence.terraentity.client.entity.renderer.mob.*;
 import org.confluence.terraentity.config.ClientConfig;
+import org.confluence.terraentity.entity.ai.goal.FactorFloatGoal;
 import org.confluence.terraentity.entity.monster.*;
 import org.confluence.terraentity.entity.monster.demoneye.DemonEye;
 import org.confluence.terraentity.entity.monster.humanoid.HumanoidMonster;
@@ -162,12 +163,12 @@ public class TEMonsterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<FireImpEntity>> FIRE_IMP = TEEntities.registerMonster(ENTITIES, "fire_imp", (e, l) -> new FireImpEntity(e, l, TEProjectileEntities.FIRE_IMP_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1);
 
     // 哥布林军队
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_ARCHER = TEEntities.registerMonster(ENTITIES, "goblin_archer", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.BOW.getDefaultInstance()).setSpawnWithoutLight()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_PEON = TEEntities.registerMonster(ENTITIES, "goblin_peon", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_WARRIOR = TEEntities.registerMonster(ENTITIES, "goblin_warrior", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.STONE_SWORD.getDefaultInstance()).setSpawnWithoutLight()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_THIEF = TEEntities.registerMonster(ENTITIES, "goblin_thief", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_SCOUT = TEEntities.registerMonster(ENTITIES, "goblin_scout", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> ANGER_GOBLIN = TEEntities.registerMonster(ENTITIES, "anger_goblin", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.GOLDEN_SWORD.getDefaultInstance()).setSpawnWithoutLight()), 0.65F, 1.85F);
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_ARCHER = TEEntities.registerMonster(ENTITIES, "goblin_archer", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.BOW.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_PEON = TEEntities.registerMonster(ENTITIES, "goblin_peon", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_WARRIOR = TEEntities.registerMonster(ENTITIES, "goblin_warrior", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.STONE_SWORD.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_THIEF = TEEntities.registerMonster(ENTITIES, "goblin_thief", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_SCOUT = TEEntities.registerMonster(ENTITIES, "goblin_scout", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> ANGER_GOBLIN = TEEntities.registerMonster(ENTITIES, "anger_goblin", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.GOLDEN_SWORD.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
 
     //饿鬼
     public static final DeferredHolder<EntityType<?>, EntityType<TheHungry>> THE_HUNGRY = TEEntities.registerMonster(ENTITIES, "the_hungry", (e, l) -> new TheHungry(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
