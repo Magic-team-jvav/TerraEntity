@@ -370,7 +370,7 @@ public abstract class TETradeScreen<M extends TETradesMenu> extends AbstractCont
 
     @Override
     protected void slotClicked(Slot slot, int slotId, int mouseButton, ClickType type) {
-        if (type != ClickType.PICKUP_ALL) {
+        if (type != ClickType.PICKUP_ALL || slotId != 0) {
             super.slotClicked(slot, slotId, mouseButton, type);
         }
     }
