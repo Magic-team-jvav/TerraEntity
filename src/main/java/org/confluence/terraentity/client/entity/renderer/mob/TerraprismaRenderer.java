@@ -14,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.TerraprismaModel;
 import org.confluence.terraentity.entity.summon.Terraprisma;
-import org.confluence.terraentity.integration.iris.IrisHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class TerraprismaRenderer extends EntityRenderer<Terraprisma> {
@@ -93,22 +92,9 @@ public class TerraprismaRenderer extends EntityRenderer<Terraprisma> {
     }
 
     protected void renderModel(Terraprisma entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight){
-//        RenderSystem.disableDepthTest();
         if(RenderSystem.getShader() == null){
             return;
         }
-        if(IrisHelper.isIrisShader()) {
-
-            poseStack.pushPose();
-            poseStack.scale(0.9f,0.9f,0.9f);
-            model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity))), packedLight, OverlayTexture.NO_OVERLAY, entity.getRgb() | 0x2F000000);
-            poseStack.popPose();
-            // 不知道是什么原因，会出现深度始终小于实体
-            model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(entity))), packedLight, OverlayTexture.NO_OVERLAY, entity.getRgb() | 0xFF000000);
-        }else{
-            // 原版这个效果好一点
-            model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity),0,0)), packedLight, OverlayTexture.NO_OVERLAY, entity.getRgb() | 0xFF000000);
-        }
-//        RenderSystem.enableDepthTest();
+        model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity),0,0)), packedLight, OverlayTexture.NO_OVERLAY, entity.getRgb() | 0xFF000000);
     }
 }

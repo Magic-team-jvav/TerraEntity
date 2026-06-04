@@ -21,8 +21,6 @@ import org.confluence.terraentity.entity.ai.keyframe.Keyframe;
 import org.confluence.terraentity.entity.ai.keyframe.animation.KeyframeAnimation;
 import org.confluence.terraentity.entity.util.KeyframeAnimationCounter;
 import org.confluence.terraentity.init.TEEntityDataSerializers;
-import org.confluence.terraentity.integration.ModChecker;
-import org.confluence.terraentity.integration.veil.VeilHelper;
 import org.confluence.terraentity.utils.OBB;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,9 +57,6 @@ public class Terraprisma extends SummonSword {
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket clientboundAddEntityPacket) {
         super.recreateFromPacket(clientboundAddEntityPacket);
-        if(ModChecker.veil.isLoaded()) {
-            VeilHelper.addLight(level(), light);
-        }
     }
 
     public Terraprisma(EntityType<? extends TamableAnimal> entityType, Level level) {
@@ -70,17 +65,10 @@ public class Terraprisma extends SummonSword {
         this.rgb = getRandomColor();
         this.entityData.set(DATA_COLOR, this.rgb);
 
-        if(ModChecker.veil.isLoaded()) {
-            light = VeilHelper.initLight(level);
-        }
-
     }
 
     @Override
     public void onRemovedFromLevel(){
-        if(ModChecker.veil.isLoaded()) {
-            VeilHelper.removeLight(level(), light);
-        }
         super.onRemovedFromLevel();
     }
 
@@ -88,9 +76,6 @@ public class Terraprisma extends SummonSword {
     public void tick() {
         super.tick();
         if(this.level().isClientSide){
-            if(ModChecker.veil.isLoaded()) {
-                VeilHelper.setLight(level(), light, this.getX(), this.getY(), this.getZ(), 0.01F, 17, this.rgb);
-            }
             float d = (getRandom().nextFloat() - 0.5f) * 0.05f;
 
             colorProgress = Mth.clamp(colorProgress + d + this.sliderProgress, 0, 1);

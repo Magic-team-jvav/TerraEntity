@@ -11,7 +11,6 @@ import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.init.TEEntities;
 import org.confluence.terraentity.init.TEItems;
 import org.confluence.terraentity.init.item.*;
-import org.confluence.terraentity.integration.curios.CuriosHelper;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -185,11 +184,6 @@ public class TEEnglishProvider extends LanguageProvider {
         add("task.terra_entity.boomerang_attack", "Boomerang Attack");
         add("task.terra_entity.boomerang_attack.desc", "Maid attacks enemies with a boomerang.");
         add("task.terra_entity.boomerang_attack.condition.has_boomerang", "Mainhand holds a boomerang");
-
-        // curios
-        add("curios.identifier." + CuriosHelper.MOUNT_KEY, "Mount");
-        add("curios.identifier." + CuriosHelper.PET_KEY, "Pet");
-        add("curios.identifier." + CuriosHelper.LIGHT_PET_KEY, "Light Pet");
 
         // 附魔
         add("enchantment.terra_entity.multi_boomerang", "Multi Shoot Boomerang");

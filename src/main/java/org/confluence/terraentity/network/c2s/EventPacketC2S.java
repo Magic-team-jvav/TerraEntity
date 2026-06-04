@@ -17,8 +17,6 @@ import org.confluence.terraentity.attachment.WeaponStorage;
 import org.confluence.terraentity.entity.npc.AbstractTerraNPC;
 import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.confluence.terraentity.init.entity.TENpcEntities;
-import org.confluence.terraentity.integration.ModChecker;
-import org.confluence.terraentity.integration.curios.CuriosHelper;
 import org.confluence.terraentity.mixed.IPlayer;
 import org.confluence.terraentity.utils.AdapterUtils;
 import org.confluence.terraentity.utils.TEUtils;
@@ -67,11 +65,6 @@ public record EventPacketC2S(TypeEnum typeEnum) implements IPacketC2S {
             ItemStack stack = player.getMainHandItem();
             if (stack.getItem() instanceof ILeftClickStateItem item) {
                 item.onWhellScroll(player, stack, -1);
-            }
-        });
-        map.put(TypeEnum.RIDE_OR_LEAVE, (player) -> {
-            if (ModChecker.curios.isLoaded()) {
-                CuriosHelper.rideOrLeave(player);
             }
         });
     });

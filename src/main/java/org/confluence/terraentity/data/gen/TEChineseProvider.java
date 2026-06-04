@@ -7,7 +7,6 @@ import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.init.TEItems;
 import org.confluence.terraentity.init.entity.*;
 import org.confluence.terraentity.init.item.*;
-import org.confluence.terraentity.integration.curios.CuriosHelper;
 
 import static org.confluence.terraentity.TerraEntity.MODID;
 
@@ -773,11 +772,6 @@ public class TEChineseProvider extends LanguageProvider {
         add("task.terra_entity.boomerang_attack", "回旋镖攻击");
         add("task.terra_entity.boomerang_attack.desc", "女仆会主动用回旋镖攻击周围的敌对生物");
         add("task.terra_entity.boomerang_attack.condition.has_boomerang", "主手持有回旋镖");
-
-        // curios
-        add("curios.identifier." + CuriosHelper.MOUNT_KEY, "坐骑");
-        add("curios.identifier." + CuriosHelper.PET_KEY, "宠物");
-        add("curios.identifier." + CuriosHelper.LIGHT_PET_KEY, "照明宠物");
 
         // 附魔
         add("enchantment.terra_entity.multi_boomerang", "影分身");
