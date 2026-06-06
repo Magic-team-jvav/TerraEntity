@@ -17,7 +17,6 @@ import org.confluence.terraentity.entity.monster.prefab.AttributeBuilder;
 import org.confluence.terraentity.entity.proj.LineProj;
 import org.confluence.terraentity.init.TESounds;
 import org.confluence.terraentity.init.entity.TEProjectileEntities;
-import org.confluence.terraentity.mixin.accessor.EntityAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.DefaultAnimations;
@@ -87,7 +86,7 @@ public class Harpy extends AbstractMonster {
             return;
         }
 
-        Vec3 collide = ((EntityAccessor) this).callCollide(motion);
+        Vec3 collide = this.callCollide(motion);
         if (collide.x != motion.x) {
             motion = new Vec3(-motion.x*0.8F, motion.y, motion.z).add(0,0.2f,0);
         }

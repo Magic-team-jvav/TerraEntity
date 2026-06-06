@@ -24,7 +24,6 @@ import org.confluence.terraentity.api.entity.IMinion;
 import org.confluence.terraentity.entity.boss.EyeOfCthulhu;
 import org.confluence.terraentity.entity.util.DeathAnimOptions;
 import org.confluence.terraentity.init.TESounds;
-import org.confluence.terraentity.mixin.accessor.EntityAccessor;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -127,7 +126,7 @@ public class DemonEye extends Monster implements Enemy, VariantHolder<DemonEyeVa
             return;
         }
 
-        Vec3 collide = ((EntityAccessor) this).callCollide(motion);
+        Vec3 collide = this.callCollide(motion);
         if (collide.x != motion.x) {
             motion = new Vec3(motion.x < 0 ? 0.22 : -0.22, motion.y, motion.z);
         }
