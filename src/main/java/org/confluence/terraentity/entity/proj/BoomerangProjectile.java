@@ -1,5 +1,8 @@
 package org.confluence.terraentity.entity.proj;
 
+import PortLib.extensions.net.minecraft.world.entity.LivingEntity.PortLivingEntityExtension;
+import PortLib.extensions.net.minecraft.world.entity.projectile.ProjectileUtil.PortProjectileUtilExtension;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -25,7 +28,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
 import org.confluence.lib.common.LibAttributes;
 import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.api.entity.IAttackableProjectile;
@@ -39,12 +41,13 @@ import org.confluence.terraentity.init.entity.TEProjectileEntities;
 import org.confluence.terraentity.item.Boomerang;
 import org.confluence.terraentity.item.Boomerang.BoomerangModifier;
 import org.confluence.terraentity.utils.TEUtils;
+import org.mesdag.portlib.event.entity.PortProjectileImpactEvent;
+import org.mesdag.portlib.wrapper.common.extensions.IPortProjectileExtension;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class BoomerangProjectile extends Projectile {
-
+public class BoomerangProjectile extends Projectile implements IPortProjectileExtension {
     public ItemStack weapon = ItemStack.EMPTY;
     private BoomerangModifier modifier;
     public int randomRotation;//随机初始旋转角度
@@ -83,10 +86,10 @@ public class BoomerangProjectile extends Projectile {
     public static final EntityDataAccessor<Integer> DATA_BACKING_TIME = SynchedEntityData.defineId(BoomerangProjectile.class, EntityDataSerializers.INT);
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_WEAPON, ItemStack.EMPTY);
-        builder.define(DATA_BACKING, false);
-        builder.define(DATA_BACKING_TIME, 0);
+    protected void defineSynchedData() {
+        entityData.define(DATA_WEAPON, ItemStack.EMPTY);
+        entityData.define(DATA_BACKING, false);
+        entityData.define(DATA_BACKING_TIME, 0);
     }
 
     @Override
@@ -105,11 +108,6 @@ public class BoomerangProjectile extends Projectile {
     }
 
     @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
-    }
-
-    @Override
     protected void onHitEntity(EntityHitResult result) {
         if (level().isClientSide) return;
         Entity victim = result.getEntity();
@@ -121,7 +119,7 @@ public class BoomerangProjectile extends Projectile {
                 penetrationCount--;
                 float damage = (float) owner.getAttributeValue(LibAttributes.getAttackDamage()) + modifier.damage - 1;
                 if (directVictim.hurt(source, damage)) {
-                    EffectStrategyComponent data = weapon.get(TEDataComponentTypes.EFFECT_STRATEGY);
+                    EffectStrategyComponent data = PortItemStackExtension.getData(weapon, TEDataComponentTypes.EFFECT_STRATEGY);
                     if (data != null) {
                         data.applyAll((LivingEntity) this.getOwner(), living);
                     }
@@ -186,8 +184,8 @@ public class BoomerangProjectile extends Projectile {
         if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
             super.tick();
 
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, ClipContext.Block.COLLIDER);
-            if (hitresult.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, hitresult)) {
+            HitResult hitresult = PortProjectileUtilExtension.getHitResultOnMoveVector(this, this::canHitEntity, ClipContext.Block.COLLIDER);
+            if (hitresult.getType() != HitResult.Type.MISS && !PortProjectileImpactEvent.onProjectileImpact(this, hitresult)) {
                 this.hitTargetOrDeflectSelf(hitresult);
             }
 
@@ -278,7 +276,7 @@ public class BoomerangProjectile extends Projectile {
     }
 
     @Override
-    public void onRemovedFromLevel() {
+    public void onRemovedFromWorld() {
         if (!level().isClientSide && !weapon.isEmpty() && getOwner() != null) {
             Boomerang.setBacked(weapon, SingleBooleanComponent.TRUE);
 
@@ -287,17 +285,15 @@ public class BoomerangProjectile extends Projectile {
             if (getOwner() instanceof Player player
 //                    && (modifier.shouldWaitForBack && !modifier.shouldApplyCd || modifier.maxCount - 1 == count)
             ) {
-
                 player.getCooldowns().removeCooldown(weapon.getItem());
 
-                if (WeaponStorage.of(player).leftClicking && weapon.is(player.getWeaponItem().getItem())) {
+                if (WeaponStorage.of(player).leftClicking && weapon.is(PortLivingEntityExtension.getWeaponItem(player).getItem())) {
                     Boomerang boomerang = (Boomerang) weapon.getItem();
                     boomerang.onLeftClick(player, weapon);
                 }
             }
-
         }
-        super.onRemovedFromLevel();
+        super.onRemovedFromWorld();
     }
 
     @Override

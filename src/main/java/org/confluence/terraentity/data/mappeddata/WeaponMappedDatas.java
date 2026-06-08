@@ -32,7 +32,7 @@ public class WeaponMappedDatas extends MappedData<WeaponMappedDatas.WeaponMapped
     static MappedDataType.Builder<WeaponMappedDatas.WeaponMappedDataType, WeaponMappedDatas> builder = MappedDataType.builder(WeaponMappedDatas.WeaponMappedDataType::new)
             .setComment("This file contains various default parameters of weapons. ");
 
-    public static MappedKey<WeaponMappedDatas.WeaponMappedDataType, WhipPathManager> WHIP_PATHS = builder.registerCodec("whip_path_config", WhipPathManager.CODEC)
+    public static final MappedKey<WeaponMappedDatas.WeaponMappedDataType, WhipPathManager> WHIP_PATHS = builder.registerCodec("whip_path_config", WhipPathManager.CODEC)
             .withDefaultValue(WhipPathManager::getDefaultParams)
             .withOnReload(WhipPathManager::onLoad);
 

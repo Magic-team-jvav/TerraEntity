@@ -1,34 +1,34 @@
 package org.confluence.terraentity.config;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.confluence.terraentity.client.gui.renderer.chat.bubble.BubbleConfig;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientConfig {
 
-    public static ModConfigSpec.ConfigValue<Integer> BossBarStyle;
-    public static ModConfigSpec.ConfigValue<Integer> BossBarNumberOffsetX;
-    public static ModConfigSpec.ConfigValue<Integer> BossBarNumberOffsetY;
+    public static ForgeConfigSpec.ConfigValue<Integer> BossBarStyle;
+    public static ForgeConfigSpec.ConfigValue<Integer> BossBarNumberOffsetX;
+    public static ForgeConfigSpec.ConfigValue<Integer> BossBarNumberOffsetY;
 
-    public static ModConfigSpec.BooleanValue GENERATE_PROJECTILE_PARTICLE;
+    public static ForgeConfigSpec.BooleanValue GENERATE_PROJECTILE_PARTICLE;
 
-    public static ModConfigSpec.BooleanValue ENABLE_NON_SPIDER_MODEL;
+    public static ForgeConfigSpec.BooleanValue ENABLE_NON_SPIDER_MODEL;
 
-    public static ModConfigSpec.EnumValue<BubbleConfig> NPC_CHAT_BUBBLE_STYLE;
+    public static ForgeConfigSpec.EnumValue<BubbleConfig> NPC_CHAT_BUBBLE_STYLE;
 
-    public static ModConfigSpec.BooleanValue ENABLE_ENTITY_MOTION_BLUR;
+    public static ForgeConfigSpec.BooleanValue ENABLE_ENTITY_MOTION_BLUR;
 
-    public static ModConfigSpec SPEC;
+    public static ForgeConfigSpec SPEC;
     public static int bossBarStyle;
 
     public static void load(){
         bossBarStyle = BossBarStyle.get();
     }
 
-    public static ModConfigSpec init(){
-        final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static ForgeConfigSpec init(){
+        final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
         BossBarStyle  = BUILDER
                 .comment("Boss Bar Style.")
                 .comment("0: Default, 1: Still Style, 2: Dynamic Style")

@@ -4,71 +4,70 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.renderer.mob.NPCRenderer;
 import org.confluence.terraentity.entity.npc.*;
 import org.confluence.terraentity.init.TEEntities;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
+import org.mesdag.portlib.event.entity.PortEntityAttributeCreationEvent;
+import org.mesdag.portlib.event.entity.PortRegisterSpawnPlacementsEvent;
+import org.mesdag.portlib.wrapper.world.entity.PortSpawnPlacementTypes;
 
 public class TENpcEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, TerraEntity.MODID);
 
     /// 向导
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> GUIDE = register("guide", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> GUIDE = register("guide", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 爆破专家
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> DEMOLITIONIST = register("demolitionist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> DEMOLITIONIST = register("demolitionist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 哥布林
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> GOBLIN_TINKERER = register("goblin_tinkerer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> GOBLIN_TINKERER = register("goblin_tinkerer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 武器商
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> ARMS_DEALER = register("arms_dealer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> ARMS_DEALER = register("arms_dealer", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 护士
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> NURSE = register("nurse", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> NURSE = register("nurse", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 商人
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> MERCHANT = register("merchant", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> MERCHANT = register("merchant", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 油漆工
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> PAINTER = register("painter", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> PAINTER = register("painter", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 渔夫
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> ANGLER = register("angler", AnglerNPC::new, MobCategory.CREATURE, 0.6f, 1.65f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> FEMALE_ANGLER = register("female_angler", AnglerNPC::new, MobCategory.CREATURE, 0.45f, 1.45F);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> ANGLER = register("angler", AnglerNPC::new, MobCategory.CREATURE, 0.6f, 1.65f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> FEMALE_ANGLER = register("female_angler", AnglerNPC::new, MobCategory.CREATURE, 0.45f, 1.45F);
     /// 树妖
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> DRYAD = register("dryad", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> DRYAD = register("dryad", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 染料商
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> DYE_TRADER = register("dye_trader", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> DYE_TRADER = register("dye_trader", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 老人
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> OLD_MAN = register("old_man", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> OLD_MAN = register("old_man", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 机械师
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> MECHANIC = register("mechanic", MechanicNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> MECHANIC = register("mechanic", MechanicNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 旅商
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> TRAVELING_MERCHANT = register("traveling_merchant", TravelingMerchantNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> TRAVELING_MERCHANT = register("traveling_merchant", TravelingMerchantNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 巫医
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> WITCH_DOCTOR = register("witch_doctor", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> WITCH_DOCTOR = register("witch_doctor", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 派对女孩
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> PARTY_GIRL = register("party_girl", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> PARTY_GIRL = register("party_girl", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 服装商
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> CLOTHIER = register("clothier", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> CLOTHIER = register("clothier", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 动物学家
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> ZOOLOGIST = register("zoologist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> ZOOLOGIST = register("zoologist", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 松露人
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> TRUFFLE = register("truffle", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> TRUFFLE = register("truffle", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
     /// 巫师
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractTerraNPC>> WIZARD = register("wizard", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
+    public static final RegistryObject<EntityType<AbstractTerraNPC>> WIZARD = register("wizard", SimpleNPC::new, MobCategory.CREATURE, 0.6f, 1.85f);
 
-    private static <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> register(String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height) {
+    private static <T extends Mob> RegistryObject<EntityType<T>> register(String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height) {
         return TEEntities.registerEntity(ENTITIES, name, entityFactory, category, width, height);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-
+    public static void registerRenderers(PortEntityRenderersEvent.PortRegisterRenderers event) {
         event.registerEntityRenderer(GUIDE.get(), c -> new NPCRenderer<>(c, GUIDE.getId()));
         event.registerEntityRenderer(DEMOLITIONIST.get(), c -> new NPCRenderer<>(c, DEMOLITIONIST.getId()));
         event.registerEntityRenderer(GOBLIN_TINKERER.get(), c -> new NPCRenderer<>(c, GOBLIN_TINKERER.getId()));
@@ -91,7 +90,7 @@ public class TENpcEntities {
         event.registerEntityRenderer(WIZARD.get(), c -> new NPCRenderer<>(c, WIZARD.getId()));
     }
 
-    public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+    public static void registerEntityAttributes(PortEntityAttributeCreationEvent event) {
         event.put(GUIDE.get(), AbstractTerraNPC.createAttributes().build());
         event.put(DEMOLITIONIST.get(), AbstractTerraNPC.createAttributes().build());
         event.put(GOBLIN_TINKERER.get(), AbstractTerraNPC.createAttributes().build());
@@ -114,26 +113,25 @@ public class TENpcEntities {
         event.put(WIZARD.get(), AbstractTerraNPC.createAttributes().build());
     }
 
-    public static void spawnPlacementRegister(RegisterSpawnPlacementsEvent event) {
-
-        event.register(GUIDE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DEMOLITIONIST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOBLIN_TINKERER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ARMS_DEALER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(NURSE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(MERCHANT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PAINTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ANGLER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DRYAD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DYE_TRADER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(OLD_MAN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(MECHANIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(TRAVELING_MERCHANT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(WITCH_DOCTOR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PARTY_GIRL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CLOTHIER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(TRUFFLE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ZOOLOGIST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+    public static void spawnPlacementRegister(PortRegisterSpawnPlacementsEvent event) {
+        event.register(GUIDE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DEMOLITIONIST.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOBLIN_TINKERER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ARMS_DEALER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(NURSE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(MERCHANT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PAINTER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ANGLER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DRYAD.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DYE_TRADER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(OLD_MAN.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(MECHANIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(TRAVELING_MERCHANT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(WITCH_DOCTOR.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PARTY_GIRL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CLOTHIER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(TRUFFLE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ZOOLOGIST.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractTerraNPC::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
     }
 
     public static void register(IEventBus bus) {

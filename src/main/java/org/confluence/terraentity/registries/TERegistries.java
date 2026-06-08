@@ -2,9 +2,7 @@ package org.confluence.terraentity.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
-import net.neoforged.neoforge.registries.RegistryBuilder;
+import net.minecraftforge.eventbus.api.IEventBus;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.init.TEEffectStrategies;
 import org.confluence.terraentity.registries.chat.ChatElementProvider;
@@ -34,29 +32,29 @@ import org.confluence.terraentity.registries.npc_trade_task.TradeTaskProvider;
 import org.confluence.terraentity.registries.npc_trade_task.TradeTaskProviderTypes;
 import org.confluence.terraentity.registries.track.TrackTypeProvider;
 import org.confluence.terraentity.registries.track.TrackTypeProviderTypes;
+import org.mesdag.portlib.registries.PortCustomRegistration;
+import org.mesdag.portlib.registries.PortRegisterHandler;
 
 import static net.minecraft.resources.ResourceKey.createRegistryKey;
 
 public class TERegistries {
+    public static final PortCustomRegistration<GenerationProvider> GENERATION_PROVIERS = createRegistry(Keys.GENERATION_PROVIDER);
+    public static final PortCustomRegistration<EffectStrategyProvider> EFFECT_STRATEGY_PROVIDERS = createRegistry(Keys.EFFECT_STRATEGY_PROVIDER);
+    public static final PortCustomRegistration<EffectStrategy> EFFECT_STRATEGIES = createRegistry(Keys.EFFECT_STRATEGY);
+    public static final PortCustomRegistration<TrackTypeProvider> TRACK_TYPE_PROVIDERS = createRegistry(Keys.TRACK_TYPE_PROVIDER);
+    public static final PortCustomRegistration<TradeProvider> TRADE_PROVIDERS = createRegistry(Keys.TRADE_PROVIDER);
+    public static final PortCustomRegistration<TradeTaskProvider> TRADE_TASK_PROVIDERS = createRegistry(Keys.TRADE_TASK_PROVIDER);
+    public static final PortCustomRegistration<TradeLockProvider> TRADE_LOCK_PROVIDERS = createRegistry(Keys.TRADE_LOCK_PROVIDER);
+    public static final PortCustomRegistration<TradeGeneratorProvider> TRADE_GENERATOR_PROVIDERS = createRegistry(Keys.TRADE_GENERATOR_PROVIDER);
+    public static final PortCustomRegistration<ChesterType> CHESTER_TYPES = createRegistry(Keys.CHESTER_TYPE);
+    public static final PortCustomRegistration<ChesterConditionalType> CHESTER_CONDITIONAL_TYPES = createRegistry(Keys.CHESTER_CONDITIONAL_TYPE);
+    public static final PortCustomRegistration<TradeModifierProvider> TRADE_MODIFIER_PROVIDERS = createRegistry(Keys.TRADE_MODIFIER_PROVIDER);
+    public static final PortCustomRegistration<ChatElementProvider> CHAT_ELEMENT_PROVIDERS = createRegistry(Keys.CHAT_ELEMENT_PROVIDER);
+    public static final PortCustomRegistration<ChatConditionProvider> CHAT_CONDITION_PROVIDERS = createRegistry(Keys.CHAT_CONDITION_PROVIDER);
+    public static final PortCustomRegistration<MappedDataType<?, ?>> MAPPED_DATAS = createRegistry(Keys.MAPPED_DATA);
 
-    public static final Registry<GenerationProvider> GENERATION_PROVIERS = createRegistry(Keys.GENERATION_PROVIDER);
-    public static final Registry<EffectStrategyProvider> EFFECT_STRATEGY_PROVIDERS = createRegistry(Keys.EFFECT_STRATEGY_PROVIDER);
-    public static final Registry<EffectStrategy> EFFECT_STRATEGIES = createRegistry(Keys.EFFECT_STRATEGY);
-    public static final Registry<TrackTypeProvider> TRACK_TYPE_PROVIDERS = createRegistry(Keys.TRACK_TYPE_PROVIDER);
-    public static final Registry<TradeProvider> TRADE_PROVIDERS = createRegistry(Keys.TRADE_PROVIDER);
-    public static final Registry<TradeTaskProvider> TRADE_TASK_PROVIDERS = createRegistry(Keys.TRADE_TASK_PROVIDER);
-    public static final Registry<TradeLockProvider> TRADE_LOCK_PROVIDERS = createRegistry(Keys.TRADE_LOCK_PROVIDER);
-    public static final Registry<TradeGeneratorProvider> TRADE_GENERATOR_PROVIDERS = createRegistry(Keys.TRADE_GENERATOR_PROVIDER);
-    public static final Registry<ChesterType> CHESTER_TYPES = createRegistry(Keys.CHESTER_TYPE);
-    public static final Registry<ChesterConditionalType> CHESTER_CONDITIONAL_TYPES = createRegistry(Keys.CHESTER_CONDITIONAL_TYPE);
-    public static final Registry<TradeModifierProvider> TRADE_MODIFIER_PROVIDERS = createRegistry(Keys.TRADE_MODIFIER_PROVIDER);
-    public static final Registry<ChatElementProvider> CHAT_ELEMENT_PROVIDERS = createRegistry(Keys.CHAT_ELEMENT_PROVIDER);
-    public static final Registry<ChatConditionProvider> CHAT_CONDITION_PROVIDERS = createRegistry(Keys.CHAT_CONDITION_PROVIDER);
-    public static final Registry<MappedDataType<?,?>> MAPPED_DATAS = createRegistry(Keys.MAPPED_DATA);
-
-
-    private static  <T> Registry<T> createRegistry(ResourceKey<Registry<T>> key) {
-        return new RegistryBuilder<>(key).create();
+    private static <T> PortCustomRegistration<T> createRegistry(ResourceKey<Registry<T>> key) {
+        return PortRegisterHandler.custom(TerraEntity.MODID, key, maker -> {});
     }
 
     public static class Keys {
@@ -73,29 +71,7 @@ public class TERegistries {
         public static final ResourceKey<Registry<TradeModifierProvider>> TRADE_MODIFIER_PROVIDER = createRegistryKey(TerraEntity.space("trade_modifier_provider"));
         public static final ResourceKey<Registry<ChatElementProvider>> CHAT_ELEMENT_PROVIDER = createRegistryKey(TerraEntity.space("chat_element"));
         public static final ResourceKey<Registry<ChatConditionProvider>> CHAT_CONDITION_PROVIDER = createRegistryKey(TerraEntity.space("chat_condition"));
-        public static final ResourceKey<Registry<MappedDataType<?,?>>> MAPPED_DATA = createRegistryKey(TerraEntity.space("mapped_data_type"));
-
-
-    }
-
-
-    // 注册监听
-    public static void newRegistry(NewRegistryEvent event) {
-        event.register(EFFECT_STRATEGY_PROVIDERS);
-        event.register(TRACK_TYPE_PROVIDERS);
-        event.register(GENERATION_PROVIERS);
-        event.register(EFFECT_STRATEGIES);
-        event.register(TRADE_PROVIDERS);
-        event.register(TRADE_TASK_PROVIDERS);
-        event.register(TRADE_LOCK_PROVIDERS);
-        event.register(TRADE_GENERATOR_PROVIDERS);
-        event.register(CHESTER_TYPES);
-        event.register(CHESTER_CONDITIONAL_TYPES);
-        event.register(TRADE_MODIFIER_PROVIDERS);
-        event.register(CHAT_ELEMENT_PROVIDERS);
-        event.register(CHAT_CONDITION_PROVIDERS);
-        event.register(MAPPED_DATAS);
-
+        public static final ResourceKey<Registry<MappedDataType<?, ?>>> MAPPED_DATA = createRegistryKey(TerraEntity.space("mapped_data_type"));
     }
 
     public static void register(IEventBus bus) {
@@ -113,7 +89,5 @@ public class TERegistries {
         ChatProviderTypes.TYPES.register(bus);
         ChatConditionProviderTypes.TYPES.register(bus);
         MappedDataTypes.TYPES.register(bus);
-
     }
-
 }

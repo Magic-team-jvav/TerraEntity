@@ -51,8 +51,8 @@ public class LineProj extends BaseProj<LineProj> {
     }
 
     @Override
-    public void onAddedToLevel(){
-        super.onAddedToLevel();
+    public void onAddedToWorld(){
+        super.onAddedToWorld();
         this.setDeltaMovement(getDeltaMovement().scale(0.01f));
     }
 }

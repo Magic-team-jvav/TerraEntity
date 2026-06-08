@@ -10,16 +10,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.init.TEEffects;
 import org.confluence.terraentity.utils.TEUtils;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 
-public class ThrownIceProjectile extends BaseProj<ThrownIceProjectile> {
+public class ThrownIceProjectile extends BaseProj<ThrownIceProjectile> implements IPortEntityExtension {
 
     public final Vector3f axis;
     public final float rotSpeed;
     public int lifetime;
     public ThrownIceProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel, new MobEffectInstance(TEEffects.FROST_BURN, 100));
+        super(pEntityType, pLevel, new MobEffectInstance(TEEffects.FROST_BURN.get(), 100));
         axis = new Vector3f(
                 this.level().random.nextFloat() - 0.5f,
                 this.level().random.nextFloat() - 0.5f,
@@ -37,7 +37,7 @@ public class ThrownIceProjectile extends BaseProj<ThrownIceProjectile> {
     }
 
     @Override
-    protected double getDefaultGravity() {
+    public double getDefaultGravity() {
         return 0.108f;
     }
 
@@ -47,15 +47,15 @@ public class ThrownIceProjectile extends BaseProj<ThrownIceProjectile> {
     }
 
     @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
         Vec3 dir = TEUtils.sphere(this.random.nextFloat() * 0.3f + 0.3f, this.random.nextFloat() * 6.28f, this.random.nextFloat() * 0.3f);
 //        Vec3 dir = TEUtils.sphere(0.5f, 0.3f, 3.14f);
         this.addDeltaMovement(dir.add(0,1,0));
     }
 
     @Override
-    protected void onHitBlock(@NotNull BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult pResult) {
         super.onHitBlock(pResult);
         if(!level().isClientSide()) {
             ((ServerLevel)level()).sendParticles(ParticleTypes.SNOWFLAKE, this.getX(), this.getY(), this.getZ(),

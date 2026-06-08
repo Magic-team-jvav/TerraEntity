@@ -7,8 +7,9 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import org.confluence.lib.common.entitiy.IBouncy;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 
-public class SpikeBallProjectile extends BaseProj<SpikeBallProjectile> implements IBouncy {
+public class SpikeBallProjectile extends BaseProj<SpikeBallProjectile> implements IBouncy, IPortEntityExtension {
     public Entity target;
 
     public SpikeBallProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {

@@ -1,21 +1,19 @@
 package org.confluence.terraentity.item;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attribute.PortAttributeExtension;
+import PortLib.extensions.net.minecraft.world.item.Item.PortItemExtension;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.confluence.lib.ConfluenceMagicLib;
 import org.confluence.lib.common.LibAttributes;
@@ -26,6 +24,12 @@ import org.confluence.terraentity.init.TEDataComponentTypes;
 import org.confluence.terraentity.init.entity.TEProjectileEntities;
 import org.confluence.terraentity.registries.hit_effect.IEffectStrategy;
 import org.confluence.terraentity.utils.TEUtils;
+import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.component.PortDataComponentType;
+import org.mesdag.portlib.registries.PortRegistryEntry;
+import org.mesdag.portlib.wrapper.world.entity.PortEquipmentSlotGroup;
+import org.mesdag.portlib.wrapper.world.entity.ai.attributes.PortAttributeModifier;
+import org.mesdag.portlib.wrapper.world.item.component.PortItemAttributeModifiers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,30 +63,23 @@ public class BaseWhipItem extends Item implements ILeftClickStateItem {
             int hitCooldown,
             float rangeFactor
     ) {
-        super(properties.stacksTo(1)
-                .attributes(ItemAttributeModifiers.builder()
-                        .add(
-                                LibAttributes.getSummonDamage(),
-                                new AttributeModifier(TerraEntity.space("whip_damage_modifier"), damage, AttributeModifier.Operation.ADD_VALUE),
-                                EquipmentSlotGroup.MAINHAND
-                        )
-                        .add(
-                                Attributes.ATTACK_SPEED,
-                                new AttributeModifier(TerraEntity.space("whip_attack_speed_modifier"), attackSpeed, AttributeModifier.Operation.ADD_MULTIPLIED_BASE),
-                                EquipmentSlotGroup.MAINHAND
-                        )
-                        .add(
-                                ConfluenceMagicLib.MARK_DAMAGE,
-                                new AttributeModifier(TerraEntity.space("whip_mark_damage_modifier"), markDamage, AttributeModifier.Operation.ADD_VALUE),
-                                EquipmentSlotGroup.MAINHAND
-                        )
-                        .add(
-                                ConfluenceMagicLib.WHIP_RANGE,
-                                new AttributeModifier(TerraEntity.space("whip_range_modifier"), rangeFactor, AttributeModifier.Operation.ADD_MULTIPLIED_BASE),
-                                EquipmentSlotGroup.MAINHAND
-                        )
-                        .build())
-        );
+        super(PortItemExtension.Properties.attributes(properties.stacksTo(1), PortItemAttributeModifiers.builder().add(
+                LibAttributes.getSummonDamage(),
+                new PortAttributeModifier(TerraEntity.space("whip_damage_modifier"), damage, PortAttributeModifier.PortOperation.ADD_VALUE),
+                PortEquipmentSlotGroup.MAINHAND
+        ).add(
+                PortAttributeExtension.wrap(Attributes.ATTACK_SPEED),
+                new PortAttributeModifier(TerraEntity.space("whip_attack_speed_modifier"), attackSpeed, PortAttributeModifier.PortOperation.ADD_MULTIPLIED_BASE),
+                PortEquipmentSlotGroup.MAINHAND
+        ).add(
+                ConfluenceMagicLib.MARK_DAMAGE,
+                new PortAttributeModifier(TerraEntity.space("whip_mark_damage_modifier"), markDamage, PortAttributeModifier.PortOperation.ADD_VALUE),
+                PortEquipmentSlotGroup.MAINHAND
+        ).add(
+                ConfluenceMagicLib.WHIP_RANGE,
+                new PortAttributeModifier(TerraEntity.space("whip_range_modifier"), rangeFactor, PortAttributeModifier.PortOperation.ADD_MULTIPLIED_BASE),
+                PortEquipmentSlotGroup.MAINHAND
+        ).build()));
         this.hitCooldown = hitCooldown;
         if (properties instanceof WhipProperties whipProperties) {
             this.particleOptions = whipProperties.particleOptions;
@@ -101,18 +98,18 @@ public class BaseWhipItem extends Item implements ILeftClickStateItem {
     }
 
     @Override
-    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
-        return enchantment.is(Enchantments.LOOTING) || super.supportsEnchantment(stack, enchantment);
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return enchantment == Enchantments.MOB_LOOTING || super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        var data = stack.get(TEDataComponentTypes.EFFECT_STRATEGY);
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        var data = PortItemStackExtension.getData(stack, TEDataComponentTypes.EFFECT_STRATEGY);
         if (data != null) {
             IEffectStrategy.appendDescription(tooltipComponents, data.effects(), Component.translatable("tooltip.terra_entity.whip.hit_effect").withStyle(style -> style.withColor(0xB4C363)));
         }
         // 农场主增益
-        var data1 = stack.get(TEDataComponentTypes.EFFECT_STRATEGY_BENEFICIAL);
+        var data1 = PortItemStackExtension.getData(stack, TEDataComponentTypes.EFFECT_STRATEGY_BENEFICIAL);
         if (data1 != null) {
             tooltipComponents.add(Component.literal(" ? ? ?").withStyle(style -> style.withColor(0x666666).withObfuscated(true)));
 //            IEffectStrategy.appendDescription(tooltipComponents, data1.effects(), Component.translatable("tooltip.terra_entity.whip.hit_effect_beneficial").withStyle(style -> style.withColor(0x84C363)), 0x678563);
@@ -201,10 +198,18 @@ public class BaseWhipItem extends Item implements ILeftClickStateItem {
             return this;
         }
 
+        public <T> WhipProperties component(PortRegistryEntry<PortDataComponentType<?>, PortDataComponentType<T>> type, T value) {
+            return component(type.get(), value);
+        }
+
+        public <T> WhipProperties component(PortDataComponentType<T> type, T value) {
+            PortItemExtension.Properties.component(this, type, value);
+            return this;
+        }
+
         /// 生成Properties
         public Properties buildProperties() {
-
-            if (!hasDamage) this.component(DataComponents.UNBREAKABLE, new Unbreakable(true));
+            if (!hasDamage) PortItemExtension.Properties.unbreakable(this);
             return modifiers.stream().reduce(this, (p, m) -> (WhipProperties) m.apply(p), (p1, p2) -> p1);
         }
     }

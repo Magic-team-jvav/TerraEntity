@@ -12,19 +12,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.confluence.lib.ConfluenceMagicLib;
 import org.confluence.terraentity.api.entity.ISummonMob;
 import org.confluence.terraentity.network.s2c.SyncSummonPacket;
 import org.confluence.terraentity.registries.TERegistries;
 import org.confluence.terraentity.registries.chester.ChesterConditionalType;
+import org.mesdag.portlib.wrapper.IPortNBTSerializable;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /// 召唤师附件
-public class SummonerAttachment implements INBTSerializable<CompoundTag> {
+public class SummonerAttachment implements IPortNBTSerializable<CompoundTag> {
     /// 当前仆从栏容量
     int currentCapacity = 1;
     SummonerType type;

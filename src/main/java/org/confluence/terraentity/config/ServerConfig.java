@@ -1,35 +1,35 @@
 package org.confluence.terraentity.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ServerConfig {
-    public static ModConfigSpec.BooleanValue BOSS_CLEAR_WHEN_NO_TARGET;
-    public static ModConfigSpec.DoubleValue BOSS_ATTRIBUTES_MULTIPLIER_HEALTH;
-    public static ModConfigSpec.DoubleValue BOSS_ATTRIBUTES_MULTIPLIER_DAMAGE;
-    private static ModConfigSpec.BooleanValue BOSS_NO_PHYSICS;
-    public static ModConfigSpec.BooleanValue BOSS_LEAVE_ON_DAY;
-    public static ModConfigSpec.BooleanValue BOSS_KEEP_WANDERING;
+    public static ForgeConfigSpec.BooleanValue BOSS_CLEAR_WHEN_NO_TARGET;
+    public static ForgeConfigSpec.DoubleValue BOSS_ATTRIBUTES_MULTIPLIER_HEALTH;
+    public static ForgeConfigSpec.DoubleValue BOSS_ATTRIBUTES_MULTIPLIER_DAMAGE;
+    private static ForgeConfigSpec.BooleanValue BOSS_NO_PHYSICS;
+    public static ForgeConfigSpec.BooleanValue BOSS_LEAVE_ON_DAY;
+    public static ForgeConfigSpec.BooleanValue BOSS_KEEP_WANDERING;
 
-//    public static ModConfigSpec.BooleanValue RESPAWN_PROTECT;
-
-
-    public static ModConfigSpec.BooleanValue ENHANCE_ALL_MONSTER;
-    public static ModConfigSpec.DoubleValue MONSTER_ATTRIBUTES_MULTIPLIER_HEALTH;
-    public static ModConfigSpec.DoubleValue MONSTER_ATTRIBUTES_MULTIPLIER_DAMAGE;
-
-    public static ModConfigSpec.BooleanValue SPAWN_WITHOUT_LIGHT;
-
-    public static ModConfigSpec.DoubleValue CHANCE_TO_SPAWN_SLIME_ON_ZOMBIE_HEAD;
-    public static ModConfigSpec.DoubleValue ENEMY_SPAWN_CHANCE;
-    public static ModConfigSpec.BooleanValue ENEMY_SPAWN_CHANCE_APPLY_ALL;
-
-    public static ModConfigSpec.IntValue BEHAVIOR_TREE_WEB_VIEWER_SERVER_PORT;
+//    public static ForgeConfigSpec.BooleanValue RESPAWN_PROTECT;
 
 
-    private static ModConfigSpec spec;
+    public static ForgeConfigSpec.BooleanValue ENHANCE_ALL_MONSTER;
+    public static ForgeConfigSpec.DoubleValue MONSTER_ATTRIBUTES_MULTIPLIER_HEALTH;
+    public static ForgeConfigSpec.DoubleValue MONSTER_ATTRIBUTES_MULTIPLIER_DAMAGE;
 
-    public static ModConfigSpec init(){
-        final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static ForgeConfigSpec.BooleanValue SPAWN_WITHOUT_LIGHT;
+
+    public static ForgeConfigSpec.DoubleValue CHANCE_TO_SPAWN_SLIME_ON_ZOMBIE_HEAD;
+    public static ForgeConfigSpec.DoubleValue ENEMY_SPAWN_CHANCE;
+    public static ForgeConfigSpec.BooleanValue ENEMY_SPAWN_CHANCE_APPLY_ALL;
+
+    public static ForgeConfigSpec.IntValue BEHAVIOR_TREE_WEB_VIEWER_SERVER_PORT;
+
+
+    private static ForgeConfigSpec spec;
+
+    public static ForgeConfigSpec init(){
+        final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
         BOSS_CLEAR_WHEN_NO_TARGET = BUILDER
                 .comment("When a boss has no target, should it be cleared?")

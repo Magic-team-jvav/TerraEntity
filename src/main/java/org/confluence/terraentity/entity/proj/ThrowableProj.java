@@ -49,10 +49,10 @@ public class ThrowableProj extends BaseProj<ThrowableProj> {
     public static final EntityDataAccessor<Vector3f> DATA_TARGET = SynchedEntityData.defineId(ThrowableProj.class, EntityDataSerializers.VECTOR3);
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_HEIGHT, new Vector3f(0,0,0));
-        builder.define(DATA_TARGET, new Vector3f(0,0,0));
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(DATA_HEIGHT, new Vector3f(0,0,0));
+        entityData.define(DATA_TARGET, new Vector3f(0,0,0));
 
     }
 
@@ -68,8 +68,8 @@ public class ThrowableProj extends BaseProj<ThrowableProj> {
     }
 
     @Override
-    public void onAddedToLevel(){
-        super.onAddedToLevel();
+    public void onAddedToWorld(){
+        super.onAddedToWorld();
         if(!level().isClientSide) {
             if(targetPos==null) {
                 discard();

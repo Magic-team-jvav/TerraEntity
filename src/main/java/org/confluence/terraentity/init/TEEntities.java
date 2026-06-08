@@ -3,17 +3,17 @@ package org.confluence.terraentity.init;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.init.entity.*;
 import org.jetbrains.annotations.NotNull;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
+import org.mesdag.portlib.event.entity.PortEntityAttributeCreationEvent;
+import org.mesdag.portlib.event.entity.PortRegisterSpawnPlacementsEvent;
 
 import java.util.stream.Stream;
 
@@ -22,20 +22,20 @@ public final class TEEntities {
         return TerraEntity.MODID + ":" + key;
     }
 
-    public static <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerMonster(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, float width, float height) {
+    public static <T extends Mob> RegistryObject<EntityType<T>> registerMonster(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, float width, float height) {
         return registerEntity(register, name, entityFactory, MobCategory.MONSTER, width, height);
     }
 
-    public static <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerCreature(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, float width, float height) {
+    public static <T extends Mob> RegistryObject<EntityType<T>> registerCreature(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, float width, float height) {
         return registerEntity(register, name, entityFactory, MobCategory.CREATURE, width, height);
     }
 
-    public static <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerEntity(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height) {
+    public static <T extends Mob> RegistryObject<EntityType<T>> registerEntity(DeferredRegister<EntityType<?>> register, String name, EntityType.EntityFactory<T> entityFactory, MobCategory category, float width, float height) {
         return register.register(name, () -> EntityType.Builder.of(entityFactory, category).sized(width, height).clientTrackingRange(10).build(Key(name)));
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerEntityRenderers(PortEntityRenderersEvent.PortRegisterRenderers event) {
         TEMonsterEntities.registerRenderers(event);
         TEBossEntities.registerRenderers(event);
         TEProjectileEntities.registerRenderers(event);
@@ -45,7 +45,7 @@ public final class TEEntities {
         TEAnimals.registerRenderers(event);
     }
 
-    public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+    public static void registerEntityAttributes(PortEntityAttributeCreationEvent event) {
         TEBossEntities.registerEntityAttributes(event);
         TEMonsterEntities.registerEntityAttributes(event);
         TERideableEntities.registerEntityAttributes(event);
@@ -54,7 +54,7 @@ public final class TEEntities {
         TEAnimals.registerEntityAttributes(event);
     }
 
-    public static void spawnPlacementRegister(RegisterSpawnPlacementsEvent event) {
+    public static void spawnPlacementRegister(PortRegisterSpawnPlacementsEvent event) {
         TEMonsterEntities.spawnPlacementRegister(event);
         TENpcEntities.spawnPlacementRegister(event);
         TEAnimals.spawnPlacementRegister(event);

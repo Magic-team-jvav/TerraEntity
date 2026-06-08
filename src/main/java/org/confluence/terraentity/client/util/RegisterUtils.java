@@ -6,9 +6,9 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.confluence.terraentity.client.entity.renderer.proj.ProjRenderer;
 import org.confluence.terraentity.entity.proj.BaseProj;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
 
 import java.lang.reflect.Field;
 import java.util.function.Function;
@@ -36,15 +36,15 @@ public class RegisterUtils {
         };
     }
 
-    public static void registerModel(EntityRenderersEvent.RegisterLayerDefinitions evt, Class<? extends Model> clz){
+    public static void registerModel(PortEntityRenderersEvent.PortRegisterLayerDefinitions evt, Class<? extends Model> clz){
         evt.registerLayerDefinition(getModelDefine(clz), getLayerDefinition(clz));
     }
 
-    public static <T extends BaseProj>void registerBaseProjRenderer(EntityRenderersEvent.RegisterRenderers event, EntityType<T> entityType, Function<EntityRendererProvider.Context, EntityModel<T>> model){
+    public static <T extends BaseProj>void registerBaseProjRenderer(PortEntityRenderersEvent.PortRegisterRenderers event, EntityType<T> entityType, Function<EntityRendererProvider.Context, EntityModel<T>> model){
         event.registerEntityRenderer(entityType, (dispatcher)-> new ProjRenderer<>(dispatcher, model.apply(dispatcher),1,0));
     }
 
-    public static <T extends BaseProj>void registerBaseProjRenderer(EntityRenderersEvent.RegisterRenderers event, EntityType<T> entityType, Function<EntityRendererProvider.Context, EntityModel<T>> model, float size, float offsetY){
+    public static <T extends BaseProj>void registerBaseProjRenderer(PortEntityRenderersEvent.PortRegisterRenderers event, EntityType<T> entityType, Function<EntityRendererProvider.Context, EntityModel<T>> model, float size, float offsetY){
         event.registerEntityRenderer(entityType, (dispatcher)-> new ProjRenderer<>(dispatcher, model.apply(dispatcher),size,offsetY));
     }
 }

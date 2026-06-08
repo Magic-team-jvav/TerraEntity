@@ -134,12 +134,6 @@ public class TrailSwordProj<T extends TrailSwordProj<T>> extends BaseProj<T> imp
 //    }
 
     @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
-//        this.setPos(getHandPosition(0));
-    }
-
-    @Override
     public int getLifetime() {
         return (int) (40 / speed);
     }

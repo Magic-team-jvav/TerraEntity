@@ -1,5 +1,6 @@
 package org.confluence.terraentity.entity.proj;
 
+import PortLib.extensions.java.util.List.PortListExtension;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -17,14 +18,15 @@ public class TrailProjectile extends LineProj {
 
     private final List<Vec3> trails = new LinkedList<>();
     protected Vec3 posO = Vec3.ZERO;
+
     public TrailProjectile(EntityType<TrailProjectile> type, Level level) {
         super(type, level);
         this.setNoGravity(true);
-        this.setExistTick(20*8);
+        this.setExistTick(20 * 8);
     }
 
     public TrailProjectile(Level level, int trailColor) {
-        this(TEProjectileEntities.TRAIL_PROJECTILE.get(),level);
+        this(TEProjectileEntities.TRAIL_PROJECTILE.get(), level);
         setTrailColor(trailColor);
     }
 
@@ -37,7 +39,7 @@ public class TrailProjectile extends LineProj {
             }
             trails.add(this.position());
             if (trails.size() > 5 || posO == this.position()) {
-                trails.removeFirst();
+                PortListExtension.removeFirst(trails);
             }
             posO = this.position();
         }
@@ -45,9 +47,9 @@ public class TrailProjectile extends LineProj {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_TRAIL_COLOR, 0xFFFFFF);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(DATA_TRAIL_COLOR, 0xFFFFFF);
     }
 
     public void setTrailColor(int color) {
@@ -73,4 +75,4 @@ public class TrailProjectile extends LineProj {
     public List<Vec3> getTrails() {
         return trails;
     }
-} 
+}

@@ -11,19 +11,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import software.bernie.geckolib.animatable.GeoAnimatable;
+import org.confluence.lib.util.LibUtils;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
 public class LavaPillar extends BaseProj<LavaPillar> implements GeoEntity {
-
     AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     int triggerTime = 50;
     int continueTime = 40;
@@ -49,7 +48,7 @@ public class LavaPillar extends BaseProj<LavaPillar> implements GeoEntity {
 
     // 取消渲染模型
     @Override
-    public ResourceLocation getTexture(){
+    public ResourceLocation getTexture() {
         return null;
     }
 
@@ -57,27 +56,27 @@ public class LavaPillar extends BaseProj<LavaPillar> implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        if(this.level() instanceof ServerLevel serverLevel) {
+        if (this.level() instanceof ServerLevel serverLevel) {
 
             if (this.tickCount < triggerTime) {
-                if(tickCount % 4 == 0) {
+                if (tickCount % 4 == 0) {
                     serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.2f, this.getZ(), 4, 0.0D, 0.5D, 0.0D, 0);
                 }
             } else {
-                if(this.tickCount == triggerTime){
+                if (this.tickCount == triggerTime) {
                     this.triggerAnim("Up", "up");
                 }
                 float f = (this.tickCount - triggerTime) * 1.0f / continueTime;
-                f = f * ( 1f - f);
-                if(tickCount % 8 == 0) {
+                f = f * (1f - f);
+                if (tickCount % 8 == 0) {
                     serverLevel.sendParticles(ParticleTypes.LAVA, this.getX(), this.getY() + 1f, this.getZ(),
                             10, 0, f * 12, 0, 0);
                 }
 
-                if(this.tickCount % 10 == 0){
-                    if(tickCount > triggerTime + continueTime * 0.5f){
+                if (this.tickCount % 10 == 0) {
+                    if (tickCount > triggerTime + continueTime * 0.5f) {
                         this.doHurt(this.getBoundingBox().inflate(1).setMaxY(this.getY() + 3.0D));
-                    }else {
+                    } else {
                         this.doHurt(this.getBoundingBox().setMaxY(this.getY() + 3.0D));
                     }
                 }
@@ -85,18 +84,19 @@ public class LavaPillar extends BaseProj<LavaPillar> implements GeoEntity {
         }
     }
 
-    private void doHurt(AABB aabb){
-        List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class,aabb , e->this.getOwner() == null ||
+    private void doHurt(AABB aabb) {
+        List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, aabb, e -> this.getOwner() == null ||
                 this.getOwner() instanceof LivingEntity living && living.canAttack(e));
         for (LivingEntity livingentity : list) {
-            livingentity.hurt(this.damageSources().source(DamageTypes.LAVA, this.getOwner()), this.damage);
+            livingentity.hurt(LibUtils.damageSource(level(), DamageTypes.LAVA, this.getOwner()), this.damage);
         }
     }
 
-    static RawAnimation up = RawAnimation.begin().thenPlay("up");
+    static final RawAnimation up = RawAnimation.begin().thenPlay("up");
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<GeoAnimatable>(this, "Up", state -> PlayState.CONTINUE)
+        controllers.add(new AnimationController<>(this, "Up", state -> PlayState.CONTINUE)
                 .triggerableAnim("up", up)
         );
     }
@@ -106,7 +106,7 @@ public class LavaPillar extends BaseProj<LavaPillar> implements GeoEntity {
         return cache;
     }
 
-    public boolean isTriggered(){
+    public boolean isTriggered() {
         return this.tickCount >= 50;
     }
 }

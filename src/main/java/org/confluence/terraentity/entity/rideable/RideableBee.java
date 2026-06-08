@@ -1,23 +1,18 @@
 package org.confluence.terraentity.entity.rideable;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.api.entity.IFlyRideableMob;
 import org.confluence.terraentity.init.TEAttachments;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
 
 public class RideableBee extends AbstractRideableEntity implements IFlyRideableMob {
@@ -26,7 +21,7 @@ public class RideableBee extends AbstractRideableEntity implements IFlyRideableM
 
     public RideableBee(EntityType<? extends Mob> entityType, Level level) {
         super(entityType, level);
-        this.getAttribute(Attributes.GRAVITY).setBaseValue(0.03f);
+        this.getAttribute(PortAttributesExtension.gravity().value()).setBaseValue(0.03f);
     }
 
     public void tick(){

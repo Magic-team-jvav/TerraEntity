@@ -1,5 +1,6 @@
 package org.confluence.terraentity.entity.proj;
 
+import PortLib.extensions.net.minecraft.world.entity.projectile.ProjectileUtil.PortProjectileUtilExtension;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -23,8 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.api.entity.*;
@@ -33,6 +33,7 @@ import org.confluence.terraentity.registries.hit_effect.IEffectStrategy;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.mesdag.portlib.event.entity.PortProjectileImpactEvent;
 
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     protected List<MobEffectInstance> effects;
     protected IEffectStrategy effectStrategy;
     public ResourceLocation texture = TerraEntity.space("textures/entity/projectile/default.png");
-    protected DeferredHolder<SoundEvent, SoundEvent> hitSound;
+    protected RegistryObject<SoundEvent> hitSound;
     public Consumer<BaseProj> clientTickCallback;
     public ITrackType trackType;
     public IGeneration generation;
@@ -87,7 +88,7 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         this.effects = pEffects;
     }
 
-    public T setHitSound(DeferredHolder<SoundEvent, SoundEvent> hitSound) {
+    public T setHitSound(RegistryObject<SoundEvent> hitSound) {
         this.hitSound = hitSound;
         return (T) this;
     }
@@ -179,9 +180,9 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_INIT_SPEED, new Vector3f(0, 0, 0));
-        builder.define(DATA_SCALE, 1.0f);
+    protected void defineSynchedData() {
+        entityData.define(DATA_INIT_SPEED, new Vector3f(0, 0, 0));
+        entityData.define(DATA_SCALE, 1.0f);
     }
 
     @Override
@@ -223,8 +224,8 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
         if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
             super.tick();
 
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, ClipContext.Block.COLLIDER);
-            if (hitresult.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, hitresult)) {
+            HitResult hitresult = PortProjectileUtilExtension.getHitResultOnMoveVector(this, this::canHitEntity, ClipContext.Block.COLLIDER);
+            if (hitresult.getType() != HitResult.Type.MISS && !PortProjectileImpactEvent.onProjectileImpact(this, hitresult)) {
                 if (hitresult.getType() == HitResult.Type.BLOCK) {
                     BlockHitResult blockhitresult = (BlockHitResult) hitresult;
                     this.onHitBlock(blockhitresult);
@@ -273,8 +274,8 @@ public abstract class BaseProj<T extends BaseProj<T>> extends Projectile impleme
     }
 
     @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
         if (!level().isClientSide()) {
 //            if(getOwner()==null){
 ////                discard();

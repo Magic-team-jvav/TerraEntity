@@ -1,5 +1,6 @@
 package org.confluence.terraentity.init.entity;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.core.registries.Registries;
@@ -7,20 +8,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.*;
 import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
@@ -43,6 +41,10 @@ import org.confluence.terraentity.entity.util.AttBuilder;
 import org.confluence.terraentity.entity.util.SpawnPlacementChecks;
 import org.confluence.terraentity.init.TEEntities;
 import org.confluence.terraentity.init.TESounds;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
+import org.mesdag.portlib.event.entity.PortEntityAttributeCreationEvent;
+import org.mesdag.portlib.event.entity.PortRegisterSpawnPlacementsEvent;
+import org.mesdag.portlib.wrapper.world.entity.PortSpawnPlacementTypes;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 
 import java.util.List;
@@ -52,167 +54,167 @@ public class TEMonsterEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, TerraEntity.MODID);
 
     // 史莱姆
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> BLUE_SLIME = registerSlime("blue_slime", 0x73bcf4, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> GREEN_SLIME = registerSlime("green_slime", 0x48E920, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> PINK_SLIME = registerSlime("pink_slime", 0xFF87B3, 1);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> DUNGEON_SLIME = registerSlime("dungeon_slime", 0x6d697b, 3);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> CORRUPT_SLIME = registerSlime("corrupt_slime", 0xC91717, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> DESERT_SLIME = registerSlime("desert_slime", 0xDCC59a, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> JUNGLE_SLIME = registerSlime("jungle_slime", 0x9ae920, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> EVIL_SLIME = registerSlime("evil_slime", 0xFF00FF, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> ICE_SLIME = registerSlime("ice_slime", 0xB3F0EA, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> LAVA_SLIME = ENTITIES.register("lava_slime", () -> EntityType.Builder.<BaseSlime>of((entityType, level) -> new BaseSlime(entityType, level, 0xFFB150, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).fireImmune().build(TEEntities.Key("lava_slime")));
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> LUMINOUS_SLIME = registerSlime("luminous_slime", 0xFFFFFF, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> CRIMSLIME = registerSlime("crimslime", 0x8B4949, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> PURPLE_SLIME = registerSlime("purple_slime", 0xf334f8, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> RED_SLIME = registerSlime("red_slime", 0xf83434, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> TROPIC_SLIME = registerSlime("tropic_slime", 0x73bcf4, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> YELLOW_SLIME = registerSlime("yellow_slime", 0xf8e234, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<HoneySlime>> HONEY_SLIME = ENTITIES.register("honey_slime", () -> EntityType.Builder.<HoneySlime>of((entityType, level) -> new HoneySlime(entityType, level, 0xf8e234), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("honey_slime")));
-    public static final DeferredHolder<EntityType<?>, EntityType<BlackSlime>> BLACK_SLIME = ENTITIES.register("black_slime", () -> EntityType.Builder.of(BlackSlime::new, MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("black_slime")));
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> GREEN_DUMPLING_SLIME = registerSlime("green_dumpling_slime", 0x32CD32, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseSlime>> SWAMP_SLIME = registerSlime("swamp_slime", 0x556B2F, 2);
-    public static final DeferredHolder<EntityType<?>, EntityType<GoldenSlime>> GOLDEN_SLIME = ENTITIES.register("golden_slime", () -> EntityType.Builder.of(GoldenSlime::new, MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("golden_slime")));
-    public static final DeferredHolder<EntityType<?>, EntityType<FleshSlime>> FLESH_SLIME = ENTITIES.register("flesh_slime", () -> EntityType.Builder.<FleshSlime>of((entityType, level) -> new FleshSlime(entityType, level, 0xFF0000, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("fleshed_slime")));
+    public static final RegistryObject<EntityType<BaseSlime>> BLUE_SLIME = registerSlime("blue_slime", 0x73bcf4, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> GREEN_SLIME = registerSlime("green_slime", 0x48E920, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> PINK_SLIME = registerSlime("pink_slime", 0xFF87B3, 1);
+    public static final RegistryObject<EntityType<BaseSlime>> DUNGEON_SLIME = registerSlime("dungeon_slime", 0x6d697b, 3);
+    public static final RegistryObject<EntityType<BaseSlime>> CORRUPT_SLIME = registerSlime("corrupt_slime", 0xC91717, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> DESERT_SLIME = registerSlime("desert_slime", 0xDCC59a, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> JUNGLE_SLIME = registerSlime("jungle_slime", 0x9ae920, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> EVIL_SLIME = registerSlime("evil_slime", 0xFF00FF, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> ICE_SLIME = registerSlime("ice_slime", 0xB3F0EA, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> LAVA_SLIME = ENTITIES.register("lava_slime", () -> EntityType.Builder.<BaseSlime>of((entityType, level) -> new BaseSlime(entityType, level, 0xFFB150, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).fireImmune().build(TEEntities.Key("lava_slime")));
+    public static final RegistryObject<EntityType<BaseSlime>> LUMINOUS_SLIME = registerSlime("luminous_slime", 0xFFFFFF, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> CRIMSLIME = registerSlime("crimslime", 0x8B4949, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> PURPLE_SLIME = registerSlime("purple_slime", 0xf334f8, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> RED_SLIME = registerSlime("red_slime", 0xf83434, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> TROPIC_SLIME = registerSlime("tropic_slime", 0x73bcf4, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> YELLOW_SLIME = registerSlime("yellow_slime", 0xf8e234, 2);
+    public static final RegistryObject<EntityType<HoneySlime>> HONEY_SLIME = ENTITIES.register("honey_slime", () -> EntityType.Builder.<HoneySlime>of((entityType, level) -> new HoneySlime(entityType, level, 0xf8e234), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("honey_slime")));
+    public static final RegistryObject<EntityType<BlackSlime>> BLACK_SLIME = ENTITIES.register("black_slime", () -> EntityType.Builder.of(BlackSlime::new, MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("black_slime")));
+    public static final RegistryObject<EntityType<BaseSlime>> GREEN_DUMPLING_SLIME = registerSlime("green_dumpling_slime", 0x32CD32, 2);
+    public static final RegistryObject<EntityType<BaseSlime>> SWAMP_SLIME = registerSlime("swamp_slime", 0x556B2F, 2);
+    public static final RegistryObject<EntityType<GoldenSlime>> GOLDEN_SLIME = ENTITIES.register("golden_slime", () -> EntityType.Builder.of(GoldenSlime::new, MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("golden_slime")));
+    public static final RegistryObject<EntityType<FleshSlime>> FLESH_SLIME = ENTITIES.register("flesh_slime", () -> EntityType.Builder.<FleshSlime>of((entityType, level) -> new FleshSlime(entityType, level, 0xFF0000, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("fleshed_slime")));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SpikedSlime>> SPIKED_SLIME = ENTITIES.register("spiked_slime", () -> EntityType.Builder.<SpikedSlime>of((entityType, level) -> new SpikedSlime(entityType, level, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("spiked_slime")));
-    public static final DeferredHolder<EntityType<?>, EntityType<SpikedSlime>> SPIKED_JUNGLE_SLIME = ENTITIES.register("spiked_jungle_slime", () -> EntityType.Builder.<SpikedSlime>of((entityType, level) -> SpikedJungleSlime.createSpikedJungleSlime(entityType, level, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("spiked_jungle_slime")));
-    public static final DeferredHolder<EntityType<?>, EntityType<SpikedSlime>> SPIKED_ICE_SLIME = ENTITIES.register("spiked_ice_slime", () -> EntityType.Builder.<SpikedSlime>of((entityType, level) -> SpikedJungleSlime.createSpikedIceSlime(entityType, level, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("spiked_ice_slime")));
+    public static final RegistryObject<EntityType<SpikedSlime>> SPIKED_SLIME = ENTITIES.register("spiked_slime", () -> EntityType.Builder.<SpikedSlime>of((entityType, level) -> new SpikedSlime(entityType, level, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("spiked_slime")));
+    public static final RegistryObject<EntityType<SpikedSlime>> SPIKED_JUNGLE_SLIME = ENTITIES.register("spiked_jungle_slime", () -> EntityType.Builder.<SpikedSlime>of((entityType, level) -> SpikedJungleSlime.createSpikedJungleSlime(entityType, level, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("spiked_jungle_slime")));
+    public static final RegistryObject<EntityType<SpikedSlime>> SPIKED_ICE_SLIME = ENTITIES.register("spiked_ice_slime", () -> EntityType.Builder.<SpikedSlime>of((entityType, level) -> SpikedJungleSlime.createSpikedIceSlime(entityType, level, 2), MobCategory.MONSTER).sized(0.6F, 0.6F).clientTrackingRange(10).build(TEEntities.Key("spiked_ice_slime")));
 
     // 飞行怪
-    public static final DeferredHolder<EntityType<?>, EntityType<DemonEye>> DEMON_EYE = TEEntities.registerMonster(ENTITIES, "demon_eye", DemonEye::new, 1.1F, 1.1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> CRIMERA = registerSimpleMonster("crimera", FlyMonsterPrefab.CRIMERA_BUILDER, 1.2f, 1.2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> EATER_OF_SOULS = registerSimpleMonster("eater_of_souls", FlyMonsterPrefab.EATER_OF_SOULS_BUILDER, 1.2f, 1.2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> DRIPPLER = registerSimpleMonster("drippler", FlyMonsterPrefab.DRIPPLER_BUILDER, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> SERVANT_OF_CTHULHU = registerSimpleMonster("servant_of_cthulhu", FlyMonsterPrefab.SERVANT_OF_CTHULHU_BUILDER, 1.1f, 1.1f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> WANDERING_EYE_FISH = registerSimpleMonster("wandering_eye_fish", FlyMonsterPrefab.WANDERING_EYE_FISH_BUILDER, 1.4f, 1.4f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> FLYING_FISH = registerSimpleMonster("flying_fish", FlyMonsterPrefab.FLYING_FISH_BUILDER, 0.9F, 0.9F);
-    public static final DeferredHolder<EntityType<?>, EntityType<VisualNeuron>> VISUAL_NEURON = TEEntities.registerMonster(ENTITIES, "visual_neuron", VisualNeuron::new, 1.2f, 1.2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<Harpy>> HARPY = TEEntities.registerMonster(ENTITIES, "harpy", (e, l) -> new Harpy(e, l, new FlyMonsterPrefab().getPrefab().setSpawnWithoutLight()), 1f, 2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<Demon>> DEMON = TEEntities.registerMonster(ENTITIES, "demon", (e, l) -> new Demon(e, l, new FlyMonsterPrefab().getPrefab().setSpawnWithoutLight().setNoFriction()), 1f, 2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<Demon>> VOODOO_DEMON = TEEntities.registerMonster(ENTITIES, "voodoo_demon", (e, l) -> new Demon(e, l, new FlyMonsterPrefab().getPrefab().setSpawnWithoutLight().setNoFriction()), 1f, 2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AntlionSwarmer>> ANTLION_SWARMER = TEEntities.registerMonster(ENTITIES, "antlion_swarmer", (e, l) -> new AntlionSwarmer(e, l, new FlyMonsterPrefab().getPrefab()), 3f, 1.5f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AntlionSwarmer>> GIANT_ANTLION_SWARMER = TEEntities.registerMonster(ENTITIES, "giant_antlion_swarmer", (e, l) -> new AntlionSwarmer(e, l, new FlyMonsterPrefab().getPrefab()), 3.5f, 2f);
-    public static final DeferredHolder<EntityType<?>, EntityType<GraniteElemental>> GRANITE_ELEMENTAL = TEEntities.registerMonster(ENTITIES, "granite_elemental", (e, l) -> new GraniteElemental(e, l, new FlyMonsterPrefab().getPrefab()), 1.5f, 1.5f);
+    public static final RegistryObject<EntityType<DemonEye>> DEMON_EYE = TEEntities.registerMonster(ENTITIES, "demon_eye", DemonEye::new, 1.1F, 1.1F);
+    public static final RegistryObject<EntityType<AbstractMonster>> CRIMERA = registerSimpleMonster("crimera", FlyMonsterPrefab.CRIMERA_BUILDER, 1.2f, 1.2f);
+    public static final RegistryObject<EntityType<AbstractMonster>> EATER_OF_SOULS = registerSimpleMonster("eater_of_souls", FlyMonsterPrefab.EATER_OF_SOULS_BUILDER, 1.2f, 1.2f);
+    public static final RegistryObject<EntityType<AbstractMonster>> DRIPPLER = registerSimpleMonster("drippler", FlyMonsterPrefab.DRIPPLER_BUILDER, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<AbstractMonster>> SERVANT_OF_CTHULHU = registerSimpleMonster("servant_of_cthulhu", FlyMonsterPrefab.SERVANT_OF_CTHULHU_BUILDER, 1.1f, 1.1f);
+    public static final RegistryObject<EntityType<AbstractMonster>> WANDERING_EYE_FISH = registerSimpleMonster("wandering_eye_fish", FlyMonsterPrefab.WANDERING_EYE_FISH_BUILDER, 1.4f, 1.4f);
+    public static final RegistryObject<EntityType<AbstractMonster>> FLYING_FISH = registerSimpleMonster("flying_fish", FlyMonsterPrefab.FLYING_FISH_BUILDER, 0.9F, 0.9F);
+    public static final RegistryObject<EntityType<VisualNeuron>> VISUAL_NEURON = TEEntities.registerMonster(ENTITIES, "visual_neuron", VisualNeuron::new, 1.2f, 1.2f);
+    public static final RegistryObject<EntityType<Harpy>> HARPY = TEEntities.registerMonster(ENTITIES, "harpy", (e, l) -> new Harpy(e, l, new FlyMonsterPrefab().getPrefab().setSpawnWithoutLight()), 1f, 2f);
+    public static final RegistryObject<EntityType<Demon>> DEMON = TEEntities.registerMonster(ENTITIES, "demon", (e, l) -> new Demon(e, l, new FlyMonsterPrefab().getPrefab().setSpawnWithoutLight().setNoFriction()), 1f, 2f);
+    public static final RegistryObject<EntityType<Demon>> VOODOO_DEMON = TEEntities.registerMonster(ENTITIES, "voodoo_demon", (e, l) -> new Demon(e, l, new FlyMonsterPrefab().getPrefab().setSpawnWithoutLight().setNoFriction()), 1f, 2f);
+    public static final RegistryObject<EntityType<AntlionSwarmer>> ANTLION_SWARMER = TEEntities.registerMonster(ENTITIES, "antlion_swarmer", (e, l) -> new AntlionSwarmer(e, l, new FlyMonsterPrefab().getPrefab()), 3f, 1.5f);
+    public static final RegistryObject<EntityType<AntlionSwarmer>> GIANT_ANTLION_SWARMER = TEEntities.registerMonster(ENTITIES, "giant_antlion_swarmer", (e, l) -> new AntlionSwarmer(e, l, new FlyMonsterPrefab().getPrefab()), 3.5f, 2f);
+    public static final RegistryObject<EntityType<GraniteElemental>> GRANITE_ELEMENTAL = TEEntities.registerMonster(ENTITIES, "granite_elemental", (e, l) -> new GraniteElemental(e, l, new FlyMonsterPrefab().getPrefab()), 1.5f, 1.5f);
 
 
     // 陆行怪
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> SPORE_SKELETON = TEEntities.registerMonster(ENTITIES, "spore_skeleton", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> SPORE_ZOMBIE = registerSimpleMonster("spore_zombie", LandMonsterPrefab.SPORE_ZOMBIE_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> HAT_SPORE_ZOMBIE = registerSimpleMonster("hat_spore_zombie", LandMonsterPrefab.HAT_SPORE_ZOMBIE_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<RangeSkeleton>> DECAYEDER = TEEntities.registerMonster(ENTITIES, "decayeder", (e, l) -> new Decayeder(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1, 1.8f);
-    public static final DeferredHolder<EntityType<?>, EntityType<BloodySpore>> BLOODY_SPORE = TEEntities.registerMonster(ENTITIES, "bloody_spore", BloodySpore::new, 1, 1.5f);
-    public static final DeferredHolder<EntityType<?>, EntityType<BloodCrawler>> BLOOD_CRAWLER = TEEntities.registerMonster(ENTITIES, "blood_crawler", BloodCrawler::new, 1.8F, 1.2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> FACE_MONSTER = registerSimpleMonster("face_monster", LandMonsterPrefab.FACE_MONSTER_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> BLOOD_TUMORS = registerSimpleMonster("blood_tumors", LandMonsterPrefab.BLOOD_TUMORS, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> BLOOD_ZOMBIE = registerSimpleMonster("blood_zombie", LandMonsterPrefab.BLOOD_ZOMBIE_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> SNOW_FLINX = registerSimpleMonster("snow_flinx", LandMonsterPrefab.SNOW_FLINX_BUILDER, 1.25F, 1.25F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> SPORE_SKELETON = TEEntities.registerMonster(ENTITIES, "spore_skeleton", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<AbstractMonster>> SPORE_ZOMBIE = registerSimpleMonster("spore_zombie", LandMonsterPrefab.SPORE_ZOMBIE_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> HAT_SPORE_ZOMBIE = registerSimpleMonster("hat_spore_zombie", LandMonsterPrefab.HAT_SPORE_ZOMBIE_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<RangeSkeleton>> DECAYEDER = TEEntities.registerMonster(ENTITIES, "decayeder", (e, l) -> new Decayeder(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1, 1.8f);
+    public static final RegistryObject<EntityType<BloodySpore>> BLOODY_SPORE = TEEntities.registerMonster(ENTITIES, "bloody_spore", BloodySpore::new, 1, 1.5f);
+    public static final RegistryObject<EntityType<BloodCrawler>> BLOOD_CRAWLER = TEEntities.registerMonster(ENTITIES, "blood_crawler", BloodCrawler::new, 1.8F, 1.2F);
+    public static final RegistryObject<EntityType<AbstractMonster>> FACE_MONSTER = registerSimpleMonster("face_monster", LandMonsterPrefab.FACE_MONSTER_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> BLOOD_TUMORS = registerSimpleMonster("blood_tumors", LandMonsterPrefab.BLOOD_TUMORS, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<AbstractMonster>> BLOOD_ZOMBIE = registerSimpleMonster("blood_zombie", LandMonsterPrefab.BLOOD_ZOMBIE_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> SNOW_FLINX = registerSimpleMonster("snow_flinx", LandMonsterPrefab.SNOW_FLINX_BUILDER, 1.25F, 1.25F);
 
     // 水怪
-    public static final DeferredHolder<EntityType<?>, EntityType<Piranha>> PIRANHA = TEEntities.registerMonster(ENTITIES, "piranha", Piranha::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<JellyFish>> BLUE_JELLYFISH = TEEntities.registerMonster(ENTITIES, "blue_jellyfish", JellyFish::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<JellyFish>> PINK_JELLYFISH = TEEntities.registerMonster(ENTITIES, "pink_jellyfish", JellyFish::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Shark>> SHARK = TEEntities.registerMonster(ENTITIES, "shark", Shark::new, 2.5F, 1F);
+    public static final RegistryObject<EntityType<Piranha>> PIRANHA = TEEntities.registerMonster(ENTITIES, "piranha", Piranha::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<JellyFish>> BLUE_JELLYFISH = TEEntities.registerMonster(ENTITIES, "blue_jellyfish", JellyFish::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<JellyFish>> PINK_JELLYFISH = TEEntities.registerMonster(ENTITIES, "pink_jellyfish", JellyFish::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<Shark>> SHARK = TEEntities.registerMonster(ENTITIES, "shark", Shark::new, 2.5F, 1F);
 
 
     // 蜜蜂
-    public static final DeferredHolder<EntityType<?>, EntityType<Hornet>> HORNET = TEEntities.registerMonster(ENTITIES, "hornet", (e, l) -> new Hornet(e, l, FlyMonsterPrefab.BEE_BUILDER.get()), 0.8f, 1.8f);
-    public static final DeferredHolder<EntityType<?>, EntityType<LittleHornet>> LITTLE_HORNET = TEEntities.registerEntity(ENTITIES, "little_hornet", LittleHornet::new, MobCategory.CREATURE, 0.4f, 0.4f);
+    public static final RegistryObject<EntityType<Hornet>> HORNET = TEEntities.registerMonster(ENTITIES, "hornet", (e, l) -> new Hornet(e, l, FlyMonsterPrefab.BEE_BUILDER.get()), 0.8f, 1.8f);
+    public static final RegistryObject<EntityType<LittleHornet>> LITTLE_HORNET = TEEntities.registerEntity(ENTITIES, "little_hornet", LittleHornet::new, MobCategory.CREATURE, 0.4f, 0.4f);
     // 蝙蝠
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> CAVE_BAT = registerSimpleMonster("cave_bat", FlyMonsterPrefab.CAVE_BAT_BUILDER, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> JUNGLE_BAT = registerSimpleMonster("jungle_bat", FlyMonsterPrefab.JUNGLE_BAT_BUILDER, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> HELL_BAT = ENTITIES.register("hell_bat",
+    public static final RegistryObject<EntityType<AbstractMonster>> CAVE_BAT = registerSimpleMonster("cave_bat", FlyMonsterPrefab.CAVE_BAT_BUILDER, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<AbstractMonster>> JUNGLE_BAT = registerSimpleMonster("jungle_bat", FlyMonsterPrefab.JUNGLE_BAT_BUILDER, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<AbstractMonster>> HELL_BAT = ENTITIES.register("hell_bat",
             () -> EntityType.Builder.<AbstractMonster>of((type, level) -> new AbstractMonster(type, level, FlyMonsterPrefab.HELL_BAT_BUILDER.get()), MobCategory.MONSTER)
                     .clientTrackingRange(10).setTrackingRange(50).sized(1.6f, 1.6f).fireImmune().build(TEEntities.Key("hell_bat")));
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> ICE_BAT = registerSimpleMonster("ice_bat", FlyMonsterPrefab.ICE_BAT_BUILDER, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> SPORE_BAT = registerSimpleMonster("spore_bat", FlyMonsterPrefab.SPORE_BAT_BUILDER, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<AbstractMonster>> ICE_BAT = registerSimpleMonster("ice_bat", FlyMonsterPrefab.ICE_BAT_BUILDER, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<AbstractMonster>> SPORE_BAT = registerSimpleMonster("spore_bat", FlyMonsterPrefab.SPORE_BAT_BUILDER, 1.6f, 1.6f);
     // 蠕虫
-    public static final DeferredHolder<EntityType<?>, EntityType<SurefaceWorm<BaseWormPart>>> DEVOURER = TEEntities.registerMonster(ENTITIES, "devourer", (e, l) ->new SurefaceWorm<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 2F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseWorm<BaseWormPart>>> TOMB_CRAWLER = TEEntities.registerMonster(ENTITIES, "tomb_crawler", (e, l) -> BaseWorm.simpleWorm(e, l, AbstractPrefab.WARM_BUILDER.get()), 2F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseWorm<BaseWormPart>>> GIANT_WORM = TEEntities.registerMonster(ENTITIES, "giant_worm", (e, l) -> BaseWorm.simpleWorm(e, l, AbstractPrefab.WARM_BUILDER.get()), 2F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BaseWorm<BaseWormPart>>> LEECH = TEEntities.registerMonster(ENTITIES, "leech", (e, l) -> BaseWorm.simpleWorm(e, l, AbstractPrefab.WARM_BUILDER.get()), 2F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BoneSerpent<BaseWormPart>>> BONE_SERPENT = TEEntities.registerMonster(ENTITIES, "bone_serpent", (e, l) -> new BoneSerpent<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 2F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BoneSerpent<BaseWormPart>>> WITHER_BONE_SERPENT = TEEntities.registerMonster(ENTITIES, "wither_bone_serpent", (e, l) -> new BoneSerpent<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 2F, 2F);
+    public static final RegistryObject<EntityType<SurefaceWorm<BaseWormPart>>> DEVOURER = TEEntities.registerMonster(ENTITIES, "devourer", (e, l) -> new SurefaceWorm<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 2F, 2F);
+    public static final RegistryObject<EntityType<BaseWorm<BaseWormPart>>> TOMB_CRAWLER = TEEntities.registerMonster(ENTITIES, "tomb_crawler", (e, l) -> BaseWorm.simpleWorm(e, l, AbstractPrefab.WARM_BUILDER.get()), 2F, 2F);
+    public static final RegistryObject<EntityType<BaseWorm<BaseWormPart>>> GIANT_WORM = TEEntities.registerMonster(ENTITIES, "giant_worm", (e, l) -> BaseWorm.simpleWorm(e, l, AbstractPrefab.WARM_BUILDER.get()), 2F, 2F);
+    public static final RegistryObject<EntityType<BaseWorm<BaseWormPart>>> LEECH = TEEntities.registerMonster(ENTITIES, "leech", (e, l) -> BaseWorm.simpleWorm(e, l, AbstractPrefab.WARM_BUILDER.get()), 2F, 2F);
+    public static final RegistryObject<EntityType<BoneSerpent<BaseWormPart>>> BONE_SERPENT = TEEntities.registerMonster(ENTITIES, "bone_serpent", (e, l) -> new BoneSerpent<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 2F, 2F);
+    public static final RegistryObject<EntityType<BoneSerpent<BaseWormPart>>> WITHER_BONE_SERPENT = TEEntities.registerMonster(ENTITIES, "wither_bone_serpent", (e, l) -> new BoneSerpent<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 2F, 2F);
     // 卷壳怪
-    public static final DeferredHolder<EntityType<?>, EntityType<GiantShelly>> GIANT_SHELLY = TEEntities.registerMonster(ENTITIES, "giant_shelly", GiantShelly::new, 1F, 1F);
+    public static final RegistryObject<EntityType<GiantShelly>> GIANT_SHELLY = TEEntities.registerMonster(ENTITIES, "giant_shelly", GiantShelly::new, 1F, 1F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Crawdad>> CRAWDAD = TEEntities.registerMonster(ENTITIES, "crawdad", Crawdad::new, 1F, 1F);
+    public static final RegistryObject<EntityType<Crawdad>> CRAWDAD = TEEntities.registerMonster(ENTITIES, "crawdad", Crawdad::new, 1F, 1F);
     // 宁芙
-    public static final DeferredHolder<EntityType<?>, EntityType<Nymph>> NYMPH = TEEntities.registerMonster(ENTITIES, "nymph", Nymph::new, 0.8F, 1.95F);
+    public static final RegistryObject<EntityType<Nymph>> NYMPH = TEEntities.registerMonster(ENTITIES, "nymph", Nymph::new, 0.8F, 1.95F);
     // 抓人草
-    public static final DeferredHolder<EntityType<?>, EntityType<Snatcher>> SNATCHER = TEEntities.registerMonster(ENTITIES, "snatcher", (e, l) -> new Snatcher(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Snatcher>> MAN_EATER = TEEntities.registerMonster(ENTITIES, "man_eater", (e, l) -> new Snatcher(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
+    public static final RegistryObject<EntityType<Snatcher>> SNATCHER = TEEntities.registerMonster(ENTITIES, "snatcher", (e, l) -> new Snatcher(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
+    public static final RegistryObject<EntityType<Snatcher>> MAN_EATER = TEEntities.registerMonster(ENTITIES, "man_eater", (e, l) -> new Snatcher(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
     // 地牢骷髅
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> BASE_BONES = TEEntities.registerMonster(ENTITIES, "base_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> BASE_BONES = TEEntities.registerMonster(ENTITIES, "base_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> ANGER_BONES = TEEntities.registerMonster(ENTITIES, "anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> SHORT_BONES = TEEntities.registerMonster(ENTITIES, "short_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.55F, 1.65F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> BIG_BONES = TEEntities.registerMonster(ENTITIES, "big_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.85F, 2.25F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> BIG_ANGER_BONES = TEEntities.registerMonster(ENTITIES, "big_anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.9F, 2.4F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> BIG_MUSCLE_ANGER_BONES = TEEntities.registerMonster(ENTITIES, "big_muscle_anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.95F, 2.45F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> BIG_HELMET_ANGER_BONES = TEEntities.registerMonster(ENTITIES, "big_helmet_anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 1F, 2.6F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeleeSkeleton>> UNDEAD_VIKING = TEEntities.registerMonster(ENTITIES, "undead_viking", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 1F, 2.6F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> ANGER_BONES = TEEntities.registerMonster(ENTITIES, "anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> SHORT_BONES = TEEntities.registerMonster(ENTITIES, "short_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.55F, 1.65F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> BIG_BONES = TEEntities.registerMonster(ENTITIES, "big_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.85F, 2.25F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> BIG_ANGER_BONES = TEEntities.registerMonster(ENTITIES, "big_anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.9F, 2.4F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> BIG_MUSCLE_ANGER_BONES = TEEntities.registerMonster(ENTITIES, "big_muscle_anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 0.95F, 2.45F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> BIG_HELMET_ANGER_BONES = TEEntities.registerMonster(ENTITIES, "big_helmet_anger_bones", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 1F, 2.6F);
+    public static final RegistryObject<EntityType<MeleeSkeleton>> UNDEAD_VIKING = TEEntities.registerMonster(ENTITIES, "undead_viking", (e, l) -> new MeleeSkeleton(e, l, new AbstractPrefab().getPrefab()), 1F, 2.6F);
     // 穿墙怪
-    public static final DeferredHolder<EntityType<?>, EntityType<CursedSkull>> CURSED_SKULL = TEEntities.registerMonster(ENTITIES, "cursed_skull", (e, l) -> new CursedSkull(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
+    public static final RegistryObject<EntityType<CursedSkull>> CURSED_SKULL = TEEntities.registerMonster(ENTITIES, "cursed_skull", (e, l) -> new CursedSkull(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Ghost>> GHOST = TEEntities.registerMonster(ENTITIES, "ghost", (e, l) -> new Ghost(e, l, new AbstractPrefab().getPrefab()), 1F, 1.8F);
-    public static final DeferredHolder<EntityType<?>, EntityType<MeteorHead>> METEOR_HEAD = TEEntities.registerMonster(ENTITIES, "meteor_head", (e, l) -> new MeteorHead(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
+    public static final RegistryObject<EntityType<Ghost>> GHOST = TEEntities.registerMonster(ENTITIES, "ghost", (e, l) -> new Ghost(e, l, new AbstractPrefab().getPrefab()), 1F, 1.8F);
+    public static final RegistryObject<EntityType<MeteorHead>> METEOR_HEAD = TEEntities.registerMonster(ENTITIES, "meteor_head", (e, l) -> new MeteorHead(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
     // 远程法师
-    public static final DeferredHolder<EntityType<?>, EntityType<RangeShooter>> DARK_CASTER = TEEntities.registerMonster(ENTITIES, "dark_caster", (e, l) -> new RangeShooter(e, l, TEProjectileEntities.DARK_CASTER_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<RangeShooter>> GOBLIN_SORCERER = TEEntities.registerMonster(ENTITIES, "goblin_sorcerer", (e, l) -> new RangeShooter(e, l, TEProjectileEntities.DARK_CASTER_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<FireImpEntity>> FIRE_IMP = TEEntities.registerMonster(ENTITIES, "fire_imp", (e, l) -> new FireImpEntity(e, l, TEProjectileEntities.FIRE_IMP_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1);
+    public static final RegistryObject<EntityType<RangeShooter>> DARK_CASTER = TEEntities.registerMonster(ENTITIES, "dark_caster", (e, l) -> new RangeShooter(e, l, TEProjectileEntities.DARK_CASTER_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<RangeShooter>> GOBLIN_SORCERER = TEEntities.registerMonster(ENTITIES, "goblin_sorcerer", (e, l) -> new RangeShooter(e, l, TEProjectileEntities.DARK_CASTER_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<FireImpEntity>> FIRE_IMP = TEEntities.registerMonster(ENTITIES, "fire_imp", (e, l) -> new FireImpEntity(e, l, TEProjectileEntities.FIRE_IMP_PROJ, new AbstractPrefab().getPrefab()), 0.65F, 1);
 
     // 哥布林军队
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_ARCHER = TEEntities.registerMonster(ENTITIES, "goblin_archer", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.BOW.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_PEON = TEEntities.registerMonster(ENTITIES, "goblin_peon", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_WARRIOR = TEEntities.registerMonster(ENTITIES, "goblin_warrior", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.STONE_SWORD.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_THIEF = TEEntities.registerMonster(ENTITIES, "goblin_thief", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> GOBLIN_SCOUT = TEEntities.registerMonster(ENTITIES, "goblin_scout", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> ANGER_GOBLIN = TEEntities.registerMonster(ENTITIES, "anger_goblin", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.GOLDEN_SWORD.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals,mob)->goals.addGoal(1,new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> GOBLIN_ARCHER = TEEntities.registerMonster(ENTITIES, "goblin_archer", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.BOW.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals, mob) -> goals.addGoal(1, new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> GOBLIN_PEON = TEEntities.registerMonster(ENTITIES, "goblin_peon", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals, mob) -> goals.addGoal(1, new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> GOBLIN_WARRIOR = TEEntities.registerMonster(ENTITIES, "goblin_warrior", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.STONE_SWORD.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals, mob) -> goals.addGoal(1, new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> GOBLIN_THIEF = TEEntities.registerMonster(ENTITIES, "goblin_thief", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals, mob) -> goals.addGoal(1, new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> GOBLIN_SCOUT = TEEntities.registerMonster(ENTITIES, "goblin_scout", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setSpawnWithoutLight().addGoal((goals, mob) -> goals.addGoal(1, new FactorFloatGoal(mob)))), 0.65F, 1.85F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> ANGER_GOBLIN = TEEntities.registerMonster(ENTITIES, "anger_goblin", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().asHumanoid().setMainHand(Items.GOLDEN_SWORD.getDefaultInstance()).setSpawnWithoutLight().addGoal((goals, mob) -> goals.addGoal(1, new FactorFloatGoal(mob)))), 0.65F, 1.85F);
 
     //饿鬼
-    public static final DeferredHolder<EntityType<?>, EntityType<TheHungry>> THE_HUNGRY = TEEntities.registerMonster(ENTITIES, "the_hungry", (e, l) -> new TheHungry(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HillHungry>> HILL_HUNGRY = TEEntities.registerMonster(ENTITIES, "hill_hungry", (e, l) -> new HillHungry(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
+    public static final RegistryObject<EntityType<TheHungry>> THE_HUNGRY = TEEntities.registerMonster(ENTITIES, "the_hungry", (e, l) -> new TheHungry(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
+    public static final RegistryObject<EntityType<HillHungry>> HILL_HUNGRY = TEEntities.registerMonster(ENTITIES, "hill_hungry", (e, l) -> new HillHungry(e, l, new AbstractPrefab().getPrefab()), 1F, 1F);
 
 
     /* *********肉后***************** */
-    public static final DeferredHolder<EntityType<?>, EntityType<Wyvern<BaseWormPart>>> WYVERN = TEEntities.registerMonster(ENTITIES, "wyvern", (e, l) -> new Wyvern<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Pixie>> PIXIE = TEEntities.registerMonster(ENTITIES, "pixie", (e, l) -> new Pixie(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> POSSESS_ARMOR = TEEntities.registerMonster(ENTITIES, "possess_armor", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().getPrefab().setDeathSound(TESounds.SOUL_DEATH).setHurtSound(TESounds.METAL_HURT)), 1F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<HumanoidMonster>> POSSESS_ARMOR_VOID_VESSEL = TEEntities.registerMonster(ENTITIES, "possess_armor_void_vessel", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().getPrefab().setDeathSound(TESounds.SOUL_DEATH).setHurtSound(TESounds.METAL_HURT)), 1F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Wraith>> WRAITH = TEEntities.registerMonster(ENTITIES, "wraith", Wraith::new, 1F, 2F);
+    public static final RegistryObject<EntityType<Wyvern<BaseWormPart>>> WYVERN = TEEntities.registerMonster(ENTITIES, "wyvern", (e, l) -> new Wyvern<>(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight().setNoGravity()), 1F, 1F);
+    public static final RegistryObject<EntityType<Pixie>> PIXIE = TEEntities.registerMonster(ENTITIES, "pixie", (e, l) -> new Pixie(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> POSSESS_ARMOR = TEEntities.registerMonster(ENTITIES, "possess_armor", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().getPrefab().setDeathSound(TESounds.SOUL_DEATH).setHurtSound(TESounds.METAL_HURT)), 1F, 2F);
+    public static final RegistryObject<EntityType<HumanoidMonster>> POSSESS_ARMOR_VOID_VESSEL = TEEntities.registerMonster(ENTITIES, "possess_armor_void_vessel", (e, l) -> new HumanoidMonster(e, l, new AbstractPrefab().getPrefab().setDeathSound(TESounds.SOUL_DEATH).setHurtSound(TESounds.METAL_HURT)), 1F, 2F);
+    public static final RegistryObject<EntityType<Wraith>> WRAITH = TEEntities.registerMonster(ENTITIES, "wraith", Wraith::new, 1F, 2F);
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> WOODEN_MIMIC = TEEntities.registerMonster(ENTITIES, "wooden_mimic", WoodenMimic::new, 0.8f, 0.8f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> GOLDEN_MIMIC = TEEntities.registerMonster(ENTITIES, "golden_mimic", WoodenMimic::new, 0.8f, 0.8f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> ICE_MIMIC = TEEntities.registerMonster(ENTITIES, "ice_mimic", WoodenMimic::new, 0.8f, 0.8f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> SHADOW_MIMIC = TEEntities.registerMonster(ENTITIES, "shadow_mimic", WoodenMimic::new, 0.8f, 0.8f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> CRIMSON_MIMIC = TEEntities.registerMonster(ENTITIES, "crimson_mimic", CrimsonMimic::new, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> CORRUPT_MIMIC = TEEntities.registerMonster(ENTITIES, "corrupt_mimic", CrimsonMimic::new, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> HALLOWED_MIMIC = TEEntities.registerMonster(ENTITIES, "hallowed_mimic", CrimsonMimic::new, 1.6f, 1.6f);
-    public static final DeferredHolder<EntityType<?>, EntityType<WoodenMimic>> JUNGLE_MIMIC = TEEntities.registerMonster(ENTITIES, "jungle_mimic", CrimsonMimic::new, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<WoodenMimic>> WOODEN_MIMIC = TEEntities.registerMonster(ENTITIES, "wooden_mimic", WoodenMimic::new, 0.8f, 0.8f);
+    public static final RegistryObject<EntityType<WoodenMimic>> GOLDEN_MIMIC = TEEntities.registerMonster(ENTITIES, "golden_mimic", WoodenMimic::new, 0.8f, 0.8f);
+    public static final RegistryObject<EntityType<WoodenMimic>> ICE_MIMIC = TEEntities.registerMonster(ENTITIES, "ice_mimic", WoodenMimic::new, 0.8f, 0.8f);
+    public static final RegistryObject<EntityType<WoodenMimic>> SHADOW_MIMIC = TEEntities.registerMonster(ENTITIES, "shadow_mimic", WoodenMimic::new, 0.8f, 0.8f);
+    public static final RegistryObject<EntityType<WoodenMimic>> CRIMSON_MIMIC = TEEntities.registerMonster(ENTITIES, "crimson_mimic", CrimsonMimic::new, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<WoodenMimic>> CORRUPT_MIMIC = TEEntities.registerMonster(ENTITIES, "corrupt_mimic", CrimsonMimic::new, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<WoodenMimic>> HALLOWED_MIMIC = TEEntities.registerMonster(ENTITIES, "hallowed_mimic", CrimsonMimic::new, 1.6f, 1.6f);
+    public static final RegistryObject<EntityType<WoodenMimic>> JUNGLE_MIMIC = TEEntities.registerMonster(ENTITIES, "jungle_mimic", CrimsonMimic::new, 1.6f, 1.6f);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> MUMMY = registerSimpleMonster("mummy", LandMonsterPrefab.MUMMY_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> DARK_MUMMY = registerSimpleMonster("dark_mummy", LandMonsterPrefab.EVIL_MUMMY_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> BLOOD_MUMMY = registerSimpleMonster("blood_mummy", LandMonsterPrefab.EVIL_MUMMY_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> LIGHT_MUMMY = registerSimpleMonster("light_mummy", LandMonsterPrefab.MUMMY_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> DARK_LAMIA = registerSimpleMonster("dark_lamia", LandMonsterPrefab.LAMIA_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> LIGHT_LAMIA = registerSimpleMonster("light_lamia", LandMonsterPrefab.LAMIA_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> GHOUL = registerSimpleMonster("ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> TAINTED_GHOUL = registerSimpleMonster("tainted_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> VILE_GHOUL = registerSimpleMonster("vile_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> DREAMER_GHOUL = registerSimpleMonster("dreamer_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SandPoacher>> SAND_POACHER = TEEntities.registerMonster(ENTITIES, "sand_poacher", SandPoacher::new, 1.8F, 1.2F);
+    public static final RegistryObject<EntityType<AbstractMonster>> MUMMY = registerSimpleMonster("mummy", LandMonsterPrefab.MUMMY_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> DARK_MUMMY = registerSimpleMonster("dark_mummy", LandMonsterPrefab.EVIL_MUMMY_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> BLOOD_MUMMY = registerSimpleMonster("blood_mummy", LandMonsterPrefab.EVIL_MUMMY_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> LIGHT_MUMMY = registerSimpleMonster("light_mummy", LandMonsterPrefab.MUMMY_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> DARK_LAMIA = registerSimpleMonster("dark_lamia", LandMonsterPrefab.LAMIA_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> LIGHT_LAMIA = registerSimpleMonster("light_lamia", LandMonsterPrefab.LAMIA_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> GHOUL = registerSimpleMonster("ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> TAINTED_GHOUL = registerSimpleMonster("tainted_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> VILE_GHOUL = registerSimpleMonster("vile_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<AbstractMonster>> DREAMER_GHOUL = registerSimpleMonster("dreamer_ghoul", LandMonsterPrefab.GHOUL_BUILDER, 0.75F, 1.95F);
+    public static final RegistryObject<EntityType<SandPoacher>> SAND_POACHER = TEEntities.registerMonster(ENTITIES, "sand_poacher", SandPoacher::new, 1.8F, 1.2F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Piranha>> ARAPAIMA = TEEntities.registerMonster(ENTITIES, "arapaima", Piranha::new, 2.2F, 0.7F);
-    public static final DeferredHolder<EntityType<?>, EntityType<JellyFish>> GREEN_JELLYFISH = TEEntities.registerMonster(ENTITIES, "green_jellyfish", JellyFish::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<Piranha>> ARAPAIMA = TEEntities.registerMonster(ENTITIES, "arapaima", Piranha::new, 2.2F, 0.7F);
+    public static final RegistryObject<EntityType<JellyFish>> GREEN_JELLYFISH = TEEntities.registerMonster(ENTITIES, "green_jellyfish", JellyFish::new, 0.5F, 0.5F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<JumpAttackMonster>> DERPLING = TEEntities.registerMonster(ENTITIES, "derpling", (e, l) -> new JumpAttackMonster(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 2F, 2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<JumpAttackMonster>> HERPLING = TEEntities.registerMonster(ENTITIES, "herpling", (e, l) -> new JumpAttackMonster(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
+    public static final RegistryObject<EntityType<JumpAttackMonster>> DERPLING = TEEntities.registerMonster(ENTITIES, "derpling", (e, l) -> new JumpAttackMonster(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 2F, 2F);
+    public static final RegistryObject<EntityType<JumpAttackMonster>> HERPLING = TEEntities.registerMonster(ENTITIES, "herpling", (e, l) -> new JumpAttackMonster(e, l, new AbstractPrefab().getPrefab().setSpawnWithoutLight()), 1F, 1F);
 
 
     @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerRenderers(PortEntityRenderersEvent.PortRegisterRenderers event) {
         ResourceLocation defaultHumanoidModel = TEMonsterEntities.POSSESS_ARMOR_VOID_VESSEL.getId();
 
         event.registerEntityRenderer(TEMonsterEntities.BLUE_SLIME.get(), c -> new CustomSlimeRenderer(c, "blue"));
@@ -372,7 +374,7 @@ public class TEMonsterEntities {
         event.registerEntityRenderer(TEMonsterEntities.HERPLING.get(), c -> new GeoNormalRenderer<>(c, TEMonsterEntities.HERPLING.getId()));
     }
 
-    public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+    public static void registerEntityAttributes(PortEntityAttributeCreationEvent event) {
 
         // slime
         event.put(BLUE_SLIME.get(), BaseSlime.createSlimeAttributes(4.0F, 2, 16.0F).build());
@@ -394,7 +396,7 @@ public class TEMonsterEntities {
         event.put(HONEY_SLIME.get(), HoneySlime.createSlimeAttributes(0F, 0, 16.0F).build());
         event.put(GREEN_DUMPLING_SLIME.get(), BaseSlime.createSlimeAttributes(5.0F, 0, 25.0F).build());
         event.put(SWAMP_SLIME.get(), BaseSlime.createSlimeAttributes(5.0F, 1, 25.0F).build());
-        event.put(BLACK_SLIME.get(), Monster.createMonsterAttributes().add(Attributes.WATER_MOVEMENT_EFFICIENCY, BaseSlime.slimeWaterMoveSpeed).build()); // 由finalizeSpawn设置
+        event.put(BLACK_SLIME.get(), Monster.createMonsterAttributes().add(PortAttributesExtension.waterMovementEfficiency().value(), BaseSlime.slimeWaterMoveSpeed).build()); // 由finalizeSpawn设置
         event.put(GOLDEN_SLIME.get(), GoldenSlime.createSlimeAttributes().build());
         event.put(FLESH_SLIME.get(), BaseSlime.createSlimeAttributes(14.0F, 6, 50.0F).build());
 
@@ -530,170 +532,172 @@ public class TEMonsterEntities {
     }
 
 
-    public static void spawnPlacementRegister(RegisterSpawnPlacementsEvent event) {
+    public static void spawnPlacementRegister(PortRegisterSpawnPlacementsEvent event) {
 
-        event.register(BLUE_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GREEN_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PURPLE_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PINK_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DESERT_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(JUNGLE_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ICE_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(TROPIC_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(YELLOW_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(RED_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BLACK_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(LAVA_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SWAMP_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DUNGEON_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GREEN_DUMPLING_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(BLUE_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GREEN_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PURPLE_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PINK_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DESERT_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(JUNGLE_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ICE_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(TROPIC_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(YELLOW_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(RED_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BLACK_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(LAVA_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SWAMP_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DUNGEON_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GREEN_DUMPLING_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BaseSlime::checkSlimeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(SPIKED_ICE_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SPIKED_JUNGLE_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(SPIKED_ICE_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SPIKED_JUNGLE_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
 
         // land
-        event.register(BLOOD_CRAWLER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BLOOD_ZOMBIE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BLOODY_SPORE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(FACE_MONSTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SPORE_SKELETON.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SPORE_ZOMBIE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HAT_SPORE_ZOMBIE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DECAYEDER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GIANT_SHELLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CRAWDAD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(NYMPH.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SNATCHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(MAN_EATER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SNOW_FLINX.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(BLOOD_CRAWLER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BLOOD_ZOMBIE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BLOODY_SPORE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(FACE_MONSTER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SPORE_SKELETON.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SPORE_ZOMBIE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(HAT_SPORE_ZOMBIE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DECAYEDER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GIANT_SHELLY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CRAWDAD.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(NYMPH.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SNATCHER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(MAN_EATER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SNOW_FLINX.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // fly
-        event.register(DEMON_EYE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDemonEyeSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(FLYING_FISH.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkFlyingFishSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CRIMERA.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DRIPPLER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EATER_OF_SOULS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HARPY.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkHighLevelMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DEMON.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(VOODOO_DEMON.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ANTLION_SWARMER.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GIANT_ANTLION_SWARMER.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GRANITE_ELEMENTAL.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(METEOR_HEAD.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(DEMON_EYE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDemonEyeSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(FLYING_FISH.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkFlyingFishSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CRIMERA.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DRIPPLER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(EATER_OF_SOULS.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(HARPY.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkHighLevelMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DEMON.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(VOODOO_DEMON.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ANTLION_SWARMER.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GIANT_ANTLION_SWARMER.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GRANITE_ELEMENTAL.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(METEOR_HEAD.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // swim
-        event.register(PIRANHA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SHARK.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BLUE_JELLYFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PINK_JELLYFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GREEN_JELLYFISH.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(WaterAnimal::checkSurfaceWaterAnimalSpawnRules), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ARAPAIMA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(WaterAnimal::checkSurfaceWaterAnimalSpawnRules), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(PIRANHA.get(), PortSpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SHARK.get(), PortSpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BLUE_JELLYFISH.get(), PortSpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PINK_JELLYFISH.get(), PortSpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaterAnimal::checkSurfaceWaterAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GREEN_JELLYFISH.get(), PortSpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(WaterAnimal::checkSurfaceWaterAnimalSpawnRules), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ARAPAIMA.get(), PortSpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(WaterAnimal::checkSurfaceWaterAnimalSpawnRules), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
 
         // worm
-        event.register(DEVOURER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GIANT_WORM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkCaveMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(TOMB_CRAWLER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkCaveMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BONE_SERPENT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(WITHER_BONE_SERPENT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(DEVOURER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GIANT_WORM.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkCaveMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(TOMB_CRAWLER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkCaveMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BONE_SERPENT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(WITHER_BONE_SERPENT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // bee
-        event.register(HORNET.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(HORNET.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // bat
-        event.register(CAVE_BAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(JUNGLE_BAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HELL_BAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ICE_BAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SPORE_BAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(CAVE_BAT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(JUNGLE_BAT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(HELL_BAT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ICE_BAT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SPORE_BAT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // 地牢骷髅
-        event.register(BASE_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(BASE_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(ANGER_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SHORT_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BIG_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BIG_ANGER_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BIG_MUSCLE_ANGER_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BIG_HELMET_ANGER_BONES.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(UNDEAD_VIKING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(ANGER_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SHORT_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BIG_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BIG_ANGER_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BIG_MUSCLE_ANGER_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BIG_HELMET_ANGER_BONES.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(UNDEAD_VIKING.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkUndergroundMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // 穿墙怪
-        event.register(CURSED_SKULL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(CURSED_SKULL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(GHOST.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(GHOST.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkRoutineMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // 远程法师
-        event.register(DARK_CASTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(FIRE_IMP.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(DARK_CASTER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkDungeonMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(FIRE_IMP.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
 
         // 哥布林军队
-        event.register(GOBLIN_SORCERER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOBLIN_PEON.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOBLIN_ARCHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOBLIN_WARRIOR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOBLIN_THIEF.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOBLIN_SCOUT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGoblinScoutSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ANGER_GOBLIN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(GOBLIN_SORCERER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOBLIN_PEON.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOBLIN_ARCHER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOBLIN_WARRIOR.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOBLIN_THIEF.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOBLIN_SCOUT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGoblinScoutSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ANGER_GOBLIN.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkGroundSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
         // 本体没有生成但是字模块需要的
-        event.register(WANDERING_EYE_FISH.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(WANDERING_EYE_FISH.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks::checkNetherMonsterSpawn, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
         /* *********肉后***************** */
-        event.register(WYVERN.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkHighLevelMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PIXIE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkGroundSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(LUMINOUS_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(POSSESS_ARMOR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkPossessArmorSpawnCondition), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(WRAITH.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkDemonEyeSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CRIMSLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkGroundSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CORRUPT_SLIME.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkGroundSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(WYVERN.get(), PortSpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkHighLevelMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PIXIE.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkGroundSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(LUMINOUS_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(POSSESS_ARMOR.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkPossessArmorSpawnCondition), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(WRAITH.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkDemonEyeSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CRIMSLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkGroundSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CORRUPT_SLIME.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkGroundSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(WOODEN_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GOLDEN_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SHADOW_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkNetherMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(ICE_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CRIMSON_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CORRUPT_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HALLOWED_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(JUNGLE_MIMIC.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(WOODEN_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GOLDEN_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SHADOW_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkNetherMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(ICE_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CRIMSON_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CORRUPT_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(HALLOWED_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(JUNGLE_MIMIC.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkCaveMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(MUMMY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DARK_MUMMY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BLOOD_MUMMY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(LIGHT_MUMMY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DARK_LAMIA.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(LIGHT_LAMIA.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GHOUL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(TAINTED_GHOUL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(VILE_GHOUL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DREAMER_GHOUL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SAND_POACHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(MUMMY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DARK_MUMMY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BLOOD_MUMMY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(LIGHT_MUMMY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DARK_LAMIA.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(LIGHT_LAMIA.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GHOUL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(TAINTED_GHOUL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(VILE_GHOUL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DREAMER_GHOUL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SAND_POACHER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkUndergroundMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(DERPLING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HERPLING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(DERPLING.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(HERPLING.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpawnPlacementChecks.checkHardmode(SpawnPlacementChecks::checkRoutineMonsterSpawn), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
     }
 
-    private static DeferredHolder<EntityType<?>, EntityType<BaseSlime>> registerSlime(String name, int color, int size) {
-        return ENTITIES.register(
-                name,
-                () -> EntityType.Builder.<BaseSlime>of((entityType, level) -> new BaseSlime(entityType, level, color, size), MobCategory.MONSTER)
-                        .sized(0.6f, 0.6f).clientTrackingRange(10)
-                        .build(TEEntities.Key(name)));
+    private static RegistryObject<EntityType<BaseSlime>> registerSlime(String name, int color, int size) {
+        return ENTITIES.register(name, () -> EntityType.Builder.<BaseSlime>of((entityType, level) -> new BaseSlime(entityType, level, color, size), MobCategory.MONSTER)
+                .sized(0.6f, 0.6f).clientTrackingRange(10)
+                .build(TEEntities.Key(name)));
     }
 
     // 用于调整包围盒
-    public static DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> registerSimpleMonster(String name, Supplier<AttributeBuilder> builder, float width, float height) {
+    public static RegistryObject<EntityType<AbstractMonster>> registerSimpleMonster(String name, Supplier<AttributeBuilder> builder, float width, float height) {
         return ENTITIES.register(name, () -> EntityType.Builder.<AbstractMonster>of((type, level) -> new AbstractMonster(type, level, builder.get()), MobCategory.MONSTER).clientTrackingRange(10).setTrackingRange(50).sized(width, height).build(TEEntities.Key(name)));
     }
 
-    public static DeferredHolder<EntityType<?>, EntityType<AbstractMonster>> registerSimpleMonster(String name, Supplier<AttributeBuilder> builder) {
+    public static RegistryObject<EntityType<AbstractMonster>> registerSimpleMonster(String name, Supplier<AttributeBuilder> builder) {
         return registerSimpleMonster(name, builder, 1, 1);
     }
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
-        ENTITIES.addAlias(TerraEntity.space("crimson_slime"), TerraEntity.space("crimslime"));
+        ForgeRegistry<EntityType<?>> registry = (ForgeRegistry<EntityType<?>>) ForgeRegistries.ENTITY_TYPES;
+        boolean locked = registry.isLocked();
+        if (locked) registry.unfreeze();
+        registry.addAlias(TerraEntity.space("crimson_slime"), TerraEntity.space("crimslime"));
+        if (locked) registry.freeze();
     }
 }

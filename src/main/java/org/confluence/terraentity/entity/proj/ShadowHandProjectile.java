@@ -12,8 +12,8 @@ import net.minecraft.world.phys.Vec3;
 import org.confluence.terraentity.utils.TEUtils;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ShadowHandProjectile extends BaseProj<ShadowHandProjectile> implements GeoEntity {
@@ -28,9 +28,9 @@ public class ShadowHandProjectile extends BaseProj<ShadowHandProjectile> impleme
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_DIRECTION, new Vector3f(0, 0, 0));
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(DATA_DIRECTION, new Vector3f(0, 0, 0));
 
     }
 

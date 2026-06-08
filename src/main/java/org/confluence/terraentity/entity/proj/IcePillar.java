@@ -12,7 +12,7 @@ public class IcePillar extends BaseProj<IcePillar> {
     public final Vector3f axis;
 
     public IcePillar(EntityType<? extends Projectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel, new MobEffectInstance(TEEffects.FROST_BURN, 100));
+        super(pEntityType, pLevel, new MobEffectInstance(TEEffects.FROST_BURN.get(), 100));
         this.canPenetrateBlock = true;
         axis = new Vector3f(
                 this.level().random.nextFloat() - 0.5f,

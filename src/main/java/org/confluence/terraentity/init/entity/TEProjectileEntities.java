@@ -1,5 +1,6 @@
 package org.confluence.terraentity.init.entity;
 
+import PortLib.extensions.net.minecraftforge.registries.DeferredRegister.PortDeferredRegisterExtension;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -7,12 +8,11 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.*;
 import org.confluence.terraentity.client.entity.renderer.mob.GeoNegativeVolumeRenderer;
@@ -22,64 +22,65 @@ import org.confluence.terraentity.entity.proj.*;
 import org.confluence.terraentity.init.TEEffectStrategies;
 import org.confluence.terraentity.init.TEEntities;
 import org.confluence.terraentity.init.TEParticles;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
 
 public class TEProjectileEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, TerraEntity.MODID);
 
     // 回旋镖
-    public static final DeferredHolder<EntityType<?>, EntityType<BoomerangProjectile>> BOOMERANG_PROJECTILE = ENTITIES.register("boomerang_projectile", () -> EntityType.Builder.<BoomerangProjectile>of(BoomerangProjectile::new, MobCategory.MISC).sized(0.5F, 0.5F).build(TEEntities.Key("boomerang_projectile")));
-    public static final DeferredHolder<EntityType<?>, EntityType<ThrowableProj>> CABBAGE_PROJ = registerProj("cabbage_proj", ThrowableProj::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<LineProj>> BEE_STICK_PROJ = registerProj("bee_stick_proj", (e, l) ->
+    public static final RegistryObject<EntityType<BoomerangProjectile>> BOOMERANG_PROJECTILE = ENTITIES.register("boomerang_projectile", () -> EntityType.Builder.<BoomerangProjectile>of(BoomerangProjectile::new, MobCategory.MISC).sized(0.5F, 0.5F).build(TEEntities.Key("boomerang_projectile")));
+    public static final RegistryObject<EntityType<ThrowableProj>> CABBAGE_PROJ = registerProj("cabbage_proj", ThrowableProj::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<LineProj>> BEE_STICK_PROJ = registerProj("bee_stick_proj", (e, l) ->
             new LineProj(e, l).setTexture(TerraEntity.space("textures/entity/model/stinger.png")), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<LineProj>> SUMMON_BEE_STICK_PROJ = registerProj("summon_bee_stick_proj", (e, l) ->
+    public static final RegistryObject<EntityType<LineProj>> SUMMON_BEE_STICK_PROJ = registerProj("summon_bee_stick_proj", (e, l) ->
             new SummonBeeStick(e, l).setTexture(TerraEntity.space("textures/entity/model/stinger.png")), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SkullProjectile>> SKULL = registerProj("skull_proj", SkullProjectile::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<ParticleLineProj>> VILE_SPIT_PROJ = registerProj("vile_spit", (e, l) ->
+    public static final RegistryObject<EntityType<SkullProjectile>> SKULL = registerProj("skull_proj", SkullProjectile::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<ParticleLineProj>> VILE_SPIT_PROJ = registerProj("vile_spit", (e, l) ->
             (ParticleLineProj) new ParticleLineProj(e, l).setCanBeHurt().addEffect(new MobEffectInstance(MobEffects.HUNGER, 100)), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<ParticleLineProj>> DARK_CASTER_PROJ = registerProj("dark_caster_proj", (e, l) ->
+    public static final RegistryObject<EntityType<ParticleLineProj>> DARK_CASTER_PROJ = registerProj("dark_caster_proj", (e, l) ->
             (ParticleLineProj) new ParticleLineProj(e, l).setParticleOptions(ParticleTypes.SOUL).setCanBeHurt(), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<ParticleLineProj>> FIRE_IMP_PROJ = registerProj("fire_imp_proj", (e, l) ->
+    public static final RegistryObject<EntityType<ParticleLineProj>> FIRE_IMP_PROJ = registerProj("fire_imp_proj", (e, l) ->
             (ParticleLineProj) new ParticleLineProj(e, l).setParticleOptions(ParticleTypes.FLAME).setCanBeHurt().setEffectStrategy(TEEffectStrategies.SET_FIRE_EFFECT.get()), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<ParticleLineProj>> FIRE_BOUND_PROJ = registerProj("fire_bound_proj", (e, l) ->
+    public static final RegistryObject<EntityType<ParticleLineProj>> FIRE_BOUND_PROJ = registerProj("fire_bound_proj", (e, l) ->
             (ParticleLineProj) new ParticleLineProj(e, l).setParticleOptions(TEParticles.FIRE_BOUND.get()).setEffectStrategy(TEEffectStrategies.SET_FIRE_EFFECT.get()), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<LineProj>> HARPY_FEATURE_PROJ = registerProj("harpy_feature", (e, l) ->
+    public static final RegistryObject<EntityType<LineProj>> HARPY_FEATURE_PROJ = registerProj("harpy_feature", (e, l) ->
             new LineProj(e, l).setCanBeHurt().setTexture(TerraEntity.space("textures/entity/model/harpy_feather_projectile.png")), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<DemonScytheProj>> DEMON_SCYTHE_PROJ = registerProj("demon_scythe_proj", (e, l) ->
+    public static final RegistryObject<EntityType<DemonScytheProj>> DEMON_SCYTHE_PROJ = registerProj("demon_scythe_proj", (e, l) ->
             (DemonScytheProj) new DemonScytheProj(e, l, null).setTexture(TerraEntity.space("textures/entity/model/demon_scythe_projectile.png")), 1.2F, 1.2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<LavaPillar>> LAVA_PILLAR = registerProj("lava_pillar", (e, l) ->
+    public static final RegistryObject<EntityType<LavaPillar>> LAVA_PILLAR = registerProj("lava_pillar", (e, l) ->
             new LavaPillar(e, l).setEffectStrategy(TEEffectStrategies.SET_FIRE_EFFECT.get()), 1.2F, 1.2F);
-    public static final DeferredHolder<EntityType<?>, EntityType<ParticleLineProj>> THE_DESTROYER_LASER_PROJ = registerProj("the_destroyer_laser", ParticleLineProj::new, 0.75F, 0.75F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SeedProjectile>> SEED = registerProj("seed_proj", SeedProjectile::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SporeProjectile>> SPORE = registerProj("spore_proj", (e, l) ->
+    public static final RegistryObject<EntityType<ParticleLineProj>> THE_DESTROYER_LASER_PROJ = registerProj("the_destroyer_laser", ParticleLineProj::new, 0.75F, 0.75F);
+    public static final RegistryObject<EntityType<SeedProjectile>> SEED = registerProj("seed_proj", SeedProjectile::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<SporeProjectile>> SPORE = registerProj("spore_proj", (e, l) ->
             new SporeProjectile(e, l).setCanBeHurt(), 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SpikeBallProjectile>> SPIKE_BALL = registerProj("spike_ball_proj", SpikeBallProjectile::new, 1.5F, 1.5F);
+    public static final RegistryObject<EntityType<SpikeBallProjectile>> SPIKE_BALL = registerProj("spike_ball_proj", SpikeBallProjectile::new, 1.5F, 1.5F);
 
     // 鞭子
-    public static final DeferredHolder<EntityType<?>, EntityType<WhipEntity>> WHIP_PROJECTILE = ENTITIES.register("whip_projectile", () -> EntityType.Builder.<WhipEntity>of(WhipEntity::new, MobCategory.MISC).updateInterval(1).clientTrackingRange(1).sized(0.5F, 0.5F).build(TEEntities.Key("whip_projectile")));
+    public static final RegistryObject<EntityType<WhipEntity>> WHIP_PROJECTILE = ENTITIES.register("whip_projectile", () -> EntityType.Builder.<WhipEntity>of(WhipEntity::new, MobCategory.MISC).updateInterval(1).clientTrackingRange(1).sized(0.5F, 0.5F).build(TEEntities.Key("whip_projectile")));
 
     //子弹
-    public static final DeferredHolder<EntityType<?>, EntityType<TrailProjectile>> TRAIL_PROJECTILE = ENTITIES.register("trail_projectile", () -> EntityType.Builder.<TrailProjectile>of(TrailProjectile::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<TrailProjectile>> TRAIL_PROJECTILE = ENTITIES.register("trail_projectile", () -> EntityType.Builder.<TrailProjectile>of(TrailProjectile::new, MobCategory.MISC)
             .sized(0.25F, 0.25F).setUpdateInterval(2).setTrackingRange(64).setShouldReceiveVelocityUpdates(true)
             .build(TEEntities.Key("trail_projectile")));
 
     // OBB剑气
-    public static final DeferredHolder<EntityType<?>, EntityType<TrailSwordProj>> TRAIL_SWORD_PROJECTILE = ENTITIES.register("trail_sword_projectile", () -> EntityType.Builder.<TrailSwordProj>of(TrailSwordProj::new, MobCategory.MISC).updateInterval(1).clientTrackingRange(1).sized(0.5F, 0.5F).build(TEEntities.Key("trail_sword_projectile")));
+    public static final RegistryObject<EntityType<TrailSwordProj>> TRAIL_SWORD_PROJECTILE = ENTITIES.register("trail_sword_projectile", () -> EntityType.Builder.<TrailSwordProj>of(TrailSwordProj::new, MobCategory.MISC).updateInterval(1).clientTrackingRange(1).sized(0.5F, 0.5F).build(TEEntities.Key("trail_sword_projectile")));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<BeeProj>> BEE_PROJ = registerProj("bee_proj", BeeProj::new, 1.2F, 1.2F);
+    public static final RegistryObject<EntityType<BeeProj>> BEE_PROJ = registerProj("bee_proj", BeeProj::new, 1.2F, 1.2F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SlimeSpikeProjectile>> SLIME_SPIKE = registerProj("slime_spike_projectile", SlimeSpikeProjectile::blueSpike, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SlimeSpikeProjectile>> JUNGLE_SPIKE = registerProj("jungle_spike_projectile", SlimeSpikeProjectile::jungleSpike, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SlimeSpikeProjectile>> ICE_SPIKE = registerProj("ice_spike_projectile", SlimeSpikeProjectile::iceSpike, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<SlimeSpikeProjectile>> SLIME_SPIKE = registerProj("slime_spike_projectile", SlimeSpikeProjectile::blueSpike, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<SlimeSpikeProjectile>> JUNGLE_SPIKE = registerProj("jungle_spike_projectile", SlimeSpikeProjectile::jungleSpike, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<SlimeSpikeProjectile>> ICE_SPIKE = registerProj("ice_spike_projectile", SlimeSpikeProjectile::iceSpike, 0.5F, 0.5F);
 
 
     //悠悠球
-    public static final DeferredHolder<EntityType<?>, EntityType<YoyosEntity>> YOYO_PROJ = registerProj("yoyo_projectile", YoyosEntity::new, 0.5f, 0.5f);
-    public static final DeferredHolder<EntityType<?>, EntityType<ThrownIceProjectile>> THROWN_ICE_PROJECTILE = registerProj("thrown_ice_projectile", ThrownIceProjectile::new, 1f, 1f);
-    public static final DeferredHolder<EntityType<?>, EntityType<IcePillar>> ICE_PILLAR = registerProj("ice_pillar", IcePillar::new, 1f, 3f);
-    public static final DeferredHolder<EntityType<?>, EntityType<ShadowHandProjectile>> SHADOW_HAND = registerProj("shadow_hand", ShadowHandProjectile::new, 0.5f, 0.5f);
+    public static final RegistryObject<EntityType<YoyosEntity>> YOYO_PROJ = registerProj("yoyo_projectile", YoyosEntity::new, 0.5f, 0.5f);
+    public static final RegistryObject<EntityType<ThrownIceProjectile>> THROWN_ICE_PROJECTILE = registerProj("thrown_ice_projectile", ThrownIceProjectile::new, 1f, 1f);
+    public static final RegistryObject<EntityType<IcePillar>> ICE_PILLAR = registerProj("ice_pillar", IcePillar::new, 1f, 3f);
+    public static final RegistryObject<EntityType<ShadowHandProjectile>> SHADOW_HAND = registerProj("shadow_hand", ShadowHandProjectile::new, 0.5f, 0.5f);
 
     @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerRenderers(PortEntityRenderersEvent.PortRegisterRenderers event) {
         RegisterUtils.registerBaseProjRenderer(event, CABBAGE_PROJ.get(), c -> new CabbageProjModel<>(c.bakeLayer(CabbageProjModel.LAYER_LOCATION)));
         RegisterUtils.registerBaseProjRenderer(event, BEE_STICK_PROJ.get(), c -> new Stinger<>(c.bakeLayer(Stinger.LAYER_LOCATION)));
         RegisterUtils.registerBaseProjRenderer(event, SUMMON_BEE_STICK_PROJ.get(), c -> new Stinger<>(c.bakeLayer(Stinger.LAYER_LOCATION)));
@@ -121,11 +122,11 @@ public class TEProjectileEntities {
         event.registerEntityRenderer(SHADOW_HAND.get(), (c) -> new GeoNegativeVolumeRenderer<>(c, SHADOW_HAND.getId().withPrefix("proj/")));
     }
 
-    public static <T extends Projectile> DeferredHolder<EntityType<?>, EntityType<T>> registerProj(String name, EntityType.EntityFactory<T> entityFactory, float w, float h) {
-        return ENTITIES.register(name, id -> EntityType.Builder.of(entityFactory, MobCategory.MISC).clientTrackingRange(10).sized(w, h).build(id.toString()));
+    public static <T extends Projectile> RegistryObject<EntityType<T>> registerProj(String name, EntityType.EntityFactory<T> entityFactory, float w, float h) {
+        return PortDeferredRegisterExtension.register(ENTITIES, name, id -> EntityType.Builder.of(entityFactory, MobCategory.MISC).clientTrackingRange(10).sized(w, h).build(id.toString()));
     }
 
-    public static <T extends Projectile> DeferredHolder<EntityType<?>, EntityType<T>> registerProj(String name, EntityType.EntityFactory<T> entityFactory) {
+    public static <T extends Projectile> RegistryObject<EntityType<T>> registerProj(String name, EntityType.EntityFactory<T> entityFactory) {
         return registerProj(name, entityFactory, 1, 1);
     }
 

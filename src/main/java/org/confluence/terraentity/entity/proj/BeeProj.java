@@ -63,11 +63,6 @@ public class BeeProj extends BaseProj<BeeProj> {
     }
 
     @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
-    }
-
-    @Override
     protected void doKnockBack(LivingEntity entity) {}
 
     @Override

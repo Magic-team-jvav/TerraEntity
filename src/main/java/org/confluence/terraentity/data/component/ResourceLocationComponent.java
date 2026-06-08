@@ -1,30 +1,17 @@
 package org.confluence.terraentity.data.component;
 
+import PortLib.extensions.net.minecraft.resources.ResourceLocation.PortResourceLocationExtension;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.network.codec.PortStreamCodec;
 
 import java.util.Objects;
 
-public record ResourceLocationComponent(ResourceLocation location) implements DataComponentType<ResourceLocationComponent> {
-
-    public static Codec<ResourceLocationComponent> CODEC = ResourceLocation.CODEC.xmap(ResourceLocationComponent::new, ResourceLocationComponent::location);
-    public static StreamCodec<ByteBuf, ResourceLocationComponent> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
-
-    @Override
-    public @Nullable Codec<ResourceLocationComponent> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, ResourceLocationComponent> streamCodec() {
-        return STREAM_CODEC;
-    }
+public record ResourceLocationComponent(ResourceLocation location) {
+    public static final Codec<ResourceLocationComponent> CODEC = ResourceLocation.CODEC.xmap(ResourceLocationComponent::new, ResourceLocationComponent::location);
+    public static final PortStreamCodec<ByteBuf, ResourceLocationComponent> STREAM_CODEC = PortResourceLocationExtension.streamCodec()
+            .map(ResourceLocationComponent::new, ResourceLocationComponent::location);
 
     @Override
     public boolean equals(Object o) {
@@ -38,6 +25,4 @@ public record ResourceLocationComponent(ResourceLocation location) implements Da
     public int hashCode() {
         return Objects.hashCode(location);
     }
-
-
 }

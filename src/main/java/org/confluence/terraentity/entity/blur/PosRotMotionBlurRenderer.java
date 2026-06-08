@@ -8,12 +8,10 @@ import org.confluence.terraentity.api.entity.blur.IMotionBlurHolder;
 import org.confluence.terraentity.api.entity.blur.IMotionBlurRenderer;
 
 import java.util.Iterator;
-import java.util.function.Consumer;
 
-/**
- * 位置旋转运动模糊子渲染器
- * @param <T> 实体类型
- */
+/// 位置旋转运动模糊子渲染器
+///
+/// @param <T> 实体类型
 public class PosRotMotionBlurRenderer<T extends Entity & IMotionBlurHolder<PosRotMotionBlurContext>> implements IMotionBlurRenderer<T, PosRotMotionBlurContext> {
 
     boolean ifRotX;
@@ -26,11 +24,10 @@ public class PosRotMotionBlurRenderer<T extends Entity & IMotionBlurHolder<PosRo
 
     // 这是最基础的信息，将来可以用装饰器添加新渲染内容
     @Override
-    public void renderBlur(PoseStack poseStack,T animatable, float partialTick, Consumer<Integer> renderCallback) {
-
+    public void renderBlur(PoseStack poseStack, T animatable, float partialTick, RenderCallback renderCallback) {
         MotionBlurManager<PosRotMotionBlurContext> manager = animatable.getMotionBlurManager();
         Iterator<PosRotMotionBlurContext> trails = manager.iterator();
-        if(!trails.hasNext()){
+        if (!trails.hasNext()) {
             return;
         }
         double x = Mth.lerp(partialTick, animatable.xo, animatable.getX());
@@ -40,13 +37,13 @@ public class PosRotMotionBlurRenderer<T extends Entity & IMotionBlurHolder<PosRo
         int maxAge = manager.size();
         int age = 0;
         trails.next(); // 跳过第一个
-        while(trails.hasNext()) {
+        while (trails.hasNext()) {
             age++;
             PosRotMotionBlurContext trail = trails.next();
 
             poseStack.pushPose();
             double progress = (double) (age + partialTick) / (double) maxAge;
-            double pr = 1-progress;
+            double pr = 1 - progress;
             pr = Math.pow(pr, 2);
             poseStack.translate((trail.pos().x - x) * pr, (trail.pos().y - y) * pr + offsetY, (trail.pos().z - z) * pr);
 
@@ -58,12 +55,11 @@ public class PosRotMotionBlurRenderer<T extends Entity & IMotionBlurHolder<PosRo
             }
 
             float alpha = (float) (Math.pow(pr, 2)) * 0.5F;
-            int color = 0xFFFFFF | (int) ((alpha) * 0xFF ) << 24;
-            float minSize = 0.95f- 0.3f;
+            float minSize = 0.95f - 0.3f;
             float size = (float) (0.95 - minSize * progress);
             poseStack.scale(size, size, size);
 
-            renderCallback.accept(color);
+            renderCallback.accept(1, 1, 1, alpha);
 
             poseStack.popPose();
 

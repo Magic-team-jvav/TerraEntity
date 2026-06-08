@@ -12,8 +12,9 @@ import net.minecraft.world.level.Level;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.init.TEEffects;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.wrapper.common.extensions.IPortEntityExtension;
 
-public class SlimeSpikeProjectile extends BaseProj<SlimeSpikeProjectile> {
+public class SlimeSpikeProjectile extends BaseProj<SlimeSpikeProjectile> implements IPortEntityExtension {
 
     private static final EntityDataAccessor<Boolean> DATA_HAS_GRAVITY = SynchedEntityData.defineId(SlimeSpikeProjectile.class, EntityDataSerializers.BOOLEAN);
 
@@ -33,7 +34,7 @@ public class SlimeSpikeProjectile extends BaseProj<SlimeSpikeProjectile> {
     }
 
     public static SlimeSpikeProjectile iceSpike(EntityType<? extends Projectile> pEntityType, Level pLevel) {
-        return new SlimeSpikeProjectile(pEntityType, pLevel, new MobEffectInstance(TEEffects.FROST_BURN, 100), TerraEntity.space("textures/entity/proj/ice_spiked_projectile.png"), true);
+        return new SlimeSpikeProjectile(pEntityType, pLevel, new MobEffectInstance(TEEffects.FROST_BURN.get(), 100), TerraEntity.space("textures/entity/proj/ice_spiked_projectile.png"), true);
     }
 
     public void setHasGravity(boolean hasGravity) {
@@ -41,9 +42,9 @@ public class SlimeSpikeProjectile extends BaseProj<SlimeSpikeProjectile> {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_HAS_GRAVITY, true);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(DATA_HAS_GRAVITY, true);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class SlimeSpikeProjectile extends BaseProj<SlimeSpikeProjectile> {
     }
 
     @Override
-    protected double getDefaultGravity() {
+    public double getDefaultGravity() {
         return 0.108f;
     }
 

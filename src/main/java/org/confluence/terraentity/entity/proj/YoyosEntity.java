@@ -1,5 +1,7 @@
 package org.confluence.terraentity.entity.proj;
 
+import PortLib.extensions.net.minecraft.world.entity.projectile.ProjectileUtil.PortProjectileUtilExtension;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,7 +22,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,8 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
-import net.neoforged.neoforge.event.EventHooks;
+import net.minecraftforge.entity.PartEntity;
 import org.confluence.terraentity.api.entity.ICollisionAttackEntity;
 import org.confluence.terraentity.api.item.ILeftClickReceiver;
 import org.confluence.terraentity.attachment.WeaponStorage;
@@ -37,9 +37,11 @@ import org.confluence.terraentity.item.YoyosItem;
 import org.confluence.terraentity.registries.hit_effect.IEffectStrategy;
 import org.confluence.terraentity.utils.TEUtils;
 import org.jetbrains.annotations.Nullable;
+import org.mesdag.portlib.event.entity.PortProjectileImpactEvent;
+import org.mesdag.portlib.wrapper.common.extensions.IPortProjectileExtension;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -47,7 +49,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /// 悠悠球
-public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEntity, ICollisionAttackEntity {
+public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEntity, ICollisionAttackEntity, IPortProjectileExtension {
     int maxRetrieveTicks = 40;
     int retrieveTicks = 0;
     float maxRange = 10;
@@ -122,8 +124,8 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
         Entity entity = this.getOwner();
         if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
 
-            HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, ClipContext.Block.COLLIDER);
-            if (hitresult.getType() != HitResult.Type.MISS && !EventHooks.onProjectileImpact(this, hitresult)) {
+            HitResult hitresult = PortProjectileUtilExtension.getHitResultOnMoveVector(this, this::canHitEntity, ClipContext.Block.COLLIDER);
+            if (hitresult.getType() != HitResult.Type.MISS && !PortProjectileImpactEvent.onProjectileImpact(this, hitresult)) {
                 this.hitTargetOrDeflectSelf(hitresult);
             }
 
@@ -187,8 +189,9 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_WEAPON_ITEM, ItemStack.EMPTY).define(DATA_IS_BAKING, false);
+    protected void defineSynchedData() {
+        entityData.define(DATA_WEAPON_ITEM, ItemStack.EMPTY);
+        entityData.define(DATA_IS_BAKING, false);
     }
 
     @Override
@@ -213,8 +216,8 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     }
 
     @Override
-    public void onRemovedFromLevel() {
-        super.onRemovedFromLevel();
+    public void onRemovedFromWorld() {
+        super.onRemovedFromWorld();
         Entity owner = getOwner();
         if (owner != null && item != null) {
             WeaponStorage data = WeaponStorage.of(owner);
@@ -313,7 +316,7 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
                 }
                 ItemStack stack = getWeaponItem();
                 if (getOwner() != null && getOwner() instanceof LivingEntity owner) {
-                    stack.hurtAndBreak(1, owner, EquipmentSlot.MAINHAND);
+                    PortItemStackExtension.hurtAndBreak(stack, 1, owner, EquipmentSlot.MAINHAND);
                 }
                 return true;
             }
@@ -338,9 +341,9 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
                     this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
                 }
 
-                if (this.level() instanceof ServerLevel level) {
-                    EnchantmentHelper.doPostAttackEffects(level, entity, damagesource);
-                }
+//   todo             if (this.level() instanceof ServerLevel level) {
+//                    EnchantmentHelper.doPostAttackEffects(level, entity, damagesource);
+//                }
 
                 owner.setLastHurtMob(entity);
 //            asEntity().playAttackSound();
@@ -355,7 +358,7 @@ public class YoyosEntity extends Projectile implements ILeftClickReceiver, GeoEn
     }
 
     @Override
-    public boolean canChangeDimensions(Level oldLevel, Level newLevel) {
+    public boolean canChangeDimensions() {
         return false;
     }
 }

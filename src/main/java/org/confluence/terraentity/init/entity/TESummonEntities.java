@@ -1,5 +1,6 @@
 package org.confluence.terraentity.init.entity;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.entity.IronGolemRenderer;
@@ -9,13 +10,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.item.Items;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.GeoNormalModel;
 import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
@@ -23,38 +22,40 @@ import org.confluence.terraentity.client.entity.renderer.mob.*;
 import org.confluence.terraentity.entity.summon.*;
 import org.confluence.terraentity.init.TEEffectStrategies;
 import org.confluence.terraentity.init.TEEntities;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
+import org.mesdag.portlib.event.entity.PortEntityAttributeCreationEvent;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 
 public class TESummonEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, TerraEntity.MODID);
 
     // tip 召唤物
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonFinch>> SUMMON_FINCH = TEEntities.registerCreature(ENTITIES, "finch_baby", SummonFinch::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSlime>> SUMMON_SLIME = TEEntities.registerCreature(ENTITIES, "slime_baby", SummonSlime::new, 0.5F, 0.5F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonIronGolem>> SUMMON_IRON_GOLEM = TEEntities.registerCreature(ENTITIES, "i_32_iron_golem", SummonIronGolem::new, 1.5F, 3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonHornet>> SUMMON_HORNET = TEEntities.registerCreature(ENTITIES, "hornet_baby", SummonHornet::new, 0.5F, 0.8F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SculkWisp>> SCULK_WISP = TEEntities.registerCreature(ENTITIES, "sculk_wisp", SculkWisp::new, 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<FlyRangeAttackSummonMob<?>>> IMP = TEEntities.registerCreature(ENTITIES, "summon_imp", (e, l) -> new FlyRangeAttackSummonMob<>(e, l, 20, 20, 18, 15, TEProjectileEntities.FIRE_IMP_PROJ), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSnowFlinx>> SUMMON_SNOW_FLINX = TEEntities.registerCreature(ENTITIES, "summon_snow_flinx", (e, l) -> new SummonSnowFlinx(e, l), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonFinch>> SUMMON_FINCH = TEEntities.registerCreature(ENTITIES, "finch_baby", SummonFinch::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<SummonSlime>> SUMMON_SLIME = TEEntities.registerCreature(ENTITIES, "slime_baby", SummonSlime::new, 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<SummonIronGolem>> SUMMON_IRON_GOLEM = TEEntities.registerCreature(ENTITIES, "i_32_iron_golem", SummonIronGolem::new, 1.5F, 3F);
+    public static final RegistryObject<EntityType<SummonHornet>> SUMMON_HORNET = TEEntities.registerCreature(ENTITIES, "hornet_baby", SummonHornet::new, 0.5F, 0.8F);
+    public static final RegistryObject<EntityType<SculkWisp>> SCULK_WISP = TEEntities.registerCreature(ENTITIES, "sculk_wisp", SculkWisp::new, 1F, 1F);
+    public static final RegistryObject<EntityType<FlyRangeAttackSummonMob<?>>> IMP = TEEntities.registerCreature(ENTITIES, "summon_imp", (e, l) -> new FlyRangeAttackSummonMob<>(e, l, 20, 20, 18, 15, TEProjectileEntities.FIRE_IMP_PROJ), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSnowFlinx>> SUMMON_SNOW_FLINX = TEEntities.registerCreature(ENTITIES, "summon_snow_flinx", (e, l) -> new SummonSnowFlinx(e, l), 1F, 1F);
 
     // 棱镜系列
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_WOODEN_SWORD = TEEntities.registerCreature(ENTITIES, "summon_wooden_sword", (e, l) -> new SummonSword(e, l, () -> Items.WOODEN_SWORD, 0x714C11, TEEffectStrategies.POISON_5_SEC_2_AMP.get().getProvider(), 0.15f), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_STONE_SWORD = TEEntities.registerCreature(ENTITIES, "summon_stone_sword", (e, l) -> new SummonSword(e, l, () -> Items.STONE_SWORD, 0x8E9797, TEEffectStrategies.SLOW_5_SEC_2_AMP.get().getProvider(), 0.15f), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_IRON_SWORD = TEEntities.registerCreature(ENTITIES, "summon_iron_sword", (e, l) -> new SummonSword(e, l, () -> Items.IRON_SWORD, 0xE6F0F3, TEEffectStrategies.HEAL_0_5_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_GOLDEN_SWORD = TEEntities.registerCreature(ENTITIES, "summon_golden_sword", (e, l) -> new SummonSword(e, l, () -> Items.GOLDEN_SWORD, 0xE3D529, TEEffectStrategies.SET_FIRE_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_DIAMOND_SWORD = TEEntities.registerCreature(ENTITIES, "summon_diamond_sword", (e, l) -> new SummonSword(e, l, () -> Items.DIAMOND_SWORD, 0x17CFC1, TEEffectStrategies.FROZEN_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SummonSword>> SUMMON_NETHERITE_SWORD = TEEntities.registerCreature(ENTITIES, "summon_netherite_sword", (e, l) -> new SummonSword(e, l, () -> Items.NETHERITE_SWORD, 0x8136D2, TEEffectStrategies.HELL_FIRE_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Terraprisma>> TERRAPRISMA = TEEntities.registerCreature(ENTITIES, "terraprisma", (e, l) -> new Terraprisma(e, l), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSword>> SUMMON_WOODEN_SWORD = TEEntities.registerCreature(ENTITIES, "summon_wooden_sword", (e, l) -> new SummonSword(e, l, () -> Items.WOODEN_SWORD, 0x714C11, TEEffectStrategies.POISON_5_SEC_2_AMP.get().getProvider(), 0.15f), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSword>> SUMMON_STONE_SWORD = TEEntities.registerCreature(ENTITIES, "summon_stone_sword", (e, l) -> new SummonSword(e, l, () -> Items.STONE_SWORD, 0x8E9797, TEEffectStrategies.SLOW_5_SEC_2_AMP.get().getProvider(), 0.15f), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSword>> SUMMON_IRON_SWORD = TEEntities.registerCreature(ENTITIES, "summon_iron_sword", (e, l) -> new SummonSword(e, l, () -> Items.IRON_SWORD, 0xE6F0F3, TEEffectStrategies.HEAL_0_5_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSword>> SUMMON_GOLDEN_SWORD = TEEntities.registerCreature(ENTITIES, "summon_golden_sword", (e, l) -> new SummonSword(e, l, () -> Items.GOLDEN_SWORD, 0xE3D529, TEEffectStrategies.SET_FIRE_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSword>> SUMMON_DIAMOND_SWORD = TEEntities.registerCreature(ENTITIES, "summon_diamond_sword", (e, l) -> new SummonSword(e, l, () -> Items.DIAMOND_SWORD, 0x17CFC1, TEEffectStrategies.FROZEN_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
+    public static final RegistryObject<EntityType<SummonSword>> SUMMON_NETHERITE_SWORD = TEEntities.registerCreature(ENTITIES, "summon_netherite_sword", (e, l) -> new SummonSword(e, l, () -> Items.NETHERITE_SWORD, 0x8136D2, TEEffectStrategies.HELL_FIRE_EFFECT.get().getProvider(), 0.15f), 1F, 1F);
+    public static final RegistryObject<EntityType<Terraprisma>> TERRAPRISMA = TEEntities.registerCreature(ENTITIES, "terraprisma", (e, l) -> new Terraprisma(e, l), 1F, 1F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<StardustDragon>> STARDUST_DRAGON = TEEntities.registerCreature(ENTITIES, "stardust_dragon", (e, l) -> new StardustDragon(e, l), 0.5F, 0.5F);
+    public static final RegistryObject<EntityType<StardustDragon>> STARDUST_DRAGON = TEEntities.registerCreature(ENTITIES, "stardust_dragon", (e, l) -> new StardustDragon(e, l), 0.5F, 0.5F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Chester>> CHESTER = TEEntities.registerCreature(ENTITIES, "chester", (e, l) -> new Chester(e, l), 1F, 1F);
-    public static final DeferredHolder<EntityType<?>, EntityType<PiggyBank>> PIGGY_BANK = TEEntities.registerCreature(ENTITIES, "piggy_bank", (e, l) -> new PiggyBank(e, l), 1F, 1F);
+    public static final RegistryObject<EntityType<Chester>> CHESTER = TEEntities.registerCreature(ENTITIES, "chester", (e, l) -> new Chester(e, l), 1F, 1F);
+    public static final RegistryObject<EntityType<PiggyBank>> PIGGY_BANK = TEEntities.registerCreature(ENTITIES, "piggy_bank", (e, l) -> new PiggyBank(e, l), 1F, 1F);
 
 //    Color c = new Color(0xFF714C11, true);  // 删掉注释查看颜色
 
     @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerRenderers(PortEntityRenderersEvent.PortRegisterRenderers event) {
         event.registerEntityRenderer(CHESTER.get(), c -> new GeoNormalRenderer<>(c, TESummonEntities.CHESTER.getId().withPrefix("summon/"), false, 1f, 0));
         event.registerEntityRenderer(PIGGY_BANK.get(), c -> new GeoNormalRenderer<>(c, TESummonEntities.PIGGY_BANK.getId().withPrefix("summon/"), false, 1f, 0));
 
@@ -73,23 +74,23 @@ public class TESummonEntities {
         });
 
 
-        event.registerEntityRenderer(SUMMON_WOODEN_SWORD.get(), c -> new SummonSwordRenderer<>(c));
-        event.registerEntityRenderer(SUMMON_STONE_SWORD.get(), c -> new SummonSwordRenderer<>(c));
-        event.registerEntityRenderer(SUMMON_IRON_SWORD.get(), c -> new SummonSwordRenderer<>(c));
-        event.registerEntityRenderer(SUMMON_GOLDEN_SWORD.get(), c -> new SummonSwordRenderer<>(c));
-        event.registerEntityRenderer(SUMMON_DIAMOND_SWORD.get(), c -> new SummonSwordRenderer<>(c));
-        event.registerEntityRenderer(SUMMON_NETHERITE_SWORD.get(), c -> new SummonSwordRenderer<>(c));
-        event.registerEntityRenderer(TERRAPRISMA.get(), c -> new TerraprismaRenderer(c));
+        event.registerEntityRenderer(SUMMON_WOODEN_SWORD.get(), SummonSwordRenderer::new);
+        event.registerEntityRenderer(SUMMON_STONE_SWORD.get(), SummonSwordRenderer::new);
+        event.registerEntityRenderer(SUMMON_IRON_SWORD.get(), SummonSwordRenderer::new);
+        event.registerEntityRenderer(SUMMON_GOLDEN_SWORD.get(), SummonSwordRenderer::new);
+        event.registerEntityRenderer(SUMMON_DIAMOND_SWORD.get(), SummonSwordRenderer::new);
+        event.registerEntityRenderer(SUMMON_NETHERITE_SWORD.get(), SummonSwordRenderer::new);
+        event.registerEntityRenderer(TERRAPRISMA.get(), TerraprismaRenderer::new);
 
         event.registerEntityRenderer(STARDUST_DRAGON.get(), c -> new GeoWormRenderer<>(c, TEMonsterEntities.GIANT_WORM.getId(), 0.5f, 0f));
     }
 
-    public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+    public static void registerEntityAttributes(PortEntityAttributeCreationEvent event) {
         event.put(CHESTER.get(), AbstractSummonMob.createAttributes().build());
         event.put(PIGGY_BANK.get(), AbstractSummonMob.createAttributes().build());
 
         // sommon
-        event.put(SUMMON_FINCH.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 32).add(Attributes.MOVEMENT_SPEED, 0.7).add(Attributes.GRAVITY, 0).add(Attributes.SAFE_FALL_DISTANCE, 1024).add(Attributes.ATTACK_KNOCKBACK, 0).build());
+        event.put(SUMMON_FINCH.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 32).add(Attributes.MOVEMENT_SPEED, 0.7).add(PortAttributesExtension.gravity().value(), 0).add(PortAttributesExtension.safeFallDistance().value(), 1024).add(Attributes.ATTACK_KNOCKBACK, 0).build());
         event.put(SUMMON_SLIME.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 32).add(Attributes.MOVEMENT_SPEED, 0.7).build());
         event.put(SUMMON_IRON_GOLEM.get(), IronGolem.createAttributes().add(Attributes.FOLLOW_RANGE, 32).add(Attributes.MOVEMENT_SPEED, 0.6).build());
         event.put(SUMMON_HORNET.get(), AbstractSummonMob.createAttributes().add(Attributes.FOLLOW_RANGE, 84).add(Attributes.MOVEMENT_SPEED, 0.7).build());

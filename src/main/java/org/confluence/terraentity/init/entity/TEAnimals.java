@@ -1,24 +1,22 @@
 package org.confluence.terraentity.init.entity;
 
+import PortLib.extensions.net.minecraft.world.entity.ai.attributes.Attributes.PortAttributesExtension;
+import PortLib.extensions.net.minecraftforge.registries.DeferredRegister.PortDeferredRegisterExtension;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.confluence.terraentity.TerraEntity;
 import org.confluence.terraentity.client.entity.model.GeoModelTextureDecoration;
 import org.confluence.terraentity.client.entity.model.GeoNormalModel;
@@ -27,46 +25,55 @@ import org.confluence.terraentity.client.entity.renderer.GeoNormalRenderer;
 import org.confluence.terraentity.client.entity.renderer.mob.FairyRenderer;
 import org.confluence.terraentity.entity.animal.*;
 import org.confluence.terraentity.init.TEEntities;
+import org.mesdag.portlib.event.client.PortEntityRenderersEvent;
+import org.mesdag.portlib.event.entity.PortEntityAttributeCreationEvent;
+import org.mesdag.portlib.event.entity.PortRegisterSpawnPlacementsEvent;
+import org.mesdag.portlib.wrapper.world.entity.PortSpawnPlacementTypes;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static org.confluence.terraentity.entity.animal.VariantsTextureMaps.*;
 
 public class TEAnimals {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, TerraEntity.MODID);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<Duck>> DUCK = ENTITIES.register("duck", () -> EntityType.Builder.of(Duck::new, MobCategory.CREATURE).sized(0.4F, 0.7F).eyeHeight(0.644F).passengerAttachments(new Vec3(0.0, 0.7, -0.1)).clientTrackingRange(10).build(TEEntities.Key("duck")));
-    public static final DeferredHolder<EntityType<?>, EntityType<Bunny>> BUNNY = ENTITIES.register("bunny", () -> EntityType.Builder.of(Bunny::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("bunny")));
-    public static final DeferredHolder<EntityType<?>, EntityType<JewelBunny>> JEWEL_BUNNY = ENTITIES.register("jewel_bunny", () -> EntityType.Builder.of(JewelBunny::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("jewel_bunny")));
-    public static final DeferredHolder<EntityType<?>, EntityType<BoomBunny>> EXPLOSIVE_BUNNY = ENTITIES.register("explosive_bunny", () -> EntityType.Builder.of(BoomBunny::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("boom_bunny")));
-    public static final DeferredHolder<EntityType<?>, EntityType<Squirrel>> SQUIRREL = ENTITIES.register("squirrel", () -> EntityType.Builder.of(Squirrel::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("squirrel")));
-    public static final DeferredHolder<EntityType<?>, EntityType<JewelSquirrel>> JEWEL_SQUIRREL = ENTITIES.register("jewel_squirrel", () -> EntityType.Builder.of(JewelSquirrel::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("jewel_squirrel")));
-    public static final DeferredHolder<EntityType<?>, EntityType<Bird>> BIRD = ENTITIES.register("bird", () -> EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("bird")));
-    public static final DeferredHolder<EntityType<?>, EntityType<Bird>> BLUE_JAY = ENTITIES.register("blue_jay", () -> EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("blue_jay")));
-    public static final DeferredHolder<EntityType<?>, EntityType<Bird>> CARDINAL = ENTITIES.register("cardinal", () -> EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(TEEntities.Key("cardinal")));
-    public static final DeferredHolder<EntityType<?>, EntityType<Crab>> CRAB = TEEntities.registerCreature(ENTITIES, "crab", Crab::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<Duck>> DUCK = register("duck", id -> EntityType.Builder.of(Duck::new, MobCategory.CREATURE).sized(0.4F, 0.7F)/* todo .eyeHeightid.passengerAttachments(new Vec3(0.0, 0.7, -0.1))*/.clientTrackingRange(10).build(id.toString()));
+    public static final RegistryObject<EntityType<Bunny>> BUNNY = register("bunny", id -> EntityType.Builder.of(Bunny::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<JewelBunny>> JEWEL_BUNNY = register("jewel_bunny", id -> EntityType.Builder.of(JewelBunny::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<BoomBunny>> EXPLOSIVE_BUNNY = register("explosive_bunny", id -> EntityType.Builder.of(BoomBunny::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<Squirrel>> SQUIRREL = register("squirrel", id -> EntityType.Builder.of(Squirrel::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<JewelSquirrel>> JEWEL_SQUIRREL = register("jewel_squirrel", id -> EntityType.Builder.of(JewelSquirrel::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<Bird>> BIRD = register("bird", id -> EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<Bird>> BLUE_JAY = register("blue_jay", id -> EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<Bird>> CARDINAL = register("cardinal", id -> EntityType.Builder.of(Bird::new, MobCategory.CREATURE).sized(0.4F, 0.5F).clientTrackingRange(8).build(id.toString()));
+    public static final RegistryObject<EntityType<Crab>> CRAB = TEEntities.registerCreature(ENTITIES, "crab", Crab::new, 0.5F, 0.3F);
+
+    private static <T extends Entity> RegistryObject<EntityType<T>> register(String name, Function<ResourceLocation, EntityType<T>> function) {
+        return PortDeferredRegisterExtension.register(ENTITIES, name, function);
+    }
 
     // 昆虫
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleAnimal>> GLOWING_SNAIL = TEEntities.registerCreature(ENTITIES, "glowing_snail", SimpleAnimal::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleAnimal>> GRUBBY = TEEntities.registerCreature(ENTITIES, "grubby", SimpleAnimal::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleAnimal>> MAGGOT = TEEntities.registerCreature(ENTITIES, "maggot", SimpleAnimal::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleAnimal>> MAGMA_SNAIL = TEEntities.registerCreature(ENTITIES, "magma_snail", SimpleAnimal::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleAnimal>> SLUGGY = TEEntities.registerCreature(ENTITIES, "sluggy", SimpleAnimal::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleAnimal>> SNAIL = TEEntities.registerCreature(ENTITIES, "snail", SimpleAnimal::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleAnimal>> GLOWING_SNAIL = TEEntities.registerCreature(ENTITIES, "glowing_snail", SimpleAnimal::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleAnimal>> GRUBBY = TEEntities.registerCreature(ENTITIES, "grubby", SimpleAnimal::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleAnimal>> MAGGOT = TEEntities.registerCreature(ENTITIES, "maggot", SimpleAnimal::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleAnimal>> MAGMA_SNAIL = TEEntities.registerCreature(ENTITIES, "magma_snail", SimpleAnimal::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleAnimal>> SLUGGY = TEEntities.registerCreature(ENTITIES, "sluggy", SimpleAnimal::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleAnimal>> SNAIL = TEEntities.registerCreature(ENTITIES, "snail", SimpleAnimal::new, 0.5F, 0.3F);
 
-    public static final DeferredHolder<EntityType<?>, EntityType<BirdVariantAnimal>> BUTTERFLY = TEEntities.registerCreature(ENTITIES, "butterfly", (e, l) -> new BirdVariantAnimal(e, l, butterflyTextures, butterflyVariants), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Bird>> HELL_BUTTERFLY = TEEntities.registerCreature(ENTITIES, "hell_butterfly", Bird::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Bird>> PRISMATIC_LACEWING = TEEntities.registerCreature(ENTITIES, "prismatic_lacewing", Bird::new, 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BirdVariantAnimal>> DRAGONFLY = TEEntities.registerCreature(ENTITIES, "dragonfly", (e, l) -> new BirdVariantAnimal(e, l, dragonflyTextures, dragonflyVariants), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Fairy>> FAIRY = TEEntities.registerCreature(ENTITIES, "fairy", (e, l) -> new Fairy(e, l, fairyTextures, fairyVariants), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<Fairy>> FEALING = TEEntities.registerCreature(ENTITIES, "fealing", (e, l) -> new Fairy(e, l, fealingTextures, fealingVariants), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<JumpableVariantAnimal>> GRASSHOPPER = TEEntities.registerCreature(ENTITIES, "grasshopper", (e, l) -> new JumpableVariantAnimal(e, l, grasshopperTextures, grasshopperVariants), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<BirdVariantAnimal>> LADYBUG = TEEntities.registerCreature(ENTITIES, "ladybug", (e, l) -> new BirdVariantAnimal(e, l, ladybugTextures, ladybugVariants), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleVariantAnimal>> SCORPION = TEEntities.registerCreature(ENTITIES, "scorpion", (e, l) -> new SimpleVariantAnimal(e, l, scorpionTextures), 0.5F, 0.3F);
-    public static final DeferredHolder<EntityType<?>, EntityType<SimpleVariantAnimal>> WORM = TEEntities.registerCreature(ENTITIES, "worm", (e, l) -> new WeightedVariantAnimal(e, l, wormTextures, wormVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<BirdVariantAnimal>> BUTTERFLY = TEEntities.registerCreature(ENTITIES, "butterfly", (e, l) -> new BirdVariantAnimal(e, l, butterflyTextures, butterflyVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<Bird>> HELL_BUTTERFLY = TEEntities.registerCreature(ENTITIES, "hell_butterfly", Bird::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<Bird>> PRISMATIC_LACEWING = TEEntities.registerCreature(ENTITIES, "prismatic_lacewing", Bird::new, 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<BirdVariantAnimal>> DRAGONFLY = TEEntities.registerCreature(ENTITIES, "dragonfly", (e, l) -> new BirdVariantAnimal(e, l, dragonflyTextures, dragonflyVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<Fairy>> FAIRY = TEEntities.registerCreature(ENTITIES, "fairy", (e, l) -> new Fairy(e, l, fairyTextures, fairyVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<Fairy>> FEALING = TEEntities.registerCreature(ENTITIES, "fealing", (e, l) -> new Fairy(e, l, fealingTextures, fealingVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<JumpableVariantAnimal>> GRASSHOPPER = TEEntities.registerCreature(ENTITIES, "grasshopper", (e, l) -> new JumpableVariantAnimal(e, l, grasshopperTextures, grasshopperVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<BirdVariantAnimal>> LADYBUG = TEEntities.registerCreature(ENTITIES, "ladybug", (e, l) -> new BirdVariantAnimal(e, l, ladybugTextures, ladybugVariants), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleVariantAnimal>> SCORPION = TEEntities.registerCreature(ENTITIES, "scorpion", (e, l) -> new SimpleVariantAnimal(e, l, scorpionTextures), 0.5F, 0.3F);
+    public static final RegistryObject<EntityType<SimpleVariantAnimal>> WORM = TEEntities.registerCreature(ENTITIES, "worm", (e, l) -> new WeightedVariantAnimal(e, l, wormTextures, wormVariants), 0.5F, 0.3F);
 
     @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void registerRenderers(PortEntityRenderersEvent.PortRegisterRenderers event) {
         event.registerEntityRenderer(DUCK.get(), c -> new GeoNormalRenderer<>(c, new VariantTexModel<Duck>(DUCK.getId().withPrefix("animal/"), true).setHeadName("bone3"), false, 1, -0.01f));
         event.registerEntityRenderer(BUNNY.get(), c -> new GeoNormalRenderer<>(c, new GeoNormalModel<Bunny>(BUNNY.getId().withPrefix("animal/"), true).setHeadName("head"), false, 1, 0));
         event.registerEntityRenderer(JEWEL_BUNNY.get(), c -> new GeoNormalRenderer<>(c, new VariantTexModel<JewelBunny>(BUNNY.getId().withPrefix("animal/"), true).setHeadName("head"), false, 1, 0));
@@ -99,11 +106,11 @@ public class TEAnimals {
 
     }
 
-    public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+    public static void registerEntityAttributes(PortEntityAttributeCreationEvent event) {
         event.put(DUCK.get(), Chicken.createAttributes().build());
-        event.put(BUNNY.get(), Rabbit.createAttributes().add(Attributes.SAFE_FALL_DISTANCE, 6).build());
-        event.put(JEWEL_BUNNY.get(), Rabbit.createAttributes().add(Attributes.SAFE_FALL_DISTANCE, 6).build());
-        event.put(EXPLOSIVE_BUNNY.get(), Rabbit.createAttributes().add(Attributes.SAFE_FALL_DISTANCE, 6).build());
+        event.put(BUNNY.get(), Rabbit.createAttributes().add(PortAttributesExtension.safeFallDistance().value(), 6).build());
+        event.put(JEWEL_BUNNY.get(), Rabbit.createAttributes().add(PortAttributesExtension.safeFallDistance().value(), 6).build());
+        event.put(EXPLOSIVE_BUNNY.get(), Rabbit.createAttributes().add(PortAttributesExtension.safeFallDistance().value(), 6).build());
         event.put(SQUIRREL.get(), Squirrel.createAttributes().build());
         event.put(JEWEL_SQUIRREL.get(), Squirrel.createAttributes().build());
         event.put(BIRD.get(), Bird.createAttributes().build());
@@ -112,12 +119,12 @@ public class TEAnimals {
         event.put(CRAB.get(), SimpleAnimal.createInsectAttributes().build());
 
         // 昆虫
-        event.put(GLOWING_SNAIL.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
-        event.put(GRUBBY.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
-        event.put(MAGGOT.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
-        event.put(MAGMA_SNAIL.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
-        event.put(SLUGGY.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
-        event.put(SNAIL.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
+        event.put(GLOWING_SNAIL.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
+        event.put(GRUBBY.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
+        event.put(MAGGOT.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
+        event.put(MAGMA_SNAIL.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
+        event.put(SLUGGY.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
+        event.put(SNAIL.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
 
         event.put(BUTTERFLY.get(), Bird.createInspectAttributes().build());
         event.put(HELL_BUTTERFLY.get(), Bird.createInspectAttributes().build());
@@ -125,41 +132,41 @@ public class TEAnimals {
         event.put(DRAGONFLY.get(), Bird.createInspectAttributes().build());
         event.put(FAIRY.get(), Bird.createInspectAttributes().build());
         event.put(FEALING.get(), Bird.createInspectAttributes().build());
-        event.put(GRASSHOPPER.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
+        event.put(GRASSHOPPER.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
         event.put(LADYBUG.get(), Bird.createInspectAttributes().build());
-        event.put(SCORPION.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
-        event.put(WORM.get(), SimpleAnimal.createInsectAttributes().add(Attributes.FALL_DAMAGE_MULTIPLIER, 0).build());
+        event.put(SCORPION.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
+        event.put(WORM.get(), SimpleAnimal.createInsectAttributes().add(PortAttributesExtension.fallDamageMultiplier().value(), 0).build());
     }
 
-    public static void spawnPlacementRegister(RegisterSpawnPlacementsEvent event) {
-        event.register(DUCK.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BUNNY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(JEWEL_BUNNY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EXPLOSIVE_BUNNY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SQUIRREL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(JEWEL_SQUIRREL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BIRD.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(BLUE_JAY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CARDINAL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(CRAB.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+    public static void spawnPlacementRegister(PortRegisterSpawnPlacementsEvent event) {
+        event.register(DUCK.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BUNNY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(JEWEL_BUNNY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(EXPLOSIVE_BUNNY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SQUIRREL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(JEWEL_SQUIRREL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BIRD.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(BLUE_JAY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CARDINAL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(CRAB.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(GLOWING_SNAIL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GRUBBY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(MAGGOT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(MAGMA_SNAIL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SLUGGY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SNAIL.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(GLOWING_SNAIL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GRUBBY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(MAGGOT.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(MAGMA_SNAIL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SLUGGY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SNAIL.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
 
-        event.register(BUTTERFLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HELL_BUTTERFLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(PRISMATIC_LACEWING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(DRAGONFLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(FAIRY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(FEALING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(GRASSHOPPER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(LADYBUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(WORM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, wormSpawnRules(), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(BUTTERFLY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(HELL_BUTTERFLY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(PRISMATIC_LACEWING.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(DRAGONFLY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(FAIRY.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(FEALING.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(GRASSHOPPER.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(LADYBUG.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(SCORPION.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
+        event.register(WORM.get(), PortSpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, wormSpawnRules(), PortRegisterSpawnPlacementsEvent.PortOperation.REPLACE);
     }
 
     private static SpawnPlacements.SpawnPredicate<SimpleVariantAnimal> wormSpawnRules() {

@@ -22,27 +22,26 @@ import software.bernie.geckolib.model.GeoModel;
 import java.util.function.Function;
 
 public class GeoMotionBlurRenderer<T extends Mob & GeoEntity & IMotionBlurHolder<C>, C extends IMotionBlurContext> extends GeoNormalRenderer<T> {
-
     IMotionBlurRenderer<T, C> motionBlurRenderer;
     boolean isBlur = false;
 
     public GeoMotionBlurRenderer(EntityRendererProvider.Context renderManager, ResourceLocation path) {
-        this(renderManager, path, false,1,0);
+        this(renderManager, path, false, 1, 0);
     }
 
     public GeoMotionBlurRenderer(EntityRendererProvider.Context renderManager, ResourceLocation path, boolean ifRotX) {
-        this(renderManager, path, ifRotX,1,0);
+        this(renderManager, path, ifRotX, 1, 0);
     }
 
     public GeoMotionBlurRenderer(EntityRendererProvider.Context renderManager, ResourceLocation path, boolean ifRotX, float scale, float offsetY) {
-        this(renderManager, new GeoNormalModel<>(path), ifRotX,scale,offsetY);
+        this(renderManager, new GeoNormalModel<>(path), ifRotX, scale, offsetY);
     }
 
     public GeoMotionBlurRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model, boolean ifRotX, float scale, float offsetY) {
         super(renderManager, model, ifRotX, scale, offsetY);
     }
 
-    public GeoMotionBlurRenderer<T, C> setMotionBlurRenderer(Function<GeoMotionBlurRenderer<T, C >, IMotionBlurRenderer<T, C>> motionBlurRendererFunction) {
+    public GeoMotionBlurRenderer<T, C> setMotionBlurRenderer(Function<GeoMotionBlurRenderer<T, C>, IMotionBlurRenderer<T, C>> motionBlurRendererFunction) {
         this.motionBlurRenderer = motionBlurRendererFunction.apply(this);
         return this;
     }
@@ -65,11 +64,9 @@ public class GeoMotionBlurRenderer<T extends Mob & GeoEntity & IMotionBlurHolder
     }
 
     @Override
-    public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight,
-                            int packedOverlay, int colour) {
-
-        super.renderFinal(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, colour);
-//        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+    public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        super.renderFinal(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        //        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 //        // 关闭模板写入（后续操作不影响模板缓冲区）
 //        RenderSystem.stencilMask(0x00);
 
@@ -83,11 +80,11 @@ public class GeoMotionBlurRenderer<T extends Mob & GeoEntity & IMotionBlurHolder
 
             IMotionBlurRenderer<T, C> renderer = this.motionBlurRenderer;
             if (renderer != null) {
-                renderer.renderBlur(poseStack, animatable, partialTick, (color) -> {
+                renderer.renderBlur(poseStack, animatable, partialTick, (r, g, b, a) -> {
                     // 渲染残影（仅在不等于1的区域）
                     super.actuallyRender(poseStack, animatable, model,
                             RenderType.entityTranslucent(getTextureLocation(animatable)),
-                            bufferSource, buffer, false, partialTick, packedLight, packedOverlay, color);
+                            bufferSource, buffer, false, partialTick, packedLight, packedOverlay, r, g, b, a);
                 });
             }
 
@@ -97,16 +94,16 @@ public class GeoMotionBlurRenderer<T extends Mob & GeoEntity & IMotionBlurHolder
 
     @Override
     public boolean shouldRender(T livingEntity, Frustum camera, double camX, double camY, double camZ) {
-        if(!livingEntity.getMotionBlurManager().isEmpty()){
+        if (!livingEntity.getMotionBlurManager().isEmpty()) {
             return true;
         }
         return super.shouldRender(livingEntity, camera, camX, camY, camZ);
     }
 
     @Override
-    protected void applyRotations(T animatable, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
-        if(!this.isBlur){ // 防止重复旋转x轴
-            super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
+    protected void applyRotations(T animatable, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick) {
+        if (!this.isBlur) { // 防止重复旋转x轴
+            super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick);
         }
     }
 

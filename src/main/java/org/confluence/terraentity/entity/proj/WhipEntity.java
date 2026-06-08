@@ -1,5 +1,7 @@
 package org.confluence.terraentity.entity.proj;
 
+import PortLib.extensions.net.minecraft.world.entity.Entity.PortEntityExtension;
+import PortLib.extensions.net.minecraft.world.item.ItemStack.PortItemStackExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,7 +20,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
+import net.minecraftforge.entity.PartEntity;
 import org.confluence.lib.ConfluenceMagicLib;
 import org.confluence.lib.common.LibAttributes;
 import org.confluence.terraentity.api.entity.IAttackableProjectile;
@@ -38,7 +40,6 @@ import org.confluence.terraentity.init.item.TEWhipItems;
 import org.confluence.terraentity.item.BaseWhipItem;
 import org.confluence.terraentity.registries.mappeddata.MappedDataTypes;
 import org.confluence.terraentity.utils.TEUtils;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -126,10 +127,10 @@ public class WhipEntity extends Projectile {
         if (weapon.getItem() instanceof BaseWhipItem item1) {
             item = item1;
         }
-        var data = weapon.get(TEDataComponentTypes.EFFECT_STRATEGY);
+        var data = PortItemStackExtension.getData(weapon, TEDataComponentTypes.EFFECT_STRATEGY);
         if (data != null)
             hiteffect = data;
-        var data1 = weapon.get(TEDataComponentTypes.EFFECT_STRATEGY_BENEFICIAL);
+        var data1 = PortItemStackExtension.getData(weapon, TEDataComponentTypes.EFFECT_STRATEGY_BENEFICIAL);
         if (data1 != null)
             hiteffect_beneficial = data1;
         boolean triggerSweep = random.nextFloat() < 0.2f;
@@ -178,7 +179,7 @@ public class WhipEntity extends Projectile {
      * 获取鞭范围
      */
     public double getRange(Player player) {
-        return _rangeFactor * player.getAttribute(ConfluenceMagicLib.WHIP_RANGE).getValue();
+        return _rangeFactor * player.getAttributeValue(ConfluenceMagicLib.WHIP_RANGE);
     }
 
 
@@ -207,7 +208,7 @@ public class WhipEntity extends Projectile {
 
         if ((int) (existTick * 0.3f) == tickCount) {
             if (this.getOwner() != null) {
-                this.getOwner().playSound(TESounds.WHIP_ATTACK.get(), 0.6F + getRandom().nextFloat() * 0.2f, 1.0F);
+                this.getOwner().playSound(TESounds.WHIP_ATTACK.get(), 0.6F + PortEntityExtension.getRandom(this).nextFloat() * 0.2f, 1.0F);
             }
         }
 
@@ -296,7 +297,7 @@ public class WhipEntity extends Projectile {
         }
         if (trigger) {
             // 命中敌人造成伤害才消耗耐久
-            getWeapon().hurtAndBreak(1, owner, EquipmentSlot.MAINHAND);
+            PortItemStackExtension.hurtAndBreak(getWeapon(), 1, owner, EquipmentSlot.MAINHAND);
         }
     }
 
@@ -385,16 +386,16 @@ public class WhipEntity extends Projectile {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_INITIAL_POSITION, new Vector3f(0, 0, 0));
-        builder.define(DATA_INITIAL_DIRECTION, new Vector3f(0, 0, 0));
-        builder.define(DATA_WEAPON, ItemStack.EMPTY);
-        builder.define(DATA_INITIAL_EXISTING_TIME, 22);
-        builder.define(DATA_SERVER_RANDOM, -1f);
+    protected void defineSynchedData() {
+        entityData.define(DATA_INITIAL_POSITION, new Vector3f());
+        entityData.define(DATA_INITIAL_DIRECTION, new Vector3f());
+        entityData.define(DATA_WEAPON, ItemStack.EMPTY);
+        entityData.define(DATA_INITIAL_EXISTING_TIME, 22);
+        entityData.define(DATA_SERVER_RANDOM, -1f);
     }
 
     @Override
-    public void onSyncedDataUpdated(@NotNull EntityDataAccessor<?> var1) {
+    public void onSyncedDataUpdated(EntityDataAccessor<?> var1) {
         if (level().isClientSide) {
 
             if (var1 == DATA_INITIAL_POSITION) {
@@ -427,7 +428,7 @@ public class WhipEntity extends Projectile {
         float f1 = -Mth.sin((x + z) * 0.017453292F);
         float f2 = Mth.cos(y * 0.017453292F) * Mth.cos(x * 0.017453292F);
         this.shoot(f, f1, f2, velocity, inaccuracy);
-        Vec3 vec3 = shooter.getKnownMovement();
+        Vec3 vec3 = PortEntityExtension.getKnownMovement(shooter);
         Vec3 dir = new Vec3(f, f1, f2);
         if (TEUtils.angleBetween(shooter.getLookAngle(), vec3) < 1.5f) {
             this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, vec3.y * 0.2F, vec3.z));
@@ -444,9 +445,7 @@ public class WhipEntity extends Projectile {
     }
 
     @Override
-    protected boolean canHitEntity(@NotNull Entity target) {
+    protected boolean canHitEntity(Entity target) {
         return false;
     }
-
-
 }
