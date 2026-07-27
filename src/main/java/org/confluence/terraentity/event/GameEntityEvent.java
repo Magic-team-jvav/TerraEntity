@@ -27,7 +27,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.confluence.lib.ConfluenceMagicLib;
 import org.confluence.lib.api.entity.Boss;
-import org.confluence.lib.api.entity.IDiscardWhenRespawnEntity;
 import org.confluence.lib.util.LibUtils;
 import org.confluence.terraentity.api.entity.ISummonMob;
 import org.confluence.terraentity.api.npc.trade.ITradeHolder;
@@ -99,9 +98,6 @@ public class GameEntityEvent {
         if (event.getEntity() instanceof ServerPlayer player) {
             // 同步召唤栏信息
             player.getData(TEAttachments.SUMMONER_STORAGE.get()).sync(player);
-
-            IDiscardWhenRespawnEntity.process(player);
-
         }
     }
 
