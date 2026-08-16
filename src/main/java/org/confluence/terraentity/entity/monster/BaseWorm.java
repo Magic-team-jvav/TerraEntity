@@ -25,7 +25,6 @@ import org.confluence.terraentity.entity.ai.goal.WormRandomWanderGoal;
 import org.confluence.terraentity.entity.monster.prefab.AttributeBuilder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

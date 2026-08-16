@@ -4,7 +4,6 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

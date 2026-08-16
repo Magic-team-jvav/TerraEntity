@@ -1,14 +1,7 @@
 package org.confluence.terraentity.mixed;
 
 import com.mojang.blaze3d.pipeline.TextureTarget;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.caffeinemc.mods.sodium.api.util.ColorARGB;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import org.confluence.terraentity.mixin.accessor.GameRendererAccessor;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 public class HotSwap {
     public static void doSomething(float partialTicks, TextureTarget target){

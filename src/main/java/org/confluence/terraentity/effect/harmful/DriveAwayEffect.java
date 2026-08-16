@@ -3,21 +3,19 @@ package org.confluence.terraentity.effect.harmful;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import org.confluence.terraentity.entity.monster.Harpy;
 import org.confluence.terraentity.utils.DriveAwaySystem.DriveAwayExecutor;
-import java.util.Random;
 
 import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
 
 /**
  * <h1>驱离效果 - 对飞行单位使用驱离系统</h1>

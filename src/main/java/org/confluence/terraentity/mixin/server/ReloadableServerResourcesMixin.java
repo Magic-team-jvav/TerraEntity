@@ -3,7 +3,6 @@ package org.confluence.terraentity.mixin.server;
 import com.github.edg_thexu.cafelib.data.pack.resources.PreReloader;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.LayeredRegistryAccess;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;

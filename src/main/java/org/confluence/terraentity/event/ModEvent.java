@@ -19,9 +19,6 @@ import org.confluence.terraentity.integration.curios.CuriosHelper;
 import org.confluence.terraentity.network.NetworkHandler;
 import org.confluence.terraentity.utils.DriveAwaySystem.DriveAwayExecutor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @EventBusSubscriber(modid = TerraEntity.MODID)
 public class ModEvent {
     @SubscribeEvent
@@ -68,7 +65,7 @@ public class ModEvent {
         if (server == null) {
             return;
         }
-        
+
         // 遍历所有维度（ServerLevel）并更新被驱离的实体
         for (ServerLevel level : server.getAllLevels()) {
             DriveAwayExecutor.tickAllDriveAwayEntities(level);

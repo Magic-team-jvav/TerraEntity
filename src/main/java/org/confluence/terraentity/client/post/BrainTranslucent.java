@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11C.glIsEnabled;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 

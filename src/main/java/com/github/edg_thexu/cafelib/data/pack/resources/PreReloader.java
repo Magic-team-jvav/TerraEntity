@@ -2,7 +2,6 @@ package com.github.edg_thexu.cafelib.data.pack.resources;
 
 import com.github.edg_thexu.cafelib.CafeLib;
 import com.github.edg_thexu.cafelib.api.event.AddPreloadResourceEvent;
-
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;

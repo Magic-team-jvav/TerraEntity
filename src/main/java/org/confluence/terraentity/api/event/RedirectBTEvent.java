@@ -1,7 +1,6 @@
 package org.confluence.terraentity.api.event;
 
 import net.minecraft.world.entity.LivingEntity;
-
 import net.neoforged.fml.event.IModBusEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import org.confluence.terraentity.entity.ai.goal.behavior.BTNode;

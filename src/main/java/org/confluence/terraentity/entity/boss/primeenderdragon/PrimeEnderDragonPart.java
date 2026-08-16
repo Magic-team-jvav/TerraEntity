@@ -9,7 +9,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.entity.PartEntity;
 import org.confluence.terraentity.api.entity.ICollisionAttackEntity;

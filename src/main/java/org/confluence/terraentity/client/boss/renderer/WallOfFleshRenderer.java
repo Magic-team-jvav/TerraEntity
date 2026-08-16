@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
@@ -22,8 +23,6 @@ import org.confluence.terraentity.entity.boss.wallofflesh.WallOfFlesh;
 import org.confluence.terraentity.entity.boss.wallofflesh.WallOfFleshEye;
 import org.confluence.terraentity.entity.boss.wallofflesh.WallOfFleshMouth;
 import org.confluence.terraentity.entity.boss.wallofflesh.WallOfFleshPart;
-import net.minecraft.util.Tuple;
-import javax.annotation.Nonnull;
 import org.confluence.terraentity.init.entity.TEBossEntities;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -33,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
+
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
