@@ -134,6 +134,10 @@ public class TEEnglishProvider extends LanguageProvider {
 
         add("tooltip.terra_entity.chester.desc", "Press shift and right click to switch target container. You can bind a container to it.");
         add("tooltip.terra_entity.chester.current", "Current Container");
+        add("tooltip.terra_entity.chester.connect", "Connect to %s.");
+        add("tooltip.terra_entity.chester.bind", "Bind to %s.");
+        add("tooltip.terra_entity.chester.bind_exist", "Already bind to %s.");
+        add("tooltip.terra_entity.chester.bind_remove", "Binding removed.");
 
         // boomerang
         add("tooltip.terra_entity.boomerang.penetration", "Penetrates Count");

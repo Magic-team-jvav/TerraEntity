@@ -24,10 +24,14 @@ import org.confluence.terraentity.registries.chester.ChesterConditionalType;
 import org.confluence.terraentity.registries.chester.ChesterConditionalTypes;
 import org.confluence.terraentity.registries.chester.ChesterType;
 import org.confluence.terraentity.utils.TEUtils;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+@ParametersAreNonnullByDefault
 public class ChesterSummonItem<T extends Chester> extends PetItem<T> {
 
     public ChesterSummonItem(Properties properties, DeferredHolder<EntityType<?>, EntityType<T>> entityType) {
@@ -35,7 +39,7 @@ public class ChesterSummonItem<T extends Chester> extends PetItem<T> {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (level.isClientSide()) {
             return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
@@ -44,7 +48,7 @@ public class ChesterSummonItem<T extends Chester> extends PetItem<T> {
             BlockPos pos = TEUtils.getEyeBlockHitResult(player);
             SummonerAttachment data = player.getData(TEAttachments.SUMMONER_STORAGE);
             SummonerAttachment.Key key = new SummonerAttachment.Key(pos, player.level().dimension());
-            Level level1 = level.getServer().getLevel(key.levelId());
+            Level level1 = Objects.requireNonNull(level.getServer()).getLevel(key.levelId());
             ChesterConditionalType type = ChesterConditionalTypes.match(pos, player, level1);
 
             if(type != null){
@@ -73,7 +77,13 @@ public class ChesterSummonItem<T extends Chester> extends PetItem<T> {
             // 全局指针未在最后
             data.chestType = ++data.chestType % TERegistries.CHESTER_TYPES.entrySet().size();
             ChesterAttachmentPacketS2C.syncChesterOpenType(data.chestType, data.chestTypeAdditional, (ServerPlayer) player);
-            player.sendSystemMessage(Component.literal(data.chestType + " " + data.chestTypeAdditional ));
+            Map.Entry<ResourceKey<ChesterType>, ChesterType> index = TERegistries.CHESTER_TYPES.entrySet().stream()
+                    .toList().get(data.chestType % TERegistries.CHESTER_TYPES.entrySet().size());
+            if (data.chestTypeAdditional == 0)
+                player.sendSystemMessage(Component.translatable("tooltip.terra_entity.chester.connect", index.getValue().getName()));
+            else
+                player.sendSystemMessage(Component.translatable("tooltip.terra_entity.chester.connect", index.getValue().getName())
+                        .append(" ").append(String.valueOf(data.chestTypeAdditional)));
             return InteractionResultHolder.success(player.getItemInHand(hand));
         }
         return super.use(level, player, hand);
@@ -97,7 +107,7 @@ public class ChesterSummonItem<T extends Chester> extends PetItem<T> {
                 if(additionalSize <= maxAdditionalSize){
                     Map.Entry<SummonerAttachment.Key, ChesterConditionalType> entry = data.boundBlocks.entrySet().stream().toList().get(data.chestTypeAdditional - 1);
                     BlockPos pos = entry.getKey().pos();
-                    ChesterConditionalType type = entry.getValue();
+                    //ChesterConditionalType type = entry.getValue();
                     tooltipComponents.add(Component.literal("(" + pos.getX() + " " + pos.getY() + " " + pos.getZ() + ")").append("->").append(Component.translatable(entry.getKey().levelId().location().toLanguageKey())) );
 
                 }

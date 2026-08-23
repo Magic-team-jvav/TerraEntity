@@ -12,6 +12,7 @@ import org.confluence.terraentity.attachment.SummonerAttachment;
 import org.confluence.terraentity.init.TEAttachments;
 import org.confluence.terraentity.registries.chester.ChesterConditionalType;
 import org.confluence.terraentity.utils.AdapterUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class ChesterAttachmentPacketS2C implements CustomPacketPayload {
     }
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public CustomPacketPayload.@NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 

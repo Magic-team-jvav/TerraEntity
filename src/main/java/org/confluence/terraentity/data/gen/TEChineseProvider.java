@@ -645,6 +645,10 @@ public class TEChineseProvider extends LanguageProvider {
         add("tooltip.terra_entity.house_detect.info", "按下shift+右键 切换模式");
         add("tooltip.terra_entity.chester.desc", "按下shift+右键 切换目标容器. 你可以用它绑定一个容器");
         add("tooltip.terra_entity.chester.current", "当前容器");
+        add("tooltip.terra_entity.chester.connect", "连接至%s。");
+        add("tooltip.terra_entity.chester.bind", "绑定至%s。");
+        add("tooltip.terra_entity.chester.bind_exist", "已绑定至%s。");
+        add("tooltip.terra_entity.chester.bind_remove", "绑定解除。");
 
 
         // boomerang
