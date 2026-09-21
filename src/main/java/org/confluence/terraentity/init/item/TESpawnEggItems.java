@@ -40,7 +40,7 @@ public class TESpawnEggItems {
     public static final DeferredItem<SpawnEggItem> SNATCHER_SPAWN_EGG = registerEgg("snatcher_spawn_egg", TEMonsterEntities.SNATCHER, 0xffffff, 0xffffff);
     public static final DeferredItem<SpawnEggItem> MAN_EATER_SPAWN_EGG = registerEgg("man_eater_spawn_egg", TEMonsterEntities.MAN_EATER, 0xffffff, 0xffffff);
     public static final DeferredItem<SpawnEggItem> HORNET_SPAWN_EGG = registerEgg("hornet_spawn_egg", TEMonsterEntities.HORNET, 0xffffff, 0xffffff);
-    public static final DeferredItem<SpawnEggItem> ICE_SLIME_SPAWN_EGG = registerEgg("ice_slime_spawn_egg", TEMonsterEntities.ICE_SLIME, 0xB3F0EA, 0x7FDEDF);
+    public static final DeferredItem<SpawnEggItem> ICE_SLIME_SPAWN_EGG = registerEgg("ice_slime_spawn_egg", TEMonsterEntities.ICE_SLIME, 0xffffff, 0xffffff);
     public static final DeferredItem<SpawnEggItem> ICE_BAT_SPAWN_EGG = registerEgg("ice_bat_spawn_egg", TEMonsterEntities.ICE_BAT, 0xffffff, 0xffffff);
     public static final DeferredItem<SpawnEggItem> LAVA_SLIME_SPAWN_EGG = registerEgg("lava_slime_spawn_egg", TEMonsterEntities.LAVA_SLIME, 0xffffff, 0xffffff);
     public static final DeferredItem<SpawnEggItem> HELL_BAT_SPAWN_EGG = registerEgg("hell_bat_spawn_egg", TEMonsterEntities.HELL_BAT, 0xffffff, 0xffffff);
