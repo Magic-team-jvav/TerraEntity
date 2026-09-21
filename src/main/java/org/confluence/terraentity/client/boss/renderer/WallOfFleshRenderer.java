@@ -3,6 +3,7 @@ package org.confluence.terraentity.client.boss.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -43,7 +44,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
 
     private static final float CELL_SIZE = 240f;
     private static final float CELL_HALF = CELL_SIZE / 2.0f;
-    private final Set<GeoBone> gridBones = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Set<GeoBone> gridBones = Collections.newSetFromMap(new Reference2ObjectOpenHashMap<>());
     private final Map<String, Integer> cellVariantCache = new HashMap<>();
     private int cachedPartCount = -1; //记录缓存 part 数量
     private boolean modelMerged = false;
@@ -137,7 +138,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
                         String.format("%.1f", avgFps),
                         frameRenderedCount,
                         frameCulledCount,
-                        String.format("%.1f", (frameCulledCount / (float)total) * 100));
+                        String.format("%.1f", (frameCulledCount / (float) total) * 100));
             }
 
             // 重置所有计数器
@@ -146,6 +147,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
             this.lastLogTime = currentTime;
         }
     }
+
     @Override
     public void renderRecursively(PoseStack poseStack, WallOfFlesh animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
                                   int packedOverlay, int colour) {
@@ -193,7 +195,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
 
         // 1.获取骨骼在模型空间中的最终位置
         Matrix4f matrix = poseStack.last().pose();
-        float modelX = - (bone.getPivotX() + bone.getPosX()) / 32f; //因为 geo lib 的原因 x 这里要取反
+        float modelX = -(bone.getPivotX() + bone.getPosX()) / 32f; //因为 geo lib 的原因 x 这里要取反
         float modelY = (bone.getPivotY() + bone.getPosY()) / 32f;
         float modelZ = (bone.getPivotZ() + bone.getPosZ()) / 32f;
 
@@ -221,14 +223,14 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
         boolean result = !frustum.isVisible(boneAabb);
 
         // 6. 地狱上层基岩剔除
-        if (!result){
+        if (!result) {
             result = shouldCullByHeight(boneAabb, animatable, this.playerEyePos);
         }
 
         // debug 日志记录
-        if(isPrintLog && result){
+        if (isPrintLog && result) {
             this.frameCulledCount++; // 记录这一帧中被剔除的一个骨骼
-        }else {
+        } else {
             this.frameRenderedCount++; // 记录这一帧中被渲染的一个骨骼
         }
 
@@ -262,7 +264,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
      * 绘制视锥剔除调试框(代码稳定后可移除)
      */
     private void drawDebugBox(MultiBufferSource bufferSource, double camX, double camY, double camZ, double radius) {
-        if(!isDrawDebugBox){
+        if (!isDrawDebugBox) {
             return;
         }
         // 获取专门用于绘制线条的 VertexConsumer
@@ -281,7 +283,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
     }
 
     /**
-     *  眼球追踪
+     * 眼球追踪
      */
     private void handleEyeTracking(GeoBone bone, WallOfFlesh animatable, float partialTick) {
         GeoBone parent = bone.getParent();
@@ -387,7 +389,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
         List<Tuple<Integer, Vec3>> localOffsets = animatable.getLocalOffsets();
 
         // 数据未同步则跳过
-        if (localOffsets.isEmpty()||animatable.subEntities.isEmpty()) return;
+        if (localOffsets.isEmpty() || animatable.subEntities.isEmpty()) return;
 
         // 数量未变化则不重构
         int currentOffsetSize = localOffsets.size();
@@ -491,6 +493,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
         this.cachedPartCount = currentOffsetSize;
         modelMerged = true;
     }
+
     /**
      * geckolib 1.21.1 的构造器手动拷贝骨骼（递归拷贝子骨骼），使用指定的新名称。
      */
@@ -556,7 +559,7 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
     @Override
     protected void applyRotations(WallOfFlesh animatable, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
         if (isShaking(animatable))
-            rotationYaw += (float)(Math.cos(animatable.tickCount * 3.25d) * Math.PI * 0.4d);
+            rotationYaw += (float) (Math.cos(animatable.tickCount * 3.25d) * Math.PI * 0.4d);
 
         if (!animatable.hasPose(Pose.SLEEPING))
             poseStack.mulPose(Axis.YP.rotationDegrees(180f - rotationYaw));
@@ -569,13 +572,13 @@ public class WallOfFleshRenderer extends GeoNormalRenderer<WallOfFlesh> {
 
     @Override
     protected int getSkyLightLevel(@Nonnull WallOfFlesh entity, @Nonnull BlockPos pos) {
-        Vec3 potionPos = new Vec3(pos.getX(), entity.level().getMaxBuildHeight()+1, pos.getZ());
+        Vec3 potionPos = new Vec3(pos.getX(), entity.level().getMaxBuildHeight() + 1, pos.getZ());
         return super.getSkyLightLevel(entity, BlockPos.containing(potionPos));
     }
 
     @Override
     protected int getBlockLightLevel(@Nonnull WallOfFlesh entity, @Nonnull BlockPos pos) {
-        Vec3 potionPos = new Vec3(pos.getX(), entity.level().getMaxBuildHeight()+1, pos.getZ());
+        Vec3 potionPos = new Vec3(pos.getX(), entity.level().getMaxBuildHeight() + 1, pos.getZ());
         return super.getBlockLightLevel(entity, BlockPos.containing(potionPos));
     }
 

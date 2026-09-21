@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +15,6 @@ import org.confluence.terraentity.utils.TEUtils;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 public record NPCNames(Map<String, Float> namesWeights) {
@@ -34,7 +34,7 @@ public record NPCNames(Map<String, Float> namesWeights) {
         @Override
         protected void apply(Map<ResourceLocation, JsonElement> resourceList) {
             ConditionalOps<JsonElement> ops = makeConditionalOps();
-            Map<EntityType<?>, NPCNames> map = new IdentityHashMap<>();
+            Map<EntityType<?>, NPCNames> map = new Reference2ObjectOpenHashMap<>();
             for (Map.Entry<ResourceLocation, JsonElement> entry : resourceList.entrySet()) {
                 BuiltInRegistries.ENTITY_TYPE.getOptional(entry.getKey()).ifPresent(entityType -> NPCNames.CODEC.parse(ops, entry.getValue())
                         .resultOrPartial(errorMsg -> TerraEntity.LOGGER.warn("Could not decode npc names with json id {} - error: {}", entry.getKey(), errorMsg))

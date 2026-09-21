@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -12,9 +13,12 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import org.confluence.lib.common.data.SingleJsonFileReloadListener;
 import org.confluence.terraentity.TerraEntity;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public record NPCDialogs(List<String> dialogs) {
     public static final Codec<NPCDialogs> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -33,7 +37,7 @@ public record NPCDialogs(List<String> dialogs) {
         @Override
         protected void apply(Map<ResourceLocation, JsonElement> resourceList) {
             ConditionalOps<JsonElement> ops = makeConditionalOps();
-            Map<EntityType<?>, NPCDialogs> map = new IdentityHashMap<>();
+            Map<EntityType<?>, NPCDialogs> map = new Reference2ObjectOpenHashMap<>();
             for (Map.Entry<ResourceLocation, JsonElement> entry : resourceList.entrySet()) {
                 BuiltInRegistries.ENTITY_TYPE.getOptional(entry.getKey()).ifPresent(entityType -> NPCDialogs.CODEC.parse(ops, entry.getValue())
                         .resultOrPartial(errorMsg -> TerraEntity.LOGGER.warn("Could not decode npc dialogs with json id {} - error: {}", entry.getKey(), errorMsg))
